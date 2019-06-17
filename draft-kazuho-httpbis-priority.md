@@ -79,7 +79,7 @@ the HTTP responses. However, the design has shortcomings:
   representation of a "prioritization tree" from the client to the server
   requires head-of-line blocking.
 
-Based on these observations, this document defines the "Priority" HTTP header
+Based on these observations, this document defines the Priority HTTP header
 field that can be used to specify the precedence of each HTTP response in a
 standardized, extensible, protocol-version-independent, end-to-end
 representation.
@@ -90,9 +90,9 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in [RFC2119].
 
-# The "Priority" HTTP Header Field
+# The Priority HTTP Header Field
 
-The "Priority" HTTP header field is used by a client as part of an HTTP request
+The Priority HTTP header field is used by a client as part of an HTTP request
 to specify the priority of the response.  A server can also use the header field
 as part of an HTTP request to communicate the correct or amended precedence to
 an intermediary.
@@ -124,8 +124,8 @@ other responses.
   the document even though the response is being used or referred by the
   document.
 
-When the "Priority" header or the `urgency` directive do not appear in the
-request, the server SHOULD act as if urgency level of "document" was specified.
+When the Priority header or the `urgency` directive do not appear in the
+request, the server SHOULD act as if urgency level of `document` was specified.
 
 A server SHOULD transmit HTTP responses that have the `blocking` attribute, then
 those with the `document` attribute, and finaly the ones with the `non-blocking`
@@ -151,9 +151,9 @@ progressive = "yes" / "no"
 This boolean directive indicates if a response can be processed progressively,
 i.e. provide some meaningful output as chunks of the response arrive.
 
-When the "Priority" header or the `progressive` directive do not appear in the
-request, the server SHOULD act as if a `progress` directive with an argument of
-"no" has specified.
+When the Priority header field or the `progressive` directive do not appear in
+the request, the server SHOULD act as if a `progress` directive with an argument
+of `no` has specified.
 
 A server SHOULD distribute the bandwidth of a connection between the responses
 deemed progressive sharing the same urgency.
