@@ -23,7 +23,6 @@ normative:
   RFC7230:
 
 informative:
-  RFC2318:
   RFC7540:
   QUIC-HTTP:
     title: "Hypertext Transfer Protocol Version 3 (HTTP/3)"
