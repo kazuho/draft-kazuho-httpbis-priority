@@ -23,6 +23,7 @@ normative:
   RFC7230:
 
 informative:
+  RFC2318:
   RFC7540:
   QUIC-HTTP:
     title: "Hypertext Transfer Protocol Version 3 (HTTP/3)"
@@ -50,7 +51,7 @@ It is often the case for the processing of an HTTP response to depend on the
 retrieval of another HTTP response.
 
 As an example, visual rendering of an HTML document could be blocked by the
-retrieval of a Cascading Style Sheet that the document refers to. Inline images
+retrieval of a CSS ({{RFC2318}}) file that the document refers to. Inline images
 is another example, though the difference is that they typically do not block
 rendering. Instead, they are rendered progressively as the chunks of the images
 arrive.
