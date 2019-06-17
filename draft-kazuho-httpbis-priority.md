@@ -60,10 +60,10 @@ To provide meaningful representation of a document at the earliest moment, it is
 important for a HTTP server to prioritize the HTTP responses, or the chunks of
 those HTTP responses, that it sends.
 
-HTTP/2 provides such prioritization scheme. A client sends a series of PRIORITY
-frames to communicate to the server a “priority tree;” a tree that represents
-the client's preferred ordering and weighted distribution of the bandwidth among
-the HTTP responses. However, the design has shortcomings:
+HTTP/2 ({{RFC7540}}) provides such prioritization scheme. A client sends a
+series of PRIORITY frames to communicate to the server a “priority tree;” a tree
+that represents the client's preferred ordering and weighted distribution of the
+bandwidth among the HTTP responses.  However, the design has shortcomings:
 
 * Its complexity has led to varying levels of support by the HTTP/2 client and
   servers.
@@ -74,10 +74,10 @@ the HTTP responses. However, the design has shortcomings:
   impossible for the server to determine how such images should be prioritized
   against other responses that use client-driven prioritization tree, because
   every client builds the HTTP/2 prioritization tree in a different way.
-* The design cannot be ported cleanly to HTTP/3. One of the primary goals of
-  HTTP/3 is to minimize head-of-line blocking. Transmitting the evolving
-  representation of a "prioritization tree" from the client to the server
-  requires head-of-line blocking.
+* The design cannot be ported cleanly to HTTP/3 ({{QUIC-HTTP}}). One of the
+  primary goals of HTTP/3 is to minimize head-of-line blocking. Transmitting the
+  evolving representation of a "prioritization tree" from the client to the
+  server requires head-of-line blocking.
 
 Based on these observations, this document defines the Priority HTTP header
 field that can be used to specify the precedence of each HTTP response in a
