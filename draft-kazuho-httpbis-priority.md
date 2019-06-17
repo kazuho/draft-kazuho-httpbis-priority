@@ -98,19 +98,10 @@ an intermediary.
 
 The systax of this header field is defined as follows.
 
-```
+~~~ abnf
 Priority           = 1#priority-directive
 priority-directive = token [ "=" ( token / quoted-string ) ]
-```
-
-A "Priority" header can be used as either a request header or a response header.
-
-When used as a request header, it indicates the client's view of how the
-response for the request needs to be prioritized.
-
-When used as a response header, it indicates the origin's view of how the
-response should be prioritized to the intermediaries.  The value of the header
-field does not have an effect on the client.
+~~~
 
 ## Priority Directives
 
@@ -118,9 +109,9 @@ field does not have an effect on the client.
 
 Argument syntax:
 
-```
+~~~ abnf
 urgency = "blocking" / "document" / "non-blocking"
-```
+~~~
 
 The `urgency` directive indicates how a HTTP response affects the processing of
 other responses.
@@ -142,19 +133,19 @@ attribute.
 The following example shows a request for a CSS file with the urgency set to
 `blocking`:
 
-```
+~~~ example
 GET /style.css HTTP/1.1
 Priority: urgency=blocking
 
-```
+~~~
 
 ### progressive
 
 Argument syntax:
 
-```
+~~~ example
 progressive = "yes" / "no"
-```
+~~~
 
 This boolean directive indicates if a response can be processed progressively,
 i.e. provide some meaningful output as chunks of the response arrive.
@@ -169,11 +160,11 @@ deemed progressive sharing the same urgency.
 The following examples shows a request for a JPEG file with the urgency set to
 `non-blocking`, progressive set to `yes`.
 
-```
+~~~ example
 GET /image.jpg HTTP/1.1
 Priority: urgency=non-blocking, progressive=yes
 
-```
+~~~
 
 ## Merging Client- and Server-Driven Directives
 
@@ -188,15 +179,15 @@ specified by the client.
 
 For example, when the client sends a HTTP request with
 
-```
+~~~ example
 Priority: urgency=non-blocking; progressive=yes
-```
+~~~
 
 and the origin responds with
 
-```
+~~~ example
 Priority: progressive=no
-```
+~~~
 
 the intermediary's view of the progressiveness of the response becomes negative,
 because the server-provided value overrides that provided by the client.  The
