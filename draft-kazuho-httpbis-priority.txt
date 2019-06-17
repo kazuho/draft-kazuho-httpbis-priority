@@ -1,0 +1,336 @@
+
+
+
+
+HTTP                                                              K. Oku
+Internet-Draft                                                    Fastly
+Intended status: Standards Track                           June 17, 2019
+Expires: December 19, 2019
+
+
+                     The Priority HTTP Header Field
+                  draft-kazuho-httpbis-priority-latest
+
+Abstract
+
+   This document describes the Priority HTTP header field.  This header
+   field can be used by the endpoints to specify the absolute precedence
+   of a HTTP response in an HTTP version-independent way.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at http://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on December 19, 2019.
+
+Copyright Notice
+
+   Copyright (c) 2019 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+
+
+Oku                     Expires December 19, 2019               [Page 1]
+
+Internet-Draft       The Priority HTTP Header Field            June 2019
+
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
+   2.  The Priority HTTP Header Field  . . . . . . . . . . . . . . .   3
+     2.1.  Priority Directives . . . . . . . . . . . . . . . . . . .   3
+       2.1.1.  urgency . . . . . . . . . . . . . . . . . . . . . . .   3
+       2.1.2.  progressive . . . . . . . . . . . . . . . . . . . . .   4
+     2.2.  Merging Client- and Server-Driven Directives  . . . . . .   4
+   3.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   4.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
+   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
+     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
+     5.2.  Informative References  . . . . . . . . . . . . . . . . .   5
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   6
+
+1.  Introduction
+
+   It is often the case for the processing of an HTTP response to depend
+   on the retrieval of another HTTP response.
+
+   As an example, visual rendering of an HTML document could be blocked
+   by the retrieval of a CSS ([RFC2318]) file that the document refers
+   to.  Inline images is another example, though the difference is that
+   they typically do not block rendering.  Instead, they are rendered
+   progressively as the chunks of the images arrive.
+
+   To provide meaningful representation of a document at the earliest
+   moment, it is important for a HTTP server to prioritize the HTTP
+   responses, or the chunks of those HTTP responses, that it sends.
+
+   HTTP/2 provides such prioritization scheme.  A client sends a series
+   of PRIORITY frames to communicate to the server a "priority tree;" a
+   tree that represents the client's preferred ordering and weighted
+   distribution of the bandwidth among the HTTP responses.  However, the
+   design has shortcomings:
+
+   o  Its complexity has led to varying levels of support by the HTTP/2
+      client and servers.
+
+   o  It is hard for the server to customize prioritization.  For
+      example, a server, with the knowledge of the document structure,
+      might want to prioritize the delivery of images that are critical
+      to user experience above others images, but below the CSS files.
+      But with the HTTP/2 prioritization scheme, it is impossible for
+      the server to determine how such images should be prioritized
+      against other responses that use client-driven prioritization
+
+
+
+
+Oku                     Expires December 19, 2019               [Page 2]
+
+Internet-Draft       The Priority HTTP Header Field            June 2019
+
+
+      tree, because every client builds the HTTP/2 prioritization tree
+      in a different way.
+
+   o  The design cannot be ported cleanly to HTTP/3.  One of the primary
+      goals of HTTP/3 is to minimize head-of-line blocking.
+      Transmitting the evolving representation of a "prioritization
+      tree" from the client to the server requires head-of-line
+      blocking.
+
+   Based on these observations, this document defines the Priority HTTP
+   header field that can be used to specify the precedence of each HTTP
+   response in a standardized, extensible, protocol-version-independent,
+   end-to-end representation.
+
+1.1.  Notational Conventions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
+
+2.  The Priority HTTP Header Field
+
+   The Priority HTTP header field is used by a client as part of an HTTP
+   request to specify the priority of the response.  A server can also
+   use the header field as part of an HTTP request to communicate the
+   correct or amended precedence to an intermediary.
+
+   The systax of this header field is defined as follows.
+
+   Priority           = 1#priority-directive
+   priority-directive = token [ "=" ( token / quoted-string ) ]
+
+2.1.  Priority Directives
+
+2.1.1.  urgency
+
+   Argument syntax:
+
+   urgency = "blocking" / "document" / "non-blocking"
+
+   The "urgency" directive indicates how a HTTP response affects the
+   processing of other responses.
+
+   o  "blocking" indicates that the response blocks the processing of
+      others.
+
+   o  "document" indicates that the response contains the document that
+      is being processed.
+
+
+
+Oku                     Expires December 19, 2019               [Page 3]
+
+Internet-Draft       The Priority HTTP Header Field            June 2019
+
+
+   o  "non-blocking" indicates that the response does not block the
+      processing of the document even though the response is being used
+      or referred by the document.
+
+   When the Priority header or the "urgency" directive do not appear in
+   the request, the server SHOULD act as if urgency level of "document"
+   was specified.
+
+   A server SHOULD transmit HTTP responses that have the "blocking"
+   attribute, then those with the "document" attribute, and finaly the
+   ones with the "non-blocking" attribute.
+
+   The following example shows a request for a CSS file with the urgency
+   set to "blocking":
+
+   GET /style.css HTTP/1.1
+   Priority: urgency=blocking
+
+
+2.1.2.  progressive
+
+   Argument syntax:
+
+   progressive = "yes" / "no"
+
+   This boolean directive indicates if a response can be processed
+   progressively, i.e. provide some meaningful output as chunks of the
+   response arrive.
+
+   When the Priority header field or the "progressive" directive do not
+   appear in the request, the server SHOULD act as if a "progress"
+   directive with an argument of "no" has specified.
+
+   A server SHOULD distribute the bandwidth of a connection between the
+   responses deemed progressive sharing the same urgency.
+
+   The following examples shows a request for a JPEG file with the
+   urgency set to "non-blocking", progressive set to "yes".
+
+   GET /image.jpg HTTP/1.1
+   Priority: urgency=non-blocking, progressive=yes
+
+
+2.2.  Merging Client- and Server-Driven Directives
+
+   It is not always the case that the client has the best view of how
+   the HTTP responses should be prioritized.  For example, whether a
+   JPEG image should be served progressively by the server depends on
+
+
+
+Oku                     Expires December 19, 2019               [Page 4]
+
+Internet-Draft       The Priority HTTP Header Field            June 2019
+
+
+   the structure of that image file - a property only known to the
+   server.
+
+   Therefore, a server is permitted to send a "Priority" response header
+   field.  When used, the directives found in this response header field
+   overrides those specified by the client.
+
+   For example, when the client sends a HTTP request with
+
+   Priority: urgency=non-blocking; progressive=yes
+
+   and the origin responds with
+
+   Priority: progressive=no
+
+   the intermediary's view of the progressiveness of the response
+   becomes negative, because the server-provided value overrides that
+   provided by the client.  The urgency is deemed as "non-blocking",
+   because the server did not specify the directive.
+
+3.  Security Considerations
+
+   TBD
+
+4.  IANA Considerations
+
+   TBD
+
+5.  References
+
+5.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997, <https://www.rfc-
+              editor.org/info/rfc2119>.
+
+   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Message Syntax and Routing",
+              RFC 7230, DOI 10.17487/RFC7230, June 2014,
+              <https://www.rfc-editor.org/info/rfc7230>.
+
+5.2.  Informative References
+
+   [QUIC-HTTP]
+              Bishop, M., Ed., "Hypertext Transfer Protocol Version 3
+              (HTTP/3)", draft-ietf-quic-http-16 (work in progress),
+              October 2018.
+
+
+
+Oku                     Expires December 19, 2019               [Page 5]
+
+Internet-Draft       The Priority HTTP Header Field            June 2019
+
+
+   [RFC2318]  Lie, H., Bos, B., and C. Lilley, "The text/css Media
+              Type", RFC 2318, DOI 10.17487/RFC2318, March 1998,
+              <https://www.rfc-editor.org/info/rfc2318>.
+
+   [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
+              Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
+              DOI 10.17487/RFC7540, May 2015, <https://www.rfc-
+              editor.org/info/rfc7540>.
+
+Author's Address
+
+   Kazuho Oku
+   Fastly
+
+   Email: kazuhooku@gmail.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Oku                     Expires December 19, 2019               [Page 6]
