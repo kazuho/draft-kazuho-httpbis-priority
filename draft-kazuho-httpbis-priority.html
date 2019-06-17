@@ -378,7 +378,7 @@ ul.toc li {
 
   <h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a></h1>
 <p id="rfc.section.1.p.1">It is often the case for the processing of an HTTP response to depend on the retrieval of another HTTP response.</p>
-<p id="rfc.section.1.p.2">As an example, visual rendering of an HTML document could be blocked by the retrieval of a CSS (<a href="#RFC2318">[RFC2318]</a>) file that the document refers to. Inline images is another example, though the difference is that they typically do not block rendering. Instead, they are rendered progressively as the chunks of the images arrive.</p>
+<p id="rfc.section.1.p.2">As an example, visual rendering of an HTML document could be blocked by the retrieval of a CSS file that the document refers to. Inline images is another example, though the difference is that they typically do not block rendering.  Instead, they are rendered progressively as the chunks of the images arrive.</p>
 <p id="rfc.section.1.p.3">To provide meaningful representation of a document at the earliest moment, it is important for a HTTP server to prioritize the HTTP responses, or the chunks of those HTTP responses, that it sends.</p>
 <p id="rfc.section.1.p.4">HTTP/2 (<a href="#RFC7540">[RFC7540]</a>) provides such prioritization scheme. A client sends a series of PRIORITY frames to communicate to the server a &#8220;priority tree;&#8221; a tree that represents the client&#8217;s preferred ordering and weighted distribution of the bandwidth among the HTTP responses.  However, the design has shortcomings:</p>
 <p/>
@@ -476,12 +476,6 @@ Priority: progressive=no
         <b id="QUIC-HTTP">[QUIC-HTTP]</b>
       </td>
       <td class="top"><a title="Akamai">Bishop, M.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-quic-http-16">Hypertext Transfer Protocol Version 3 (HTTP/3)</a>", Internet-Draft draft-ietf-quic-http-16, October 2018.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="RFC2318">[RFC2318]</b>
-      </td>
-      <td class="top"><a>Lie, H.</a>, <a>Bos, B.</a> and <a>C. Lilley</a>, "<a href="http://tools.ietf.org/html/rfc2318">The text/css Media Type</a>", RFC 2318, DOI 10.17487/RFC2318, March 1998.</td>
     </tr>
     <tr>
       <td class="reference">

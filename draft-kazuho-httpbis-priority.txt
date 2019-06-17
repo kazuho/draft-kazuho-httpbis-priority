@@ -80,9 +80,9 @@ Table of Contents
    on the retrieval of another HTTP response.
 
    As an example, visual rendering of an HTML document could be blocked
-   by the retrieval of a CSS ([RFC2318]) file that the document refers
-   to.  Inline images is another example, though the difference is that
-   they typically do not block rendering.  Instead, they are rendered
+   by the retrieval of a CSS file that the document refers to.  Inline
+   images is another example, though the difference is that they
+   typically do not block rendering.  Instead, they are rendered
    progressively as the chunks of the images arrive.
 
    To provide meaningful representation of a document at the earliest
@@ -282,10 +282,6 @@ Oku                     Expires December 19, 2019               [Page 5]
 Internet-Draft       The Priority HTTP Header Field            June 2019
 
 
-   [RFC2318]  Lie, H., Bos, B., and C. Lilley, "The text/css Media
-              Type", RFC 2318, DOI 10.17487/RFC2318, March 1998,
-              <https://www.rfc-editor.org/info/rfc2318>.
-
    [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
               Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
               DOI 10.17487/RFC7540, May 2015, <https://www.rfc-
@@ -297,6 +293,10 @@ Author's Address
    Fastly
 
    Email: kazuhooku@gmail.com
+
+
+
+
 
 
 
