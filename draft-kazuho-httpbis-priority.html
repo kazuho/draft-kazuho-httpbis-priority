@@ -380,13 +380,13 @@ ul.toc li {
 <p id="rfc.section.1.p.1">It is often the case for the processing of an HTTP response to depend on the retrieval of another HTTP response.</p>
 <p id="rfc.section.1.p.2">As an example, visual rendering of an HTML document could be blocked by the retrieval of a CSS (<a href="#RFC2318">[RFC2318]</a>) file that the document refers to. Inline images is another example, though the difference is that they typically do not block rendering. Instead, they are rendered progressively as the chunks of the images arrive.</p>
 <p id="rfc.section.1.p.3">To provide meaningful representation of a document at the earliest moment, it is important for a HTTP server to prioritize the HTTP responses, or the chunks of those HTTP responses, that it sends.</p>
-<p id="rfc.section.1.p.4">HTTP/2 provides such prioritization scheme. A client sends a series of PRIORITY frames to communicate to the server a &#8220;priority tree;&#8221; a tree that represents the client&#8217;s preferred ordering and weighted distribution of the bandwidth among the HTTP responses. However, the design has shortcomings:</p>
+<p id="rfc.section.1.p.4">HTTP/2 (<a href="#RFC7540">[RFC7540]</a>) provides such prioritization scheme. A client sends a series of PRIORITY frames to communicate to the server a &#8220;priority tree;&#8221; a tree that represents the client&#8217;s preferred ordering and weighted distribution of the bandwidth among the HTTP responses.  However, the design has shortcomings:</p>
 <p/>
 
 <ul>
   <li>Its complexity has led to varying levels of support by the HTTP/2 client and servers.</li>
   <li>It is hard for the server to customize prioritization. For example, a server, with the knowledge of the document structure, might want to prioritize the delivery of images that are critical to user experience above others images, but below the CSS files.  But with the HTTP/2 prioritization scheme, it is impossible for the server to determine how such images should be prioritized against other responses that use client-driven prioritization tree, because every client builds the HTTP/2 prioritization tree in a different way.</li>
-  <li>The design cannot be ported cleanly to HTTP/3. One of the primary goals of HTTP/3 is to minimize head-of-line blocking. Transmitting the evolving representation of a &#8220;prioritization tree&#8221; from the client to the server requires head-of-line blocking.</li>
+  <li>The design cannot be ported cleanly to HTTP/3 (<a href="#QUIC-HTTP">[QUIC-HTTP]</a>). One of the primary goals of HTTP/3 is to minimize head-of-line blocking. Transmitting the evolving representation of a &#8220;prioritization tree&#8221; from the client to the server requires head-of-line blocking.</li>
 </ul>
 <p id="rfc.section.1.p.6">Based on these observations, this document defines the Priority HTTP header field that can be used to specify the precedence of each HTTP response in a standardized, extensible, protocol-version-independent, end-to-end representation.</p>
 <h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#notational-conventions" id="notational-conventions">Notational Conventions</a></h1>
