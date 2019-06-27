@@ -193,6 +193,21 @@ because the server-provided value overrides that provided by the client.  The
 urgency is deemed as `non-blocking`, because the server did not specify the
 directive.
 
+# Coexistence with HTTP/2 Priorities
+
+When connecting to a HTTP/2 server, a client that uses this header-based
+prioritization scheme SHOULD send a `SETTINGS_HEADER_BASED_PRIORITY` settings
+parameter (0xTBD) with a value of zero.  An intermediary SHOULD set the settings
+parameter for a connection it establishes when and only when all the requests to
+be sent over that connection originates from a client that utilizes this header-
+based prioritization scheme.
+
+The existence of this settings parameter instructs the server that recognizes
+the settings parameter to use the header-based prioritization scheme instead of
+the frame-based prioritization scheme defined by HTTP/2.  A server that does not
+recognize this settings parameter would respect the frame-based prioritization
+scheme.
+
 # Security Considerations
 
 TBD
