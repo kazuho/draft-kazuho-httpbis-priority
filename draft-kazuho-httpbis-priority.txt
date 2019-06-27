@@ -4,8 +4,8 @@
 
 HTTP                                                              K. Oku
 Internet-Draft                                                    Fastly
-Intended status: Standards Track                           June 17, 2019
-Expires: December 19, 2019
+Intended status: Standards Track                           June 27, 2019
+Expires: December 29, 2019
 
 
                      The Priority HTTP Header Field
@@ -32,7 +32,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 19, 2019.
+   This Internet-Draft will expire on December 29, 2019.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Oku                     Expires December 19, 2019               [Page 1]
+Oku                     Expires December 29, 2019               [Page 1]
 
 Internet-Draft       The Priority HTTP Header Field            June 2019
 
@@ -67,11 +67,12 @@ Table of Contents
        2.1.1.  urgency . . . . . . . . . . . . . . . . . . . . . . .   3
        2.1.2.  progressive . . . . . . . . . . . . . . . . . . . . .   4
      2.2.  Merging Client- and Server-Driven Directives  . . . . . .   4
-   3.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
-   4.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
-   5.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   5
-     5.1.  Normative References  . . . . . . . . . . . . . . . . . .   5
-     5.2.  Informative References  . . . . . . . . . . . . . . . . .   5
+   3.  Coexistence with HTTP/2 Priorities  . . . . . . . . . . . . .   5
+   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
+   6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
+     6.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
+     6.2.  Informative References  . . . . . . . . . . . . . . . . .   6
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   6
 
 1.  Introduction
@@ -108,8 +109,7 @@ Table of Contents
 
 
 
-
-Oku                     Expires December 19, 2019               [Page 2]
+Oku                     Expires December 29, 2019               [Page 2]
 
 Internet-Draft       The Priority HTTP Header Field            June 2019
 
@@ -165,7 +165,7 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
 
 
 
-Oku                     Expires December 19, 2019               [Page 3]
+Oku                     Expires December 29, 2019               [Page 3]
 
 Internet-Draft       The Priority HTTP Header Field            June 2019
 
@@ -221,7 +221,7 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
 
 
 
-Oku                     Expires December 19, 2019               [Page 4]
+Oku                     Expires December 29, 2019               [Page 4]
 
 Internet-Draft       The Priority HTTP Header Field            June 2019
 
@@ -246,17 +246,45 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
    provided by the client.  The urgency is deemed as "non-blocking",
    because the server did not specify the directive.
 
-3.  Security Considerations
+3.  Coexistence with HTTP/2 Priorities
+
+   When connecting to a HTTP/2 server, a client that uses this header-
+   based prioritization scheme SHOULD send a
+   "SETTINGS_HEADER_BASED_PRIORITY" settings parameter (0xTBD) with a
+   value of zero.  An intermediary SHOULD set the settings parameter for
+   a connection it establishes when and only when all the requests to be
+   sent over that connection originates from a client that utilizes this
+   header- based prioritization scheme.
+
+   The existence of this settings parameter instructs the server that
+   recognizes the settings parameter to use the header-based
+   prioritization scheme instead of the frame-based prioritization
+   scheme defined by HTTP/2.  A server that does not recognize this
+   settings parameter would respect the frame-based prioritization
+   scheme.
+
+4.  Security Considerations
 
    TBD
 
-4.  IANA Considerations
+5.  IANA Considerations
 
    TBD
 
-5.  References
 
-5.1.  Normative References
+
+
+
+
+
+Oku                     Expires December 29, 2019               [Page 5]
+
+Internet-Draft       The Priority HTTP Header Field            June 2019
+
+
+6.  References
+
+6.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -268,19 +296,12 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
               <https://www.rfc-editor.org/info/rfc7230>.
 
-5.2.  Informative References
+6.2.  Informative References
 
    [QUIC-HTTP]
               Bishop, M., Ed., "Hypertext Transfer Protocol Version 3
               (HTTP/3)", draft-ietf-quic-http-16 (work in progress),
               October 2018.
-
-
-
-Oku                     Expires December 19, 2019               [Page 5]
-
-Internet-Draft       The Priority HTTP Header Field            June 2019
-
 
    [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
               Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
@@ -312,25 +333,4 @@ Author's Address
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Oku                     Expires December 19, 2019               [Page 6]
+Oku                     Expires December 29, 2019               [Page 6]
