@@ -65,22 +65,26 @@ bandwidth among the HTTP responses.  However, the design has shortcomings:
 
 * Its complexity has led to varying levels of support by the HTTP/2 client and
   servers.
-* It is hard for the server to customize prioritization. For example, a server,
-  with the knowledge of the document structure, might want to prioritize the
-  delivery of images that are critical to user experience above others images,
-  but below the CSS files.  But with the HTTP/2 prioritization scheme, it is
-  impossible for the server to determine how such images should be prioritized
-  against other responses that use client-driven prioritization tree, because
-  every client builds the HTTP/2 prioritization tree in a different way.
+* It is hard to coordinate with server-driven prioritization.  For example, a
+  server, with the knowledge of the document structure, might want to prioritize
+  the delivery of images that are critical to user experience above others
+  images, but below the CSS files.  But with the HTTP/2 prioritization scheme,
+  it is impossible for the server to determine how such images should be
+  prioritized against other responses that use client-driven prioritization
+  tree, because every client builds the HTTP/2 prioritization tree in a
+  different way.
+* It does not define a method that can be used by a server to express the
+  priority of a response.  Without such a method, intermediaries cannot
+  coordinate client-driven and server-driven priorities.
 * The design cannot be ported cleanly to HTTP/3 ({{QUIC-HTTP}}). One of the
   primary goals of HTTP/3 is to minimize head-of-line blocking. Transmitting the
   evolving representation of a "prioritization tree" from the client to the
   server requires head-of-line blocking.
 
 Based on these observations, this document defines the Priority HTTP header
-field that can be used to specify the precedence of each HTTP response in a
-standardized, extensible, protocol-version-independent, end-to-end
-representation.
+field that can be used by both the client and the server to specify the
+precedence of HTTP responses in a standardized, extensible, protocol-version-
+independent, end-to-end representation.
 
 ## Notational Conventions
 
