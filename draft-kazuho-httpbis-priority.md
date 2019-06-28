@@ -21,9 +21,9 @@ author:
 normative:
   RFC2119:
   RFC7230:
+  RFC7540:
 
 informative:
-  RFC7540:
   QUIC-HTTP:
     title: "Hypertext Transfer Protocol Version 3 (HTTP/3)"
     date: 2018-10-23
@@ -199,12 +199,12 @@ directive.
 
 # Coexistence with HTTP/2 Priorities
 
-When connecting to a HTTP/2 server, a client that uses this header-based
-prioritization scheme SHOULD send a `SETTINGS_HEADER_BASED_PRIORITY` settings
-parameter (0xTBD) with a value of zero.  An intermediary SHOULD set the settings
-parameter for a connection it establishes when and only when all the requests to
-be sent over that connection originates from a client that utilizes this header-
-based prioritization scheme.
+When connecting to a HTTP/2 ({{RFC7540}}) server, a client that uses this
+header-based prioritization scheme SHOULD send a
+`SETTINGS_HEADER_BASED_PRIORITY` settings parameter (0xTBD) with a value of
+zero.  An intermediary SHOULD set the settings parameter for a connection it
+establishes when and only when all the requests to be sent over that connection
+originates from a client that utilizes this header-based prioritization scheme.
 
 The existence of this settings parameter instructs the server that recognizes
 the settings parameter to use the header-based prioritization scheme instead of
