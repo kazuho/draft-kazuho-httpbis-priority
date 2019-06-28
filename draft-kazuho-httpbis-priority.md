@@ -26,9 +26,9 @@ normative:
 informative:
   QUIC-HTTP:
     title: "Hypertext Transfer Protocol Version 3 (HTTP/3)"
-    date: 2018-10-23
+    date: 2019-04-23
     seriesinfo:
-      Internet-Draft: draft-ietf-quic-http-16
+      Internet-Draft: draft-ietf-quic-http-20
     author:
       -
         ins: M. Bishop
