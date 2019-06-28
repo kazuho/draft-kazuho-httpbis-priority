@@ -126,7 +126,7 @@ other responses.
   the document even though the response is being used or referred by the
   document.
 
-When the Priority header or the `urgency` directive do not appear in the
+When the Priority header field or the `urgency` directive do not appear in the
 request, the server SHOULD act as if urgency level of `document` was specified.
 
 A server SHOULD transmit HTTP responses that have the `blocking` attribute, then
