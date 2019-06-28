@@ -415,7 +415,7 @@ urgency = "blocking" / "document" / "non-blocking"
   <li><samp>document</samp> indicates that the response contains the document that is being processed.</li>
   <li><samp>non-blocking</samp> indicates that the response does not block the processing of the document even though the response is being used or referred by the document.</li>
 </ul>
-<p id="rfc.section.2.1.1.p.4">When the Priority header or the <samp>urgency</samp> directive do not appear in the request, the server SHOULD act as if urgency level of <samp>document</samp> was specified.</p>
+<p id="rfc.section.2.1.1.p.4">When the Priority header field or the <samp>urgency</samp> directive do not appear in the request, the server SHOULD act as if urgency level of <samp>document</samp> was specified.</p>
 <p id="rfc.section.2.1.1.p.5">A server SHOULD transmit HTTP responses that have the <samp>blocking</samp> attribute, then those with the <samp>document</samp> attribute, and finaly the ones with the <samp>non-blocking</samp> attribute.</p>
 <p id="rfc.section.2.1.1.p.6">The following example shows a request for a CSS file with the urgency set to <samp>blocking</samp>:</p>
 <pre>

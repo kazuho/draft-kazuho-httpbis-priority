@@ -180,9 +180,9 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
       processing of the document even though the response is being used
       or referred by the document.
 
-   When the Priority header or the "urgency" directive do not appear in
-   the request, the server SHOULD act as if urgency level of "document"
-   was specified.
+   When the Priority header field or the "urgency" directive do not
+   appear in the request, the server SHOULD act as if urgency level of
+   "document" was specified.
 
    A server SHOULD transmit HTTP responses that have the "blocking"
    attribute, then those with the "document" attribute, and finaly the
