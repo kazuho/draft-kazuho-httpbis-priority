@@ -253,13 +253,13 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
 
 3.  Coexistence with HTTP/2 Priorities
 
-   When connecting to a HTTP/2 server, a client that uses this header-
-   based prioritization scheme SHOULD send a
+   When connecting to a HTTP/2 ([RFC7540]) server, a client that uses
+   this header-based prioritization scheme SHOULD send a
    "SETTINGS_HEADER_BASED_PRIORITY" settings parameter (0xTBD) with a
    value of zero.  An intermediary SHOULD set the settings parameter for
    a connection it establishes when and only when all the requests to be
    sent over that connection originates from a client that utilizes this
-   header- based prioritization scheme.
+   header-based prioritization scheme.
 
    The existence of this settings parameter instructs the server that
    recognizes the settings parameter to use the header-based
@@ -300,17 +300,17 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
               <https://www.rfc-editor.org/info/rfc7230>.
 
-6.2.  Informative References
-
-   [QUIC-HTTP]
-              Bishop, M., Ed., "Hypertext Transfer Protocol Version 3
-              (HTTP/3)", draft-ietf-quic-http-16 (work in progress),
-              October 2018.
-
    [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
               Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
               DOI 10.17487/RFC7540, May 2015, <https://www.rfc-
               editor.org/info/rfc7540>.
+
+6.2.  Informative References
+
+   [QUIC-HTTP]
+              Bishop, M., Ed., "Hypertext Transfer Protocol Version 3
+              (HTTP/3)", draft-ietf-quic-http-20 (work in progress),
+              April 2019.
 
 Author's Address
 

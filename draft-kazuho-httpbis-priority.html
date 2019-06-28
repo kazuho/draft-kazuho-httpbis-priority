@@ -450,7 +450,7 @@ Priority: progressive=no
 </pre>
 <p id="rfc.section.2.2.p.5">the intermediary&#8217;s view of the progressiveness of the response becomes negative, because the server-provided value overrides that provided by the client.  The urgency is deemed as <samp>non-blocking</samp>, because the server did not specify the directive.</p>
 <h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#coexistence-with-http2-priorities" id="coexistence-with-http2-priorities">Coexistence with HTTP/2 Priorities</a></h1>
-<p id="rfc.section.3.p.1">When connecting to a HTTP/2 server, a client that uses this header-based prioritization scheme SHOULD send a <samp>SETTINGS_HEADER_BASED_PRIORITY</samp> settings parameter (0xTBD) with a value of zero.  An intermediary SHOULD set the settings parameter for a connection it establishes when and only when all the requests to be sent over that connection originates from a client that utilizes this header- based prioritization scheme.</p>
+<p id="rfc.section.3.p.1">When connecting to a HTTP/2 (<a href="#RFC7540">[RFC7540]</a>) server, a client that uses this header-based prioritization scheme SHOULD send a <samp>SETTINGS_HEADER_BASED_PRIORITY</samp> settings parameter (0xTBD) with a value of zero.  An intermediary SHOULD set the settings parameter for a connection it establishes when and only when all the requests to be sent over that connection originates from a client that utilizes this header-based prioritization scheme.</p>
 <p id="rfc.section.3.p.2">The existence of this settings parameter instructs the server that recognizes the settings parameter to use the header-based prioritization scheme instead of the frame-based prioritization scheme defined by HTTP/2.  A server that does not recognize this settings parameter would respect the frame-based prioritization scheme.</p>
 <h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
 <p id="rfc.section.4.p.1">TBD</p>
@@ -472,6 +472,12 @@ Priority: progressive=no
       </td>
       <td class="top"><a>Fielding, R.</a> and <a>J. Reschke</a>, "<a href="http://tools.ietf.org/html/rfc7230">Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</a>", RFC 7230, DOI 10.17487/RFC7230, June 2014.</td>
     </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC7540">[RFC7540]</b>
+      </td>
+      <td class="top"><a>Belshe, M.</a>, <a>Peon, R.</a> and <a>M. Thomson</a>, "<a href="http://tools.ietf.org/html/rfc7540">Hypertext Transfer Protocol Version 2 (HTTP/2)</a>", RFC 7540, DOI 10.17487/RFC7540, May 2015.</td>
+    </tr>
   </tbody>
 </table>
 <h1 id="rfc.references.2"><a href="#rfc.references.2">6.2.</a> Informative References</h1>
@@ -481,13 +487,7 @@ Priority: progressive=no
       <td class="reference">
         <b id="QUIC-HTTP">[QUIC-HTTP]</b>
       </td>
-      <td class="top"><a title="Akamai">Bishop, M.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-quic-http-16">Hypertext Transfer Protocol Version 3 (HTTP/3)</a>", Internet-Draft draft-ietf-quic-http-16, October 2018.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="RFC7540">[RFC7540]</b>
-      </td>
-      <td class="top"><a>Belshe, M.</a>, <a>Peon, R.</a> and <a>M. Thomson</a>, "<a href="http://tools.ietf.org/html/rfc7540">Hypertext Transfer Protocol Version 2 (HTTP/2)</a>", RFC 7540, DOI 10.17487/RFC7540, May 2015.</td>
+      <td class="top"><a title="Akamai">Bishop, M.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-quic-http-20">Hypertext Transfer Protocol Version 3 (HTTP/3)</a>", Internet-Draft draft-ietf-quic-http-20, April 2019.</td>
     </tr>
   </tbody>
 </table>
