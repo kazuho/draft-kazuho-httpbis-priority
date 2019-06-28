@@ -303,7 +303,7 @@ ul.toc li {
 
   <meta name="dct.creator" content="Oku, K." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-kazuho-httpbis-priority-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-6-27" />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-6-28" />
   <meta name="dct.abstract" content="This document describes the Priority HTTP header field.  This header field can be used by the endpoints to specify the absolute precedence of a HTTP response in an HTTP version-independent way." />
   <meta name="description" content="This document describes the Priority HTTP header field.  This header field can be used by the endpoints to specify the absolute precedence of a HTTP response in an HTTP version-independent way." />
 
@@ -324,10 +324,10 @@ ul.toc li {
 </tr>
 <tr>
   <td class="left">Intended status: Standards Track</td>
-  <td class="right">June 27, 2019</td>
+  <td class="right">June 28, 2019</td>
 </tr>
 <tr>
-  <td class="left">Expires: December 29, 2019</td>
+  <td class="left">Expires: December 30, 2019</td>
   <td class="right"></td>
 </tr>
 
@@ -348,7 +348,7 @@ ul.toc li {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on December 29, 2019.</p>
+<p>This Internet-Draft will expire on December 30, 2019.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -387,10 +387,11 @@ ul.toc li {
 
 <ul>
   <li>Its complexity has led to varying levels of support by the HTTP/2 client and servers.</li>
-  <li>It is hard for the server to customize prioritization. For example, a server, with the knowledge of the document structure, might want to prioritize the delivery of images that are critical to user experience above others images, but below the CSS files.  But with the HTTP/2 prioritization scheme, it is impossible for the server to determine how such images should be prioritized against other responses that use client-driven prioritization tree, because every client builds the HTTP/2 prioritization tree in a different way.</li>
+  <li>It is hard to coordinate with server-driven prioritization.  For example, a server, with the knowledge of the document structure, might want to prioritize the delivery of images that are critical to user experience above others images, but below the CSS files.  But with the HTTP/2 prioritization scheme, it is impossible for the server to determine how such images should be prioritized against other responses that use client-driven prioritization tree, because every client builds the HTTP/2 prioritization tree in a different way.</li>
+  <li>It does not define a method that can be used by a server to express the priority of a response.  Without such a method, intermediaries cannot coordinate client-driven and server-driven priorities.</li>
   <li>The design cannot be ported cleanly to HTTP/3 (<a href="#QUIC-HTTP">[QUIC-HTTP]</a>). One of the primary goals of HTTP/3 is to minimize head-of-line blocking. Transmitting the evolving representation of a &#8220;prioritization tree&#8221; from the client to the server requires head-of-line blocking.</li>
 </ul>
-<p id="rfc.section.1.p.6">Based on these observations, this document defines the Priority HTTP header field that can be used to specify the precedence of each HTTP response in a standardized, extensible, protocol-version-independent, end-to-end representation.</p>
+<p id="rfc.section.1.p.6">Based on these observations, this document defines the Priority HTTP header field that can be used by both the client and the server to specify the precedence of HTTP responses in a standardized, extensible, protocol-version- independent, end-to-end representation.</p>
 <h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#notational-conventions" id="notational-conventions">Notational Conventions</a></h1>
 <p id="rfc.section.1.1.p.1">The key words &#8220;MUST&#8221;, &#8220;MUST NOT&#8221;, &#8220;REQUIRED&#8221;, &#8220;SHALL&#8221;, &#8220;SHALL NOT&#8221;, &#8220;SHOULD&#8221;, &#8220;SHOULD NOT&#8221;, &#8220;RECOMMENDED&#8221;, &#8220;MAY&#8221;, and &#8220;OPTIONAL&#8221; in this document are to be interpreted as described in <a href="#RFC2119">[RFC2119]</a>.</p>
 <h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#the-priority-http-header-field" id="the-priority-http-header-field">The Priority HTTP Header Field</a></h1>

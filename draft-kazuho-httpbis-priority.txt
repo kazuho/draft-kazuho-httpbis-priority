@@ -4,8 +4,8 @@
 
 HTTP                                                              K. Oku
 Internet-Draft                                                    Fastly
-Intended status: Standards Track                           June 27, 2019
-Expires: December 29, 2019
+Intended status: Standards Track                           June 28, 2019
+Expires: December 30, 2019
 
 
                      The Priority HTTP Header Field
@@ -32,7 +32,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 29, 2019.
+   This Internet-Draft will expire on December 30, 2019.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Oku                     Expires December 29, 2019               [Page 1]
+Oku                     Expires December 30, 2019               [Page 1]
 
 Internet-Draft       The Priority HTTP Header Field            June 2019
 
@@ -66,10 +66,10 @@ Table of Contents
      2.1.  Priority Directives . . . . . . . . . . . . . . . . . . .   3
        2.1.1.  urgency . . . . . . . . . . . . . . . . . . . . . . .   3
        2.1.2.  progressive . . . . . . . . . . . . . . . . . . . . .   4
-     2.2.  Merging Client- and Server-Driven Directives  . . . . . .   4
+     2.2.  Merging Client- and Server-Driven Directives  . . . . . .   5
    3.  Coexistence with HTTP/2 Priorities  . . . . . . . . . . . . .   5
    4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
-   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   5
+   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
    6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
      6.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
      6.2.  Informative References  . . . . . . . . . . . . . . . . .   6
@@ -99,7 +99,7 @@ Table of Contents
    o  Its complexity has led to varying levels of support by the HTTP/2
       client and servers.
 
-   o  It is hard for the server to customize prioritization.  For
+   o  It is hard to coordinate with server-driven prioritization.  For
       example, a server, with the knowledge of the document structure,
       might want to prioritize the delivery of images that are critical
       to user experience above others images, but below the CSS files.
@@ -109,13 +109,18 @@ Table of Contents
 
 
 
-Oku                     Expires December 29, 2019               [Page 2]
+Oku                     Expires December 30, 2019               [Page 2]
 
 Internet-Draft       The Priority HTTP Header Field            June 2019
 
 
       tree, because every client builds the HTTP/2 prioritization tree
       in a different way.
+
+   o  It does not define a method that can be used by a server to
+      express the priority of a response.  Without such a method,
+      intermediaries cannot coordinate client-driven and server-driven
+      priorities.
 
    o  The design cannot be ported cleanly to HTTP/3 ([QUIC-HTTP]).  One
       of the primary goals of HTTP/3 is to minimize head-of-line
@@ -124,9 +129,9 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
       of-line blocking.
 
    Based on these observations, this document defines the Priority HTTP
-   header field that can be used to specify the precedence of each HTTP
-   response in a standardized, extensible, protocol-version-independent,
-   end-to-end representation.
+   header field that can be used by both the client and the server to
+   specify the precedence of HTTP responses in a standardized,
+   extensible, protocol-version- independent, end-to-end representation.
 
 1.1.  Notational Conventions
 
@@ -157,18 +162,19 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
    The "urgency" directive indicates how a HTTP response affects the
    processing of other responses.
 
+
+
+
+Oku                     Expires December 30, 2019               [Page 3]
+
+Internet-Draft       The Priority HTTP Header Field            June 2019
+
+
    o  "blocking" indicates that the response blocks the processing of
       others.
 
    o  "document" indicates that the response contains the document that
       is being processed.
-
-
-
-Oku                     Expires December 29, 2019               [Page 3]
-
-Internet-Draft       The Priority HTTP Header Field            June 2019
-
 
    o  "non-blocking" indicates that the response does not block the
       processing of the document even though the response is being used
@@ -213,19 +219,18 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
    Priority: urgency=non-blocking, progressive=yes
 
 
+
+
+Oku                     Expires December 30, 2019               [Page 4]
+
+Internet-Draft       The Priority HTTP Header Field            June 2019
+
+
 2.2.  Merging Client- and Server-Driven Directives
 
    It is not always the case that the client has the best view of how
    the HTTP responses should be prioritized.  For example, whether a
    JPEG image should be served progressively by the server depends on
-
-
-
-Oku                     Expires December 29, 2019               [Page 4]
-
-Internet-Draft       The Priority HTTP Header Field            June 2019
-
-
    the structure of that image file - a property only known to the
    server.
 
@@ -267,20 +272,19 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
 
    TBD
 
-5.  IANA Considerations
-
-   TBD
 
 
 
 
 
-
-
-Oku                     Expires December 29, 2019               [Page 5]
+Oku                     Expires December 30, 2019               [Page 5]
 
 Internet-Draft       The Priority HTTP Header Field            June 2019
 
+
+5.  IANA Considerations
+
+   TBD
 
 6.  References
 
@@ -329,8 +333,4 @@ Author's Address
 
 
 
-
-
-
-
-Oku                     Expires December 29, 2019               [Page 6]
+Oku                     Expires December 30, 2019               [Page 6]
