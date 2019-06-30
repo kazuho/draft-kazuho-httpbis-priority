@@ -303,11 +303,11 @@ ul.toc li {
   <meta name="generator" content="xml2rfc version 2.5.2 - http://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
-  <meta name="dct.creator" content="Oku, K." />
+  <meta name="dct.creator" content="Oku, K. and L. Pardue" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-kazuho-httpbis-priority-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-6-30" />
-  <meta name="dct.abstract" content="This document describes the Priority HTTP header field.  This header field can be used by the endpoints to specify the absolute precedence of a HTTP response in an HTTP version-independent way." />
-  <meta name="description" content="This document describes the Priority HTTP header field.  This header field can be used by the endpoints to specify the absolute precedence of a HTTP response in an HTTP version-independent way." />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-7-01" />
+  <meta name="dct.abstract" content="This document describes the Priority HTTP header field.  This header field can be used by endpoints to specify the absolute precedence of an HTTP response in an HTTP-version-independent way." />
+  <meta name="description" content="This document describes the Priority HTTP header field.  This header field can be used by endpoints to specify the absolute precedence of an HTTP response in an HTTP-version-independent way." />
 
 </head>
 
@@ -326,11 +326,15 @@ ul.toc li {
 </tr>
 <tr>
   <td class="left">Intended status: Standards Track</td>
-  <td class="right">June 30, 2019</td>
+  <td class="right">L. Pardue</td>
 </tr>
 <tr>
-  <td class="left">Expires: January 1, 2020</td>
-  <td class="right"></td>
+  <td class="left">Expires: January 2, 2020</td>
+  <td class="right">Cloudflare</td>
+</tr>
+<tr>
+  <td class="left"></td>
+  <td class="right">July 01, 2019</td>
 </tr>
 
     	
@@ -343,14 +347,14 @@ ul.toc li {
   <h1 id="rfc.abstract">
   <a href="#rfc.abstract">Abstract</a>
 </h1>
-<p>This document describes the Priority HTTP header field.  This header field can be used by the endpoints to specify the absolute precedence of a HTTP response in an HTTP version-independent way.</p>
+<p>This document describes the Priority HTTP header field.  This header field can be used by endpoints to specify the absolute precedence of an HTTP response in an HTTP-version-independent way.</p>
 <h1 id="rfc.status">
   <a href="#rfc.status">Status of This Memo</a>
 </h1>
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on January 1, 2020.</p>
+<p>This Internet-Draft will expire on January 2, 2020.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -377,16 +381,15 @@ ul.toc li {
 <li>7.   <a href="#rfc.references">References</a></li>
 <ul><li>7.1.   <a href="#rfc.references.1">Normative References</a></li>
 <li>7.2.   <a href="#rfc.references.2">Informative References</a></li>
-</ul><li><a href="#rfc.authors">Author's Address</a></li>
+</ul><li><a href="#rfc.authors">Authors' Addresses</a></li>
 
 
   </ul>
 
   <h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a></h1>
-<p id="rfc.section.1.p.1">It is often the case for the processing of an HTTP response to depend on the retrieval of another HTTP response.</p>
-<p id="rfc.section.1.p.2">As an example, visual rendering of an HTML document could be blocked by the retrieval of a CSS file that the document refers to. Inline images is another example, though the difference is that they typically do not block rendering.  Instead, they are rendered progressively as the chunks of the images arrive.</p>
-<p id="rfc.section.1.p.3">To provide meaningful representation of a document at the earliest moment, it is important for a HTTP server to prioritize the HTTP responses, or the chunks of those HTTP responses, that it sends.</p>
-<p id="rfc.section.1.p.4">HTTP/2 (<a href="#RFC7540">[RFC7540]</a>) provides such prioritization scheme. A client sends a series of PRIORITY frames to communicate to the server a &#8220;priority tree;&#8221; a tree that represents the client&#8217;s preferred ordering and weighted distribution of the bandwidth among the HTTP responses.  However, the design has shortcomings:</p>
+<p id="rfc.section.1.p.1">It is common for an HTTP resource representation to have relationships to one or more other resources. Clients will often discover these relationships while processing a retrieved representation, leading to further retrieval requests.  Meanwhile, the nature of the relationship determines whether the client is blocked from continuing to process locally available resources. For example, visual rendering of an HTML document could be blocked by the retrieval of a CSS file that the document refers to. In contrast, inline images do not block rendering and get drawn progressively as the chunks of the images arrive.</p>
+<p id="rfc.section.1.p.2">To provide meaningful representation of a document at the earliest moment, it is important for a HTTP server to prioritize the HTTP responses, or the chunks of those HTTP responses, that it sends.</p>
+<p id="rfc.section.1.p.3">HTTP/2 (<a href="#RFC7540">[RFC7540]</a>) provides such a prioritization scheme. A client sends a series of PRIORITY frames to communicate to the server a &#8220;priority tree&#8221;; this represents the client&#8217;s preferred ordering and weighted distribution of the bandwidth among the HTTP responses.  However, the design has shortcomings:</p>
 <p/>
 
 <ul>
@@ -395,12 +398,12 @@ ul.toc li {
   <li>It does not define a method that can be used by a server to express the priority of a response.  Without such a method, intermediaries cannot coordinate client-driven and server-driven priorities.</li>
   <li>The design cannot be ported cleanly to HTTP/3 (<a href="#QUIC-HTTP">[QUIC-HTTP]</a>). One of the primary goals of HTTP/3 is to minimize head-of-line blocking. Transmitting the evolving representation of a &#8220;prioritization tree&#8221; from the client to the server requires head-of-line blocking.</li>
 </ul>
-<p id="rfc.section.1.p.6">Based on these observations, this document defines the Priority HTTP header field that can be used by both the client and the server to specify the precedence of HTTP responses in a standardized, extensible, protocol-version- independent, end-to-end representation.</p>
+<p id="rfc.section.1.p.5">Based on these observations, this document defines the Priority HTTP header field that can be used by both the client and the server to specify the precedence of HTTP responses in a standardized, extensible, protocol-version- independent, end-to-end format.</p>
 <h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#notational-conventions" id="notational-conventions">Notational Conventions</a></h1>
 <p id="rfc.section.1.1.p.1">The key words &#8220;MUST&#8221;, &#8220;MUST NOT&#8221;, &#8220;REQUIRED&#8221;, &#8220;SHALL&#8221;, &#8220;SHALL NOT&#8221;, &#8220;SHOULD&#8221;, &#8220;SHOULD NOT&#8221;, &#8220;RECOMMENDED&#8221;, &#8220;MAY&#8221;, and &#8220;OPTIONAL&#8221; in this document are to be interpreted as described in <a href="#RFC2119">[RFC2119]</a>.</p>
 <h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#the-priority-http-header-field" id="the-priority-http-header-field">The Priority HTTP Header Field</a></h1>
-<p id="rfc.section.2.p.1">The Priority HTTP header field is used by a client as part of an HTTP request to specify the priority of the response.  A server can also use the header field as part of an HTTP request to communicate the correct or amended precedence to an intermediary.</p>
-<p id="rfc.section.2.p.2">The systax of this header field is defined as follows.</p>
+<p id="rfc.section.2.p.1">The Priority HTTP header field can appear in requests and responses. A client uses it to specify the priority of the response. A server uses this to inform the client that the priority was overwritten. An intermediary can use the Priority information from client requests and server responses to correct or amend the precedence to suit it (see <a href="#merging">Section 2.2</a>).</p>
+<p id="rfc.section.2.p.2">The syntax of this header field is defined as follows.</p>
 <pre>
 Priority           = 1#priority-directive
 priority-directive = token [ "=" ( token / quoted-string ) ]
@@ -411,16 +414,16 @@ priority-directive = token [ "=" ( token / quoted-string ) ]
 <pre>
 urgency = "blocking" / "document" / "non-blocking"
 </pre>
-<p id="rfc.section.2.1.1.p.2">The <samp>urgency</samp> directive indicates how a HTTP response affects the processing of other responses.</p>
+<p id="rfc.section.2.1.1.p.2">The <samp>urgency</samp> directive indicates how an HTTP response affects the processing of other responses:</p>
 <p/>
 
 <ul>
   <li><samp>blocking</samp> indicates that the response blocks the processing of others.</li>
   <li><samp>document</samp> indicates that the response contains the document that is being processed.</li>
-  <li><samp>non-blocking</samp> indicates that the response does not block the processing of the document even though the response is being used or referred by the document.</li>
+  <li><samp>non-blocking</samp> indicates that the response does not block the processing of the document even though the response is being used or referred to by the document.</li>
 </ul>
-<p id="rfc.section.2.1.1.p.4">When the Priority header field or the <samp>urgency</samp> directive do not appear in the request, the server SHOULD act as if urgency level of <samp>document</samp> was specified.</p>
-<p id="rfc.section.2.1.1.p.5">A server SHOULD transmit HTTP responses that have the <samp>blocking</samp> attribute, then those with the <samp>document</samp> attribute, and finaly the ones with the <samp>non-blocking</samp> attribute.</p>
+<p id="rfc.section.2.1.1.p.4">The default value of the <samp>urgency</samp> directive is <samp>document</samp>. This SHOULD apply if the directive is omitted or the Priority header field is missing.</p>
+<p id="rfc.section.2.1.1.p.5">A server that supports the Priority header field SHOULD transmit HTTP responses in the order of their urgency: <samp>blocking</samp> first, followed by <samp>document</samp>, followed by <samp>non-blocking</samp>.</p>
 <p id="rfc.section.2.1.1.p.6">The following example shows a request for a CSS file with the urgency set to <samp>blocking</samp>:</p>
 <pre>
 GET /style.css HTTP/1.1
@@ -433,20 +436,20 @@ Priority: urgency=blocking
 progressive = "yes" / "no"
 </pre>
 <p id="rfc.section.2.1.2.p.2">This boolean directive indicates if a response can be processed progressively, i.e. provide some meaningful output as chunks of the response arrive.</p>
-<p id="rfc.section.2.1.2.p.3">When the Priority header field or the <samp>progressive</samp> directive do not appear in the request, the server SHOULD act as if a <samp>progress</samp> directive with an argument of <samp>no</samp> has specified.</p>
-<p id="rfc.section.2.1.2.p.4">A server SHOULD distribute the bandwidth of a connection between the responses deemed progressive sharing the same urgency.</p>
-<p id="rfc.section.2.1.2.p.5">The following examples shows a request for a JPEG file with the urgency set to <samp>non-blocking</samp>, progressive set to <samp>yes</samp>.</p>
+<p id="rfc.section.2.1.2.p.3">The default value of the <samp>progressive</samp> directive is <samp>no</samp>. This SHOULD apply if the directive is omitted or the Priority header field is missing.</p>
+<p id="rfc.section.2.1.2.p.4">A server that supports the Priority header field SHOULD distribute the bandwidth of a connection between progressive responses that share the same urgency.</p>
+<p id="rfc.section.2.1.2.p.5">The following example shows a request for a JPEG file with the urgency set to <samp>non-blocking</samp> and progressive set to <samp>yes</samp>.</p>
 <pre>
 GET /image.jpg HTTP/1.1
 Priority: urgency=non-blocking, progressive=yes
 
 </pre>
-<h1 id="rfc.section.2.2"><a href="#rfc.section.2.2">2.2.</a> <a href="#merging-client-and-server-driven-directives" id="merging-client-and-server-driven-directives">Merging Client- and Server-Driven Directives</a></h1>
+<h1 id="rfc.section.2.2"><a href="#rfc.section.2.2">2.2.</a> <a href="#merging" id="merging">Merging Client- and Server-Driven Directives</a></h1>
 <p id="rfc.section.2.2.p.1">It is not always the case that the client has the best view of how the HTTP responses should be prioritized.  For example, whether a JPEG image should be served progressively by the server depends on the structure of that image file - a property only known to the server.</p>
-<p id="rfc.section.2.2.p.2">Therefore, a server is permitted to send a &#8220;Priority&#8221; response header field.  When used, the directives found in this response header field overrides those specified by the client.</p>
+<p id="rfc.section.2.2.p.2">Therefore, a server is permitted to send a &#8220;Priority&#8221; response header field.  When used, the directives found in this response header field override those specified by the client.</p>
 <p id="rfc.section.2.2.p.3">For example, when the client sends a HTTP request with</p>
 <pre>
-Priority: urgency=non-blocking; progressive=yes
+Priority: urgency=non-blocking, progressive=yes
 </pre>
 <p id="rfc.section.2.2.p.4">and the origin responds with</p>
 <pre>
@@ -454,7 +457,7 @@ Priority: progressive=no
 </pre>
 <p id="rfc.section.2.2.p.5">the intermediary&#8217;s view of the progressiveness of the response becomes negative, because the server-provided value overrides that provided by the client.  The urgency is deemed as <samp>non-blocking</samp>, because the server did not specify the directive.</p>
 <h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#coexistence-with-http2-priorities" id="coexistence-with-http2-priorities">Coexistence with HTTP/2 Priorities</a></h1>
-<p id="rfc.section.3.p.1">When connecting to a HTTP/2 (<a href="#RFC7540">[RFC7540]</a>) server, a client that uses this header-based prioritization scheme SHOULD send a <samp>SETTINGS_HEADER_BASED_PRIORITY</samp> settings parameter (0xTBD) with a value of zero.  An intermediary SHOULD set the settings parameter for a connection it establishes when and only when all the requests to be sent over that connection originates from a client that utilizes this header-based prioritization scheme.</p>
+<p id="rfc.section.3.p.1">When connecting to an HTTP/2 (<a href="#RFC7540">[RFC7540]</a>) server, a client that uses this header-based prioritization scheme SHOULD send a <samp>SETTINGS_HEADER_BASED_PRIORITY</samp> settings parameter (0xTBD) with a value of zero.  An intermediary SHOULD set the settings parameter for a connection it establishes when and only when all the requests to be sent over that connection originates from a client that utilizes this header-based prioritization scheme.</p>
 <p id="rfc.section.3.p.2">The existence of this settings parameter instructs the server that recognizes the settings parameter to use the header-based prioritization scheme instead of the frame-based prioritization scheme defined by HTTP/2.  A server that does not recognize this settings parameter would respect the frame-based prioritization scheme.</p>
 <h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#considerations" id="considerations">Considerations</a></h1>
 <h1 id="rfc.section.4.1"><a href="#rfc.section.4.1">4.1.</a> <a href="#why-is-the-priority-header-field-end-to-end" id="why-is-the-priority-header-field-end-to-end">Why is the Priority header field end-to-end?</a></h1>
@@ -501,7 +504,7 @@ Priority: progressive=no
   </tbody>
 </table>
 <h1 id="rfc.authors">
-  <a href="#rfc.authors">Author's Address</a>
+  <a href="#rfc.authors">Authors' Addresses</a>
 </h1>
 <div class="avoidbreak">
   <address class="vcard">
@@ -522,6 +525,27 @@ Priority: progressive=no
 	  <span class="country-name vcardline"></span>
 	</span>
 	<span class="vcardline">EMail: <a href="mailto:kazuhooku@gmail.com">kazuhooku@gmail.com</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Lucas Pardue</span> 
+	  <span class="n hidden">
+		<span class="family-name">Pardue</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Cloudflare</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:lucaspardue.24.7@gmail.com">lucaspardue.24.7@gmail.com</a></span>
 
   </address>
 </div>
