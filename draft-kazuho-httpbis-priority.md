@@ -189,7 +189,7 @@ specified by the client.
 For example, when the client sends a HTTP request with
 
 ~~~ example
-Priority: urgency=non-blocking; progressive=yes
+Priority: urgency=non-blocking, progressive=yes
 ~~~
 
 and the origin responds with
