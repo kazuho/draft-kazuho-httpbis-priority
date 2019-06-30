@@ -17,6 +17,11 @@ author:
     name: Kazuho Oku
     org: Fastly
     email: kazuhooku@gmail.com
+  -
+    ins: L. Pardue
+    name: Lucas Pardue
+    org: Cloudflare
+    email: lucaspardue.24.7@gmail.com
 
 normative:
   RFC2119:
@@ -39,28 +44,29 @@ informative:
 --- abstract
 
 This document describes the Priority HTTP header field.  This header field can
-be used by the endpoints to specify the absolute precedence of a HTTP response
-in an HTTP version-independent way.
+be used by endpoints to specify the absolute precedence of an HTTP response
+in an HTTP-version-independent way.
 
 --- middle
 
 # Introduction
 
-It is often the case for the processing of an HTTP response to depend on the
-retrieval of another HTTP response.
-
-As an example, visual rendering of an HTML document could be blocked by the
-retrieval of a CSS file that the document refers to. Inline images is another
-example, though the difference is that they typically do not block rendering.
-Instead, they are rendered progressively as the chunks of the images arrive.
+It is common for an HTTP resource representation to have relationships to one or
+more other resources. Clients will often discover these relationships while
+processing a retrieved representation, leading to further retrieval requests.
+Meanwhile, the nature of the relationship determines whether the client is
+blocked from continuing to process locally available resources. For example,
+visual rendering of an HTML document could be blocked by the retrieval of a CSS
+file that the document refers to. In contrast, inline images do not block
+rendering and get drawn progressively as the chunks of the images arrive.
 
 To provide meaningful representation of a document at the earliest moment, it is
 important for a HTTP server to prioritize the HTTP responses, or the chunks of
 those HTTP responses, that it sends.
 
-HTTP/2 ({{RFC7540}}) provides such prioritization scheme. A client sends a
-series of PRIORITY frames to communicate to the server a “priority tree;” a tree
-that represents the client's preferred ordering and weighted distribution of the
+HTTP/2 ({{RFC7540}}) provides such a prioritization scheme. A client sends a
+series of PRIORITY frames to communicate to the server a “priority tree”; this
+represents the client's preferred ordering and weighted distribution of the
 bandwidth among the HTTP responses.  However, the design has shortcomings:
 
 * Its complexity has led to varying levels of support by the HTTP/2 client and
@@ -84,7 +90,7 @@ bandwidth among the HTTP responses.  However, the design has shortcomings:
 Based on these observations, this document defines the Priority HTTP header
 field that can be used by both the client and the server to specify the
 precedence of HTTP responses in a standardized, extensible, protocol-version-
-independent, end-to-end representation.
+independent, end-to-end format.
 
 ## Notational Conventions
 
@@ -94,12 +100,13 @@ interpreted as described in [RFC2119].
 
 # The Priority HTTP Header Field
 
-The Priority HTTP header field is used by a client as part of an HTTP request
-to specify the priority of the response.  A server can also use the header field
-as part of an HTTP request to communicate the correct or amended precedence to
-an intermediary.
+The Priority HTTP header field can appear in requests and responses. A client
+uses it to specify the priority of the response. A server uses this to inform
+the client that the priority was overwritten. An intermediary can use the
+Priority information from client requests and server responses to correct or
+amend the precedence to suit it (see {{merging}}).
 
-The systax of this header field is defined as follows.
+The syntax of this header field is defined as follows.
 
 ~~~ abnf
 Priority           = 1#priority-directive
@@ -116,22 +123,22 @@ Argument syntax:
 urgency = "blocking" / "document" / "non-blocking"
 ~~~
 
-The `urgency` directive indicates how a HTTP response affects the processing of
-other responses.
+The `urgency` directive indicates how an HTTP response affects the processing of
+other responses:
 
 * `blocking` indicates that the response blocks the processing of others.
 * `document` indicates that the response contains the document that is being
   processed.
 * `non-blocking` indicates that the response does not block the processing of
-  the document even though the response is being used or referred by the
+  the document even though the response is being used or referred to by the
   document.
 
-When the Priority header field or the `urgency` directive do not appear in the
-request, the server SHOULD act as if urgency level of `document` was specified.
+The default value of the `urgency` directive is `document`. This SHOULD apply if
+the directive is omitted or the Priority header field is missing.
 
-A server SHOULD transmit HTTP responses that have the `blocking` attribute, then
-those with the `document` attribute, and finaly the ones with the `non-blocking`
-attribute.
+A server that supports the Priority header field SHOULD transmit HTTP responses
+in the order of their urgency: `blocking` first, followed by `document`,
+followed by `non-blocking`.
 
 The following example shows a request for a CSS file with the urgency set to
 `blocking`:
@@ -153,15 +160,14 @@ progressive = "yes" / "no"
 This boolean directive indicates if a response can be processed progressively,
 i.e. provide some meaningful output as chunks of the response arrive.
 
-When the Priority header field or the `progressive` directive do not appear in
-the request, the server SHOULD act as if a `progress` directive with an argument
-of `no` has specified.
+The default value of the `progressive` directive is `no`. This SHOULD apply if
+the directive is omitted or the Priority header field is missing.
 
-A server SHOULD distribute the bandwidth of a connection between the responses
-deemed progressive sharing the same urgency.
+A server that supports the Priority header field SHOULD distribute the bandwidth
+of a connection between progressive responses that share the same urgency.
 
-The following examples shows a request for a JPEG file with the urgency set to
-`non-blocking`, progressive set to `yes`.
+The following example shows a request for a JPEG file with the urgency set to
+`non-blocking` and progressive set to `yes`.
 
 ~~~ example
 GET /image.jpg HTTP/1.1
@@ -169,7 +175,7 @@ Priority: urgency=non-blocking, progressive=yes
 
 ~~~
 
-## Merging Client- and Server-Driven Directives
+## Merging Client- and Server-Driven Directives {#merging}
 
 It is not always the case that the client has the best view of how the HTTP
 responses should be prioritized.  For example, whether a JPEG image should be
@@ -177,7 +183,7 @@ served progressively by the server depends on the structure of that image file
 - a property only known to the server.
 
 Therefore, a server is permitted to send a "Priority" response header field.
-When used, the directives found in this response header field overrides those
+When used, the directives found in this response header field override those
 specified by the client.
 
 For example, when the client sends a HTTP request with
@@ -199,7 +205,7 @@ directive.
 
 # Coexistence with HTTP/2 Priorities
 
-When connecting to a HTTP/2 ({{RFC7540}}) server, a client that uses this
+When connecting to an HTTP/2 ({{RFC7540}}) server, a client that uses this
 header-based prioritization scheme SHOULD send a
 `SETTINGS_HEADER_BASED_PRIORITY` settings parameter (0xTBD) with a value of
 zero.  An intermediary SHOULD set the settings parameter for a connection it
