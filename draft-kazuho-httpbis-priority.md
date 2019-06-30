@@ -144,8 +144,11 @@ The following example shows a request for a CSS file with the urgency set to
 `blocking`:
 
 ~~~ example
-GET /style.css HTTP/1.1
-Priority: urgency=blocking
+:method = GET
+:scheme = https
+:authority = example.net
+:path = /style.css
+priority = urgency=blocking
 
 ~~~
 
@@ -170,8 +173,11 @@ The following example shows a request for a JPEG file with the urgency set to
 `non-blocking` and progressive set to `yes`.
 
 ~~~ example
-GET /image.jpg HTTP/1.1
-Priority: urgency=non-blocking, progressive=yes
+:method = GET
+:scheme = https
+:authority = example.net
+:path = /style.css
+priority = urgency=non-blocking, progressive=yes
 
 ~~~
 
