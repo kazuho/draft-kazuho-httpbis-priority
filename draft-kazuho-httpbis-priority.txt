@@ -4,8 +4,8 @@
 
 HTTP                                                              K. Oku
 Internet-Draft                                                    Fastly
-Intended status: Standards Track                           June 28, 2019
-Expires: December 30, 2019
+Intended status: Standards Track                           June 30, 2019
+Expires: January 1, 2020
 
 
                      The Priority HTTP Header Field
@@ -32,7 +32,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 30, 2019.
+   This Internet-Draft will expire on January 1, 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Oku                     Expires December 30, 2019               [Page 1]
+Oku                      Expires January 1, 2020                [Page 1]
 
 Internet-Draft       The Priority HTTP Header Field            June 2019
 
@@ -68,12 +68,14 @@ Table of Contents
        2.1.2.  progressive . . . . . . . . . . . . . . . . . . . . .   4
      2.2.  Merging Client- and Server-Driven Directives  . . . . . .   5
    3.  Coexistence with HTTP/2 Priorities  . . . . . . . . . . . . .   5
-   4.  Security Considerations . . . . . . . . . . . . . . . . . . .   5
-   5.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
-   6.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
-     6.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
-     6.2.  Informative References  . . . . . . . . . . . . . . . . .   6
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   6
+   4.  Considerations  . . . . . . . . . . . . . . . . . . . . . . .   6
+     4.1.  Why is the Priority header field end-to-end?  . . . . . .   6
+   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
+     7.2.  Informative References  . . . . . . . . . . . . . . . . .   7
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   7
 
 1.  Introduction
 
@@ -104,16 +106,16 @@ Table of Contents
       might want to prioritize the delivery of images that are critical
       to user experience above others images, but below the CSS files.
       But with the HTTP/2 prioritization scheme, it is impossible for
-      the server to determine how such images should be prioritized
-      against other responses that use client-driven prioritization
 
 
 
-Oku                     Expires December 30, 2019               [Page 2]
+Oku                      Expires January 1, 2020                [Page 2]
 
 Internet-Draft       The Priority HTTP Header Field            June 2019
 
 
+      the server to determine how such images should be prioritized
+      against other responses that use client-driven prioritization
       tree, because every client builds the HTTP/2 prioritization tree
       in a different way.
 
@@ -159,16 +161,17 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
 
    urgency = "blocking" / "document" / "non-blocking"
 
-   The "urgency" directive indicates how a HTTP response affects the
-   processing of other responses.
 
 
 
 
-Oku                     Expires December 30, 2019               [Page 3]
+Oku                      Expires January 1, 2020                [Page 3]
 
 Internet-Draft       The Priority HTTP Header Field            June 2019
 
+
+   The "urgency" directive indicates how a HTTP response affects the
+   processing of other responses.
 
    o  "blocking" indicates that the response blocks the processing of
       others.
@@ -215,15 +218,16 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
    The following examples shows a request for a JPEG file with the
    urgency set to "non-blocking", progressive set to "yes".
 
-   GET /image.jpg HTTP/1.1
-   Priority: urgency=non-blocking, progressive=yes
 
 
 
-
-Oku                     Expires December 30, 2019               [Page 4]
+Oku                      Expires January 1, 2020                [Page 4]
 
 Internet-Draft       The Priority HTTP Header Field            June 2019
+
+
+   GET /image.jpg HTTP/1.1
+   Priority: urgency=non-blocking, progressive=yes
 
 
 2.2.  Merging Client- and Server-Driven Directives
@@ -268,27 +272,50 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
    settings parameter would respect the frame-based prioritization
    scheme.
 
-4.  Security Considerations
-
-   TBD
 
 
 
 
 
-
-Oku                     Expires December 30, 2019               [Page 5]
+Oku                      Expires January 1, 2020                [Page 5]
 
 Internet-Draft       The Priority HTTP Header Field            June 2019
 
 
-5.  IANA Considerations
+4.  Considerations
+
+4.1.  Why is the Priority header field end-to-end?
+
+   Contrary to the prioritization scheme of HTTP/2 that uses a hop-by-
+   hop a frame, the Priority header field is defined as end-to-end.
+
+   The rationale is that the Priority header field transmits how each
+   response affects the client's processing of those responses, rather
+   than how relatively urgent each response is to others.  The way a
+   client processes a response is a property associated to that client
+   generating that request.  Not that of an intermediary.  Therefore, it
+   is an end-to-end property.  How these end-to-end properties carried
+   by the Priority header field affect the prioritization between the
+   responses that share a connection is a hop-by-hop issue.
+
+   Having the Priority header field defined as end-to-end is important
+   for caching intermediaries.  Such intermediaries can cache the value
+   of the Priority header field along with the response, and utilize the
+   value of the cached header field when serving the cached response,
+   only because the header field is defined as end-to-end rather than
+   hop-by-hop.
+
+5.  Security Considerations
 
    TBD
 
-6.  References
+6.  IANA Considerations
 
-6.1.  Normative References
+   TBD
+
+7.  References
+
+7.1.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -300,12 +327,23 @@ Internet-Draft       The Priority HTTP Header Field            June 2019
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
               <https://www.rfc-editor.org/info/rfc7230>.
 
+
+
+
+
+
+
+Oku                      Expires January 1, 2020                [Page 6]
+
+Internet-Draft       The Priority HTTP Header Field            June 2019
+
+
    [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
               Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
               DOI 10.17487/RFC7540, May 2015, <https://www.rfc-
               editor.org/info/rfc7540>.
 
-6.2.  Informative References
+7.2.  Informative References
 
    [QUIC-HTTP]
               Bishop, M., Ed., "Hypertext Transfer Protocol Version 3
@@ -333,4 +371,22 @@ Author's Address
 
 
 
-Oku                     Expires December 30, 2019               [Page 6]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Oku                      Expires January 1, 2020                [Page 7]
