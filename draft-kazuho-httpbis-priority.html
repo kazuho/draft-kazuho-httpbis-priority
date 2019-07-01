@@ -387,7 +387,7 @@ ul.toc li {
   </ul>
 
   <h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a></h1>
-<p id="rfc.section.1.p.1">It is common for an HTTP resource representation to have relationships to one or more other resources. Clients will often discover these relationships while processing a retrieved representation, leading to further retrieval requests.  Meanwhile, the nature of the relationship determines whether the client is blocked from continuing to process locally available resources. For example, visual rendering of an HTML document could be blocked by the retrieval of a CSS file that the document refers to. In contrast, inline images do not block rendering and get drawn progressively as the chunks of the images arrive.</p>
+<p id="rfc.section.1.p.1">It is common for an HTTP (<a href="#RFC7230">[RFC7230]</a>) resource representation to have relationships to one or more other resources.  Clients will often discover these relationships while processing a retrieved representation, leading to further retrieval requests.  Meanwhile, the nature of the relationship determines whether the client is blocked from continuing to process locally available resources.  For example, visual rendering of an HTML document could be blocked by the retrieval of a CSS file that the document refers to.  In contrast, inline images do not block rendering and get drawn progressively as the chunks of the images arrive.</p>
 <p id="rfc.section.1.p.2">To provide meaningful representation of a document at the earliest moment, it is important for an HTTP server to prioritize the HTTP responses, or the chunks of those HTTP responses, that it sends.</p>
 <p id="rfc.section.1.p.3">HTTP/2 (<a href="#RFC7540">[RFC7540]</a>) provides such a prioritization scheme. A client sends a series of PRIORITY frames to communicate to the server a &#8220;priority tree&#8221;; this represents the client&#8217;s preferred ordering and weighted distribution of the bandwidth among the HTTP responses.  However, the design has shortcomings:</p>
 <p/>
@@ -396,7 +396,7 @@ ul.toc li {
   <li>Its complexity has led to varying levels of support by the HTTP/2 client and servers.</li>
   <li>It is hard to coordinate with server-driven prioritization.  For example, a server, with the knowledge of the document structure, might want to prioritize the delivery of images that are critical to user experience above others images, but below the CSS files.  But with the HTTP/2 prioritization scheme, it is impossible for the server to determine how such images should be prioritized against other responses that use client-driven prioritization tree, because every client builds the HTTP/2 prioritization tree in a different way.</li>
   <li>It does not define a method that can be used by a server to express the priority of a response.  Without such a method, intermediaries cannot coordinate client-driven and server-driven priorities.</li>
-  <li>The design cannot be ported cleanly to HTTP/3 (<a href="#QUIC-HTTP">[QUIC-HTTP]</a>). One of the primary goals of HTTP/3 is to minimize head-of-line blocking. Transmitting the evolving representation of a &#8220;prioritization tree&#8221; from the client to the server requires head-of-line blocking.</li>
+  <li>The design cannot be ported cleanly to HTTP/3 (<a href="#I-D.ietf-quic-http">[I-D.ietf-quic-http]</a>).  One of the primary goals of HTTP/3 is to minimize head-of-line blocking.  Transmitting the evolving representation of a &#8220;prioritization tree&#8221; from the client to the server requires head-of-line blocking.</li>
 </ul>
 <p id="rfc.section.1.p.5">Based on these observations, this document defines the Priority HTTP header field that can be used by both the client and the server to specify the precedence of HTTP responses in a standardized, extensible, protocol-version- independent, end-to-end format.</p>
 <h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#notational-conventions" id="notational-conventions">Notational Conventions</a></h1>
@@ -509,9 +509,9 @@ priority = progressive=?0
   <tbody>
     <tr>
       <td class="reference">
-        <b id="QUIC-HTTP">[QUIC-HTTP]</b>
+        <b id="I-D.ietf-quic-http">[I-D.ietf-quic-http]</b>
       </td>
-      <td class="top"><a title="Akamai">Bishop, M.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-quic-http-20">Hypertext Transfer Protocol Version 3 (HTTP/3)</a>", Internet-Draft draft-ietf-quic-http-20, April 2019.</td>
+      <td class="top"><a>Bishop, M.</a>, "<a href="http://tools.ietf.org/html/draft-ietf-quic-http-20">Hypertext Transfer Protocol Version 3 (HTTP/3)</a>", Internet-Draft draft-ietf-quic-http-20, April 2019.</td>
     </tr>
   </tbody>
 </table>
