@@ -255,14 +255,15 @@ This specification restricts itself to defining just three levels of urgency, in
 order to provide sufficient guranularity for prioritizing responses for ordinary
 web browsing, at minimal complexity.
 
-However, that does not mean that the prioritization scheme would be stuck to
-three levels forvever.  The design provides extensibility.  If deemed necessary,
-it would be possible to split any of the three urgency levels into sub-levels.
+However, that does not mean that the prioritization scheme would forever be
+stuck to the three levels.  The design provides extensibility.  If deemed
+necessary, it would be possible to divide any of the three urgency levels into
+sub-levels.
 
-As an example, a server could assign an `importance` attribute to each image
-that it provides, so that an intermediary could prioritize certain images above
-others.  Or, a graphical user-agent could send a `visible` attribute to indicate
-if the resource being requested is within the viewport.
+As an example, a server could assign an `importance` attribute to the priority
+of each image that it provides, so that an intermediary could prioritize
+certain images above others.  Or, a graphical user-agent could send a `visible`
+attribute to indicate if the resource being requested is within the viewport.
 
 # Security Considerations
 
