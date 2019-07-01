@@ -290,7 +290,8 @@ ul.toc li {
 <link href="#rfc.section.3" rel="Chapter" title="3 Merging Client- and Server-Driven Directives"/>
 <link href="#rfc.section.4" rel="Chapter" title="4 Coexistence with HTTP/2 Priorities"/>
 <link href="#rfc.section.5" rel="Chapter" title="5 Considerations"/>
-<link href="#rfc.section.5.1" rel="Chapter" title="5.1 Why is the Priority header field end-to-end?"/>
+<link href="#rfc.section.5.1" rel="Chapter" title="5.1 Why use an End-to-End Header Field?"/>
+<link href="#rfc.section.5.2" rel="Chapter" title="5.2 Why are there Only Three Levels of Urgency?"/>
 <link href="#rfc.section.6" rel="Chapter" title="6 Security Considerations"/>
 <link href="#rfc.section.7" rel="Chapter" title="7 IANA Considerations"/>
 <link href="#rfc.references" rel="Chapter" title="8 References"/>
@@ -373,7 +374,8 @@ ul.toc li {
 </ul><li>3.   <a href="#rfc.section.3">Merging Client- and Server-Driven Directives</a></li>
 <li>4.   <a href="#rfc.section.4">Coexistence with HTTP/2 Priorities</a></li>
 <li>5.   <a href="#rfc.section.5">Considerations</a></li>
-<ul><li>5.1.   <a href="#rfc.section.5.1">Why is the Priority header field end-to-end?</a></li>
+<ul><li>5.1.   <a href="#rfc.section.5.1">Why use an End-to-End Header Field?</a></li>
+<li>5.2.   <a href="#rfc.section.5.2">Why are there Only Three Levels of Urgency?</a></li>
 </ul><li>6.   <a href="#rfc.section.6">Security Considerations</a></li>
 <li>7.   <a href="#rfc.section.7">IANA Considerations</a></li>
 <li>8.   <a href="#rfc.references">References</a></li>
@@ -459,10 +461,16 @@ priority = progressive=?0
 <p id="rfc.section.4.p.1">When connecting to an HTTP/2 (<a href="#RFC7540">[RFC7540]</a>) server, a client that uses this header-based prioritization scheme SHOULD send a <samp>SETTINGS_HEADER_BASED_PRIORITY</samp> settings parameter (0xTBD) with a value of zero.  An intermediary SHOULD set the settings parameter for a connection it establishes when and only when all the requests to be sent over that connection originates from a client that utilizes this header-based prioritization scheme.</p>
 <p id="rfc.section.4.p.2">The existence of this settings parameter instructs the server that recognizes the settings parameter to use the header-based prioritization scheme instead of the frame-based prioritization scheme defined by HTTP/2.  A server that does not recognize this settings parameter would respect the frame-based prioritization scheme.</p>
 <h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#considerations" id="considerations">Considerations</a></h1>
-<h1 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1.</a> <a href="#why-is-the-priority-header-field-end-to-end" id="why-is-the-priority-header-field-end-to-end">Why is the Priority header field end-to-end?</a></h1>
+<h1 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1.</a> <a href="#why-use-an-end-to-end-header-field" id="why-use-an-end-to-end-header-field">Why use an End-to-End Header Field?</a></h1>
 <p id="rfc.section.5.1.p.1">Contrary to the prioritization scheme of HTTP/2 that uses a hop-by-hop a frame, the Priority header field is defined as end-to-end.</p>
 <p id="rfc.section.5.1.p.2">The rationale is that the Priority header field transmits how each response affects the client&#8217;s processing of those responses, rather than how relatively urgent each response is to others.  The way a client processes a response is a property associated to that client generating that request.  Not that of an intermediary.  Therefore, it is an end-to-end property.  How these end-to-end properties carried by the Priority header field affect the prioritization between the responses that share a connection is a hop-by-hop issue.</p>
 <p id="rfc.section.5.1.p.3">Having the Priority header field defined as end-to-end is important for caching intermediaries.  Such intermediaries can cache the value of the Priority header field along with the response, and utilize the value of the cached header field when serving the cached response, only because the header field is defined as end-to-end rather than hop-by-hop.</p>
+<p id="rfc.section.5.1.p.4">It should also be noted that the use of a header field carrying a textual value makes the prioritization scheme extensible; see the discussion below.</p>
+<h1 id="rfc.section.5.2"><a href="#rfc.section.5.2">5.2.</a> <a href="#why-are-there-only-three-levels-of-urgency" id="why-are-there-only-three-levels-of-urgency">Why are there Only Three Levels of Urgency?</a></h1>
+<p id="rfc.section.5.2.p.1">One of the aims of this specification is to define a mechanism for merging client- and server-provided hints for prioritizing the responses.  For that to work, each urgency level needs to have a well-defined meaning.  As an example, a server can assign the highest precedence among the non-blocking responses to an HTTP response carrying an icon, because the meaning of &#8220;non-blocking&#8221; is shared among the endpoints.</p>
+<p id="rfc.section.5.2.p.2">This specification restricts itself to defining just three levels of urgency, in order to provide sufficient guranularity for prioritizing responses for ordinary web browsing, at minimal complexity.</p>
+<p id="rfc.section.5.2.p.3">However, that does not mean that the prioritization scheme would forever be stuck to the three levels.  The design provides extensibility.  If deemed necessary, it would be possible to divide any of the three urgency levels into sub-levels.</p>
+<p id="rfc.section.5.2.p.4">As an example, a server could assign an <samp>importance</samp> attribute to the priority of each image that it provides, so that an intermediary could prioritize certain images above others.  Or, a graphical user-agent could send a <samp>visible</samp> attribute to indicate if the resource being requested is within the viewport.</p>
 <h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
 <p id="rfc.section.6.p.1">TBD</p>
 <h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
