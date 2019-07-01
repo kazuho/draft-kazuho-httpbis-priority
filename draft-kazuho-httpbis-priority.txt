@@ -63,17 +63,17 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  The Priority HTTP Header Field  . . . . . . . . . . . . . . .   3
-     2.1.  Priority Directives . . . . . . . . . . . . . . . . . . .   3
+     2.1.  Priority Directives . . . . . . . . . . . . . . . . . . .   4
        2.1.1.  urgency . . . . . . . . . . . . . . . . . . . . . . .   4
        2.1.2.  progressive . . . . . . . . . . . . . . . . . . . . .   4
      2.2.  Merging Client- and Server-Driven Directives  . . . . . .   5
-   3.  Coexistence with HTTP/2 Priorities  . . . . . . . . . . . . .   5
+   3.  Coexistence with HTTP/2 Priorities  . . . . . . . . . . . . .   6
    4.  Considerations  . . . . . . . . . . . . . . . . . . . . . . .   6
      4.1.  Why is the Priority header field end-to-end?  . . . . . .   6
    5.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
-   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
-     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
+   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
+   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   7
+     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   7
      7.2.  Informative References  . . . . . . . . . . . . . . . . .   7
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   7
 
@@ -91,7 +91,7 @@ Table of Contents
    the chunks of the images arrive.
 
    To provide meaningful representation of a document at the earliest
-   moment, it is important for a HTTP server to prioritize the HTTP
+   moment, it is important for an HTTP server to prioritize the HTTP
    responses, or the chunks of those HTTP responses, that it sends.
 
    HTTP/2 ([RFC7540]) provides such a prioritization scheme.  A client
@@ -143,6 +143,9 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
    document are to be interpreted as described in [RFC2119].
 
+   Example HTTP requests and responses use the HTTP/2-style formatting
+   from [RFC7540].
+
 2.  The Priority HTTP Header Field
 
    The Priority HTTP header field can appear in requests and responses.
@@ -157,9 +160,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    Priority           = 1#priority-directive
    priority-directive = token [ "=" ( token / quoted-string ) ]
 
-2.1.  Priority Directives
-
-
 
 
 
@@ -169,6 +169,8 @@ Oku & Pardue             Expires January 2, 2020                [Page 3]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
+
+2.1.  Priority Directives
 
 2.1.1.  urgency
 
@@ -200,9 +202,11 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    The following example shows a request for a CSS file with the urgency
    set to "blocking":
 
-   GET /style.css HTTP/1.1
-   Priority: urgency=blocking
-
+   :method = GET
+   :scheme = https
+   :authority = example.net
+   :path = /style.css
+   priority = urgency=blocking
 
 2.1.2.  progressive
 
@@ -214,10 +218,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    progressively, i.e. provide some meaningful output as chunks of the
    response arrive.
 
-   The default value of the "progressive" directive is "no".  This
-   SHOULD apply if the directive is omitted or the Priority header field
-   is missing.
-
 
 
 
@@ -226,6 +226,10 @@ Oku & Pardue             Expires January 2, 2020                [Page 4]
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
+   The default value of the "progressive" directive is "no".  This
+   SHOULD apply if the directive is omitted or the Priority header field
+   is missing.
+
    A server that supports the Priority header field SHOULD distribute
    the bandwidth of a connection between progressive responses that
    share the same urgency.
@@ -233,9 +237,11 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    The following example shows a request for a JPEG file with the
    urgency set to "non-blocking" and progressive set to "yes".
 
-   GET /image.jpg HTTP/1.1
-   Priority: urgency=non-blocking, progressive=yes
-
+   :method = GET
+   :scheme = https
+   :authority = example.net
+   :path = /image.jpg
+   priority = urgency=non-blocking; progressive=yes
 
 2.2.  Merging Client- and Server-Driven Directives
 
@@ -249,18 +255,32 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    field.  When used, the directives found in this response header field
    override those specified by the client.
 
-   For example, when the client sends a HTTP request with
+   For example, when the client sends an HTTP request with
 
-   Priority: urgency=non-blocking, progressive=yes
+   :method = GET
+   :scheme = https
+   :authority = example.net
+   :path = /image.jpg
+   priority = urgency=non-blocking; progressive=yes
 
    and the origin responds with
 
-   Priority: progressive=no
+   :status = 200
+   content-type = image/jpeg
+   priority = progressive=no
 
    the intermediary's view of the progressiveness of the response
    becomes negative, because the server-provided value overrides that
    provided by the client.  The urgency is deemed as "non-blocking",
    because the server did not specify the directive.
+
+
+
+
+Oku & Pardue             Expires January 2, 2020                [Page 5]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
+
 
 3.  Coexistence with HTTP/2 Priorities
 
@@ -274,14 +294,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
    The existence of this settings parameter instructs the server that
    recognizes the settings parameter to use the header-based
-
-
-
-Oku & Pardue             Expires January 2, 2020                [Page 5]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
-
    prioritization scheme instead of the frame-based prioritization
    scheme defined by HTTP/2.  A server that does not recognize this
    settings parameter would respect the frame-based prioritization
@@ -314,6 +326,18 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
    TBD
 
+
+
+
+
+
+
+
+Oku & Pardue             Expires January 2, 2020                [Page 6]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
+
+
 6.  IANA Considerations
 
    TBD
@@ -326,17 +350,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
               Requirement Levels", BCP 14, RFC 2119,
               DOI 10.17487/RFC2119, March 1997, <https://www.rfc-
               editor.org/info/rfc2119>.
-
-
-
-
-
-
-
-Oku & Pardue             Expires January 2, 2020                [Page 6]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
 
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Message Syntax and Routing",
@@ -367,19 +380,6 @@ Authors' Addresses
    Cloudflare
 
    Email: lucaspardue.24.7@gmail.com
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
