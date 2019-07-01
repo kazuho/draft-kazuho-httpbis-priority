@@ -287,7 +287,7 @@ ul.toc li {
 <link href="#rfc.section.2" rel="Chapter" title="2 The Priority HTTP Header Field"/>
 <link href="#rfc.section.2.1" rel="Chapter" title="2.1 urgency"/>
 <link href="#rfc.section.2.2" rel="Chapter" title="2.2 progressive"/>
-<link href="#rfc.section.3" rel="Chapter" title="3 Merging Client- and Server-Driven Directives"/>
+<link href="#rfc.section.3" rel="Chapter" title="3 Merging Client- and Server-Driven Parameters"/>
 <link href="#rfc.section.4" rel="Chapter" title="4 Coexistence with HTTP/2 Priorities"/>
 <link href="#rfc.section.5" rel="Chapter" title="5 Considerations"/>
 <link href="#rfc.section.5.1" rel="Chapter" title="5.1 Why use an End-to-End Header Field?"/>
@@ -371,7 +371,7 @@ ul.toc li {
 </ul><li>2.   <a href="#rfc.section.2">The Priority HTTP Header Field</a></li>
 <ul><li>2.1.   <a href="#rfc.section.2.1">urgency</a></li>
 <li>2.2.   <a href="#rfc.section.2.2">progressive</a></li>
-</ul><li>3.   <a href="#rfc.section.3">Merging Client- and Server-Driven Directives</a></li>
+</ul><li>3.   <a href="#rfc.section.3">Merging Client- and Server-Driven Parameters</a></li>
 <li>4.   <a href="#rfc.section.4">Coexistence with HTTP/2 Priorities</a></li>
 <li>5.   <a href="#rfc.section.5">Considerations</a></li>
 <ul><li>5.1.   <a href="#rfc.section.5.1">Why use an End-to-End Header Field?</a></li>
@@ -404,8 +404,8 @@ ul.toc li {
 <p id="rfc.section.1.1.p.2">Example HTTP requests and responses use the HTTP/2-style formatting from <a href="#RFC7540">[RFC7540]</a>.</p>
 <h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#the-priority-http-header-field" id="the-priority-http-header-field">The Priority HTTP Header Field</a></h1>
 <p id="rfc.section.2.p.1">The Priority HTTP header field can appear in requests and responses. A client uses it to specify the priority of the response. A server uses this to inform the client that the priority was overwritten. An intermediary can use the Priority information from client requests and server responses to correct or amend the precedence to suit it (see <a href="#merging">Section 3</a>).</p>
-<p id="rfc.section.2.p.2">The value of the Priority header field  is a Structured Headers <a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a> Parameterised List.  The following sh-param-items are defined.</p>
-<p id="rfc.section.2.p.3">When any of the defined parameters are omitted, or if the Priority header field is not used, their default values SHOULD be applied.</p>
+<p id="rfc.section.2.p.2">The value of the Priority header field is a Structured Headers <a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a> Dictionary.  Each dictionary member represents a parameter of the Priority header field.  The following parameters are defined.</p>
+<p id="rfc.section.2.p.3">Values of the parameters MUST always be present for the parameters defined in this document.  When any of the defined parameters are omitted, or if the Priority header field is not used, their default values SHOULD be applied.</p>
 <p id="rfc.section.2.p.4">Unknown parameters MUST be ignored.</p>
 <h1 id="rfc.section.2.1"><a href="#rfc.section.2.1">2.1.</a> <a href="#urgency" id="urgency">urgency</a></h1>
 <p id="rfc.section.2.1.p.1">The <samp>urgency</samp> parameter takes one of the following sh-tokens as the value, that indicates how an HTTP response affects the processing of other responses:</p>
@@ -428,10 +428,9 @@ priority = urgency=blocking
 </pre>
 <h1 id="rfc.section.2.2"><a href="#rfc.section.2.2">2.2.</a> <a href="#progressive" id="progressive">progressive</a></h1>
 <p id="rfc.section.2.2.p.1">The <samp>progressive</samp> parameter takes an sh-boolean as the value, that indicates if a response can be processed progressively, i.e. provide some meaningful output as chunks of the response arrive.</p>
-<p id="rfc.section.2.2.p.2">This boolean directive indicates if a response can be processed progressively, i.e. provide some meaningful output as chunks of the response arrive.</p>
-<p id="rfc.section.2.2.p.3">The default value of the <samp>progressive</samp> directive is <samp>no</samp>. This SHOULD apply if the directive is omitted or the Priority header field is missing.</p>
-<p id="rfc.section.2.2.p.4">A server that supports the Priority header field SHOULD distribute the bandwidth of a connection between progressive responses that share the same urgency.</p>
-<p id="rfc.section.2.2.p.5">The following example shows a request for a JPEG file with the urgency parameter set to <samp>non-blocking</samp> and the progressive parameter set to <samp>1</samp>.</p>
+<p id="rfc.section.2.2.p.2">The default value of the <samp>progressive</samp> parameter is <samp>0</samp>.</p>
+<p id="rfc.section.2.2.p.3">A server that supports the Priority header field SHOULD distribute the bandwidth of a connection between progressive responses that share the same urgency.</p>
+<p id="rfc.section.2.2.p.4">The following example shows a request for a JPEG file with the urgency parameter set to <samp>non-blocking</samp> and the progressive parameter set to <samp>1</samp>.</p>
 <pre>
 :method = GET
 :scheme = https
@@ -439,7 +438,7 @@ priority = urgency=blocking
 :path = /image.jpg
 priority = urgency=non-blocking, progressive=?1
 </pre>
-<h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#merging" id="merging">Merging Client- and Server-Driven Directives</a></h1>
+<h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#merging" id="merging">Merging Client- and Server-Driven Parameters</a></h1>
 <p id="rfc.section.3.p.1">It is not always the case that the client has the best view of how the HTTP responses should be prioritized.  For example, whether a JPEG image should be served progressively by the server depends on the structure of that image file - a property only known to the server.</p>
 <p id="rfc.section.3.p.2">Therefore, a server is permitted to send a &#8220;Priority&#8221; response header field.  When used, the parameters found in this response header field override those specified by the client.</p>
 <p id="rfc.section.3.p.3">For example, when the client sends an HTTP request with</p>
@@ -456,7 +455,7 @@ priority = urgency=non-blocking, progressive=?1
 content-type = image/jpeg
 priority = progressive=?0
 </pre>
-<p id="rfc.section.3.p.5">the intermediary&#8217;s view of the progressiveness of the response becomes negative, because the server-provided value overrides that provided by the client.  The urgency is deemed as <samp>non-blocking</samp>, because the server did not specify the directive.</p>
+<p id="rfc.section.3.p.5">the intermediary&#8217;s view of the progressiveness of the response becomes negative, because the server-provided value overrides that provided by the client.  The urgency is deemed as <samp>non-blocking</samp>, because the server did not specify the parameter.</p>
 <h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#coexistence-with-http2-priorities" id="coexistence-with-http2-priorities">Coexistence with HTTP/2 Priorities</a></h1>
 <p id="rfc.section.4.p.1">When connecting to an HTTP/2 (<a href="#RFC7540">[RFC7540]</a>) server, a client that uses this header-based prioritization scheme SHOULD send a <samp>SETTINGS_HEADER_BASED_PRIORITY</samp> settings parameter (0xTBD) with a value of zero.  An intermediary SHOULD set the settings parameter for a connection it establishes when and only when all the requests to be sent over that connection originates from a client that utilizes this header-based prioritization scheme.</p>
 <p id="rfc.section.4.p.2">The existence of this settings parameter instructs the server that recognizes the settings parameter to use the header-based prioritization scheme instead of the frame-based prioritization scheme defined by HTTP/2.  A server that does not recognize this settings parameter would respect the frame-based prioritization scheme.</p>
