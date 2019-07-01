@@ -224,7 +224,7 @@ scheme.
 
 # Considerations
 
-## Why is the Priority header field end-to-end?
+## Why use an End-to-End Header Field?
 
 Contrary to the prioritization scheme of HTTP/2 that uses a hop-by-hop a frame,
 the Priority header field is defined as end-to-end.
@@ -242,6 +242,32 @@ intermediaries.  Such intermediaries can cache the value of the Priority header
 field along with the response, and utilize the value of the cached header field
 when serving the cached response, only because the header field is defined as
 end-to-end rather than hop-by-hop.
+
+It should also be noted that the use of a header field carrying a textual value
+makes the prioritization scheme extensible; see the discussion below.
+
+## Why are there Only Three Levels of Urgency?
+
+One of the aims of this specification is to define a mechanism for merging
+client- and server-provided hints for prioritizing the responses.  For that to
+work, each urgency level needs to have a well-defined meaning.  As an example, a
+server can assign the highest precedence among the non-blocking responses to an
+HTTP response carrying an icon, because the meaning of "non-blocking" is
+shared among the endpoints.
+
+This specification restricts itself to defining just three levels of urgency, in
+order to provide sufficient guranularity for prioritizing responses for ordinary
+web browsing, at minimal complexity.
+
+However, that does not mean that the prioritization scheme would forever be
+stuck to the three levels.  The design provides extensibility.  If deemed
+necessary, it would be possible to divide any of the three urgency levels into
+sub-levels.
+
+As an example, a server could assign an `importance` attribute to the priority
+of each image that it provides, so that an intermediary could prioritize
+certain images above others.  Or, a graphical user-agent could send a `visible`
+attribute to indicate if the resource being requested is within the viewport.
 
 # Security Considerations
 
