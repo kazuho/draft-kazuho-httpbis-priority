@@ -109,12 +109,14 @@ the client that the priority was overwritten. An intermediary can use the
 Priority information from client requests and server responses to correct or
 amend the precedence to suit it (see {{merging}}).
 
-The value of the Priority header field  is a Structured Headers
-{{!I-D.ietf-httpbis-header-structure}} Parameterised List.  The following
-sh-param-items are defined.
+The value of the Priority header field is a Structured Headers
+{{!I-D.ietf-httpbis-header-structure}} Dictionary.  Each dictionary member
+represents a parameter of the Priority header field.  The following parameters
+are defined.
 
-When any of the defined parameters are omitted, or if the Priority header field
-is not used, their default values SHOULD be applied.
+Values of the parameters MUST always be present for the parameters defined in
+this document.  When any of the defined parameters is omitted, or if the
+Priority header field is not used, their default values SHOULD be applied.
 
 Unknown parameters MUST be ignored.
 
@@ -153,11 +155,10 @@ The `progressive` parameter takes an sh-boolean as the value, that indicates if
 a response can be processed progressively, i.e. provide some meaningful output
 as chunks of the response arrive.
 
-This boolean directive indicates if a response can be processed progressively,
+This boolean parameter indicates if a response can be processed progressively,
 i.e. provide some meaningful output as chunks of the response arrive.
 
-The default value of the `progressive` directive is `no`. This SHOULD apply if
-the directive is omitted or the Priority header field is missing.
+The default value of the `progressive` parameter is `0`.
 
 A server that supports the Priority header field SHOULD distribute the bandwidth
 of a connection between progressive responses that share the same urgency.
@@ -173,7 +174,7 @@ set to `non-blocking` and the progressive parameter set to `1`.
 priority = urgency=non-blocking, progressive=?1
 ~~~
 
-# Merging Client- and Server-Driven Directives {#merging}
+# Merging Client- and Server-Driven Parameters {#merging}
 
 It is not always the case that the client has the best view of how the HTTP
 responses should be prioritized.  For example, whether a JPEG image should be
@@ -205,7 +206,7 @@ priority = progressive=?0
 the intermediary's view of the progressiveness of the response becomes negative,
 because the server-provided value overrides that provided by the client.  The
 urgency is deemed as `non-blocking`, because the server did not specify the
-directive.
+parameter.
 
 # Coexistence with HTTP/2 Priorities
 
