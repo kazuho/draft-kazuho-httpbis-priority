@@ -24,22 +24,8 @@ author:
     email: lucaspardue.24.7@gmail.com
 
 normative:
-  RFC2119:
-  RFC7230:
-  RFC7540:
 
 informative:
-  QUIC-HTTP:
-    title: "Hypertext Transfer Protocol Version 3 (HTTP/3)"
-    date: 2019-04-23
-    seriesinfo:
-      Internet-Draft: draft-ietf-quic-http-20
-    author:
-      -
-        ins: M. Bishop
-        name: Mike Bishop
-        org: Akamai
-        role: editor
 
 --- abstract
 
@@ -51,20 +37,21 @@ in an HTTP-version-independent way.
 
 # Introduction
 
-It is common for an HTTP resource representation to have relationships to one or
-more other resources. Clients will often discover these relationships while
-processing a retrieved representation, leading to further retrieval requests.
-Meanwhile, the nature of the relationship determines whether the client is
-blocked from continuing to process locally available resources. For example,
-visual rendering of an HTML document could be blocked by the retrieval of a CSS
-file that the document refers to. In contrast, inline images do not block
-rendering and get drawn progressively as the chunks of the images arrive.
+It is common for an HTTP ({{!RFC7230}}) resource representation to have
+relationships to one or more other resources.  Clients will often discover these
+relationships while processing a retrieved representation, leading to further
+retrieval requests.  Meanwhile, the nature of the relationship determines
+whether the client is blocked from continuing to process locally available
+resources.  For example, visual rendering of an HTML document could be blocked
+by the retrieval of a CSS file that the document refers to.  In contrast, inline
+images do not block rendering and get drawn progressively as the chunks of the
+images arrive.
 
 To provide meaningful representation of a document at the earliest moment, it is
 important for an HTTP server to prioritize the HTTP responses, or the chunks of
 those HTTP responses, that it sends.
 
-HTTP/2 ({{RFC7540}}) provides such a prioritization scheme. A client sends a
+HTTP/2 ({{?RFC7540}}) provides such a prioritization scheme. A client sends a
 series of PRIORITY frames to communicate to the server a “priority tree”; this
 represents the client's preferred ordering and weighted distribution of the
 bandwidth among the HTTP responses.  However, the design has shortcomings:
@@ -82,10 +69,10 @@ bandwidth among the HTTP responses.  However, the design has shortcomings:
 * It does not define a method that can be used by a server to express the
   priority of a response.  Without such a method, intermediaries cannot
   coordinate client-driven and server-driven priorities.
-* The design cannot be ported cleanly to HTTP/3 ({{QUIC-HTTP}}). One of the
-  primary goals of HTTP/3 is to minimize head-of-line blocking. Transmitting the
-  evolving representation of a "prioritization tree" from the client to the
-  server requires head-of-line blocking.
+* The design cannot be ported cleanly to HTTP/3 ({{?I-D.ietf-quic-http}}).  One
+  of the primary goals of HTTP/3 is to minimize head-of-line blocking.
+  Transmitting the evolving representation of a "prioritization tree" from the
+  client to the server requires head-of-line blocking.
 
 Based on these observations, this document defines the Priority HTTP header
 field that can be used by both the client and the server to specify the
@@ -96,10 +83,10 @@ independent, end-to-end format.
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
-interpreted as described in [RFC2119].
+interpreted as described in {{!RFC2119}}.
 
 Example HTTP requests and responses use the HTTP/2-style formatting from
-{{RFC7540}}.
+{{?RFC7540}}.
 
 # The Priority HTTP Header Field
 
@@ -207,7 +194,7 @@ parameter.
 
 # Coexistence with HTTP/2 Priorities
 
-When connecting to an HTTP/2 ({{RFC7540}}) server, a client that uses this
+When connecting to an HTTP/2 ({{!RFC7540}}) server, a client that uses this
 header-based prioritization scheme SHOULD send a
 `SETTINGS_HEADER_BASED_PRIORITY` settings parameter (0xTBD) with a value of
 zero.  An intermediary SHOULD set the settings parameter for a connection it
