@@ -61,7 +61,7 @@ file that the document refers to. In contrast, inline images do not block
 rendering and get drawn progressively as the chunks of the images arrive.
 
 To provide meaningful representation of a document at the earliest moment, it is
-important for a HTTP server to prioritize the HTTP responses, or the chunks of
+important for an HTTP server to prioritize the HTTP responses, or the chunks of
 those HTTP responses, that it sends.
 
 HTTP/2 ({{RFC7540}}) provides such a prioritization scheme. A client sends a
@@ -97,6 +97,9 @@ independent, end-to-end format.
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in [RFC2119].
+
+Example HTTP requests and responses use the HTTP/2-style formatting from
+{{RFC7540}}.
 
 # The Priority HTTP Header Field
 
@@ -149,14 +152,13 @@ The following example shows a request for a CSS file with the urgency set to
 :authority = example.net
 :path = /style.css
 priority = urgency=blocking
-
 ~~~
 
 ### progressive
 
 Argument syntax:
 
-~~~ example
+~~~ abnf
 progressive = "yes" / "no"
 ~~~
 
@@ -176,9 +178,8 @@ The following example shows a request for a JPEG file with the urgency set to
 :method = GET
 :scheme = https
 :authority = example.net
-:path = /style.css
-priority = urgency=non-blocking, progressive=yes
-
+:path = /image.jpg
+priority = urgency=non-blocking; progressive=yes
 ~~~
 
 ## Merging Client- and Server-Driven Directives {#merging}
@@ -192,16 +193,22 @@ Therefore, a server is permitted to send a "Priority" response header field.
 When used, the directives found in this response header field override those
 specified by the client.
 
-For example, when the client sends a HTTP request with
+For example, when the client sends an HTTP request with
 
 ~~~ example
-Priority: urgency=non-blocking, progressive=yes
+:method = GET
+:scheme = https
+:authority = example.net
+:path = /image.jpg
+priority = urgency=non-blocking; progressive=yes
 ~~~
 
 and the origin responds with
 
 ~~~ example
-Priority: progressive=no
+:status = 200
+content-type = image/jpeg
+priority = progressive=no
 ~~~
 
 the intermediary's view of the progressiveness of the response becomes negative,
