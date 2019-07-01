@@ -115,7 +115,7 @@ represents a parameter of the Priority header field.  The following parameters
 are defined.
 
 Values of the parameters MUST always be present for the parameters defined in
-this document.  When any of the defined parameters is omitted, or if the
+this document.  When any of the defined parameters are omitted, or if the
 Priority header field is not used, their default values SHOULD be applied.
 
 Unknown parameters MUST be ignored.
