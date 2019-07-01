@@ -109,25 +109,19 @@ the client that the priority was overwritten. An intermediary can use the
 Priority information from client requests and server responses to correct or
 amend the precedence to suit it (see {{merging}}).
 
-The syntax of this header field is defined as follows.
+The value of the Priority header field  is a Structured Headers
+{{!I-D.ietf-httpbis-header-structure}} Parameterised List.  The following
+sh-param-items are defined.
 
-~~~ abnf
-Priority           = 1#priority-directive
-priority-directive = token [ "=" ( token / quoted-string ) ]
-~~~
+When any of the defined parameters are omitted, or if the Priority header field
+is not used, their default values SHOULD be applied.
 
-## Priority Directives
+Unknown parameters MUST be ignored.
 
-### urgency
+## urgency
 
-Argument syntax:
-
-~~~ abnf
-urgency = "blocking" / "document" / "non-blocking"
-~~~
-
-The `urgency` directive indicates how an HTTP response affects the processing of
-other responses:
+The `urgency` parameter takes one of the following sh-tokens as the value, that
+indicates how an HTTP response affects the processing of other responses:
 
 * `blocking` indicates that the response blocks the processing of others.
 * `document` indicates that the response contains the document that is being
@@ -136,8 +130,7 @@ other responses:
   the document even though the response is being used or referred to by the
   document.
 
-The default value of the `urgency` directive is `document`. This SHOULD apply if
-the directive is omitted or the Priority header field is missing.
+The default value is `document`.
 
 A server that supports the Priority header field SHOULD transmit HTTP responses
 in the order of their urgency: `blocking` first, followed by `document`,
@@ -154,13 +147,11 @@ The following example shows a request for a CSS file with the urgency set to
 priority = urgency=blocking
 ~~~
 
-### progressive
+## progressive
 
-Argument syntax:
-
-~~~ abnf
-progressive = "yes" / "no"
-~~~
+The `progressive` parameter takes an sh-boolean as the value, that indicates if
+a response can be processed progressively, i.e. provide some meaningful output
+as chunks of the response arrive.
 
 This boolean directive indicates if a response can be processed progressively,
 i.e. provide some meaningful output as chunks of the response arrive.
@@ -171,18 +162,18 @@ the directive is omitted or the Priority header field is missing.
 A server that supports the Priority header field SHOULD distribute the bandwidth
 of a connection between progressive responses that share the same urgency.
 
-The following example shows a request for a JPEG file with the urgency set to
-`non-blocking` and progressive set to `yes`.
+The following example shows a request for a JPEG file with the urgency parameter
+set to `non-blocking` and the progressive parameter set to `1`.
 
 ~~~ example
 :method = GET
 :scheme = https
 :authority = example.net
 :path = /image.jpg
-priority = urgency=non-blocking; progressive=yes
+priority = urgency=non-blocking, progressive=?1
 ~~~
 
-## Merging Client- and Server-Driven Directives {#merging}
+# Merging Client- and Server-Driven Directives {#merging}
 
 It is not always the case that the client has the best view of how the HTTP
 responses should be prioritized.  For example, whether a JPEG image should be
@@ -190,7 +181,7 @@ served progressively by the server depends on the structure of that image file
 - a property only known to the server.
 
 Therefore, a server is permitted to send a "Priority" response header field.
-When used, the directives found in this response header field override those
+When used, the parameters found in this response header field override those
 specified by the client.
 
 For example, when the client sends an HTTP request with
@@ -200,7 +191,7 @@ For example, when the client sends an HTTP request with
 :scheme = https
 :authority = example.net
 :path = /image.jpg
-priority = urgency=non-blocking; progressive=yes
+priority = urgency=non-blocking, progressive=?1
 ~~~
 
 and the origin responds with
@@ -208,7 +199,7 @@ and the origin responds with
 ~~~ example
 :status = 200
 content-type = image/jpeg
-priority = progressive=no
+priority = progressive=?0
 ~~~
 
 the intermediary's view of the progressiveness of the response becomes negative,
