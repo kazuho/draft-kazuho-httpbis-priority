@@ -155,9 +155,6 @@ The `progressive` parameter takes an sh-boolean as the value, that indicates if
 a response can be processed progressively, i.e. provide some meaningful output
 as chunks of the response arrive.
 
-This boolean parameter indicates if a response can be processed progressively,
-i.e. provide some meaningful output as chunks of the response arrive.
-
 The default value of the `progressive` parameter is `0`.
 
 A server that supports the Priority header field SHOULD distribute the bandwidth
