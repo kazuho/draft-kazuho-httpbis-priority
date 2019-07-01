@@ -179,7 +179,7 @@ The following example shows a request for a JPEG file with the urgency set to
 :scheme = https
 :authority = example.net
 :path = /image.jpg
-priority = urgency=non-blocking; progressive=yes
+priority = urgency=non-blocking, progressive=yes
 ~~~
 
 ## Merging Client- and Server-Driven Directives {#merging}
@@ -200,7 +200,7 @@ For example, when the client sends an HTTP request with
 :scheme = https
 :authority = example.net
 :path = /image.jpg
-priority = urgency=non-blocking; progressive=yes
+priority = urgency=non-blocking, progressive=yes
 ~~~
 
 and the origin responds with
