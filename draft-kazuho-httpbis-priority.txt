@@ -63,18 +63,17 @@ Table of Contents
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  The Priority HTTP Header Field  . . . . . . . . . . . . . . .   3
-     2.1.  Priority Directives . . . . . . . . . . . . . . . . . . .   4
-       2.1.1.  urgency . . . . . . . . . . . . . . . . . . . . . . .   4
-       2.1.2.  progressive . . . . . . . . . . . . . . . . . . . . .   4
-     2.2.  Merging Client- and Server-Driven Directives  . . . . . .   5
-   3.  Coexistence with HTTP/2 Priorities  . . . . . . . . . . . . .   6
-   4.  Considerations  . . . . . . . . . . . . . . . . . . . . . . .   6
-     4.1.  Why is the Priority header field end-to-end?  . . . . . .   6
-   5.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
-   6.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
-   7.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   7
-     7.1.  Normative References  . . . . . . . . . . . . . . . . . .   7
-     7.2.  Informative References  . . . . . . . . . . . . . . . . .   7
+     2.1.  urgency . . . . . . . . . . . . . . . . . . . . . . . . .   4
+     2.2.  progressive . . . . . . . . . . . . . . . . . . . . . . .   4
+   3.  Merging Client- and Server-Driven Directives  . . . . . . . .   5
+   4.  Coexistence with HTTP/2 Priorities  . . . . . . . . . . . . .   5
+   5.  Considerations  . . . . . . . . . . . . . . . . . . . . . . .   6
+     5.1.  Why is the Priority header field end-to-end?  . . . . . .   6
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
+   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   6
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .   7
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   7
 
 1.  Introduction
@@ -106,6 +105,7 @@ Table of Contents
    o  It is hard to coordinate with server-driven prioritization.  For
       example, a server, with the knowledge of the document structure,
       might want to prioritize the delivery of images that are critical
+      to user experience above others images, but below the CSS files.
 
 
 
@@ -114,7 +114,6 @@ Oku & Pardue             Expires January 2, 2020                [Page 2]
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
-      to user experience above others images, but below the CSS files.
       But with the HTTP/2 prioritization scheme, it is impossible for
       the server to determine how such images should be prioritized
       against other responses that use client-driven prioritization
@@ -153,15 +152,16 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    uses this to inform the client that the priority was overwritten.  An
    intermediary can use the Priority information from client requests
    and server responses to correct or amend the precedence to suit it
-   (see Section 2.2).
+   (see Section 3).
 
-   The syntax of this header field is defined as follows.
+   The value of the Priority header field is a Structured Headers
+   [I-D.ietf-httpbis-header-structure] Parameterised List.  The
+   following sh-param-items are defined.
 
-   Priority           = 1#priority-directive
-   priority-directive = token [ "=" ( token / quoted-string ) ]
+   When any of the defined parameters are omitted, or if the Priority
+   header field is not used, their default values SHOULD be applied.
 
-
-
+   Unknown parameters MUST be ignored.
 
 
 
@@ -170,16 +170,11 @@ Oku & Pardue             Expires January 2, 2020                [Page 3]
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
-2.1.  Priority Directives
+2.1.  urgency
 
-2.1.1.  urgency
-
-   Argument syntax:
-
-   urgency = "blocking" / "document" / "non-blocking"
-
-   The "urgency" directive indicates how an HTTP response affects the
-   processing of other responses:
+   The "urgency" parameter takes one of the following sh-tokens as the
+   value, that indicates how an HTTP response affects the processing of
+   other responses:
 
    o  "blocking" indicates that the response blocks the processing of
       others.
@@ -191,9 +186,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
       processing of the document even though the response is being used
       or referred to by the document.
 
-   The default value of the "urgency" directive is "document".  This
-   SHOULD apply if the directive is omitted or the Priority header field
-   is missing.
+   The default value is "document".
 
    A server that supports the Priority header field SHOULD transmit HTTP
    responses in the order of their urgency: "blocking" first, followed
@@ -208,23 +201,15 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    :path = /style.css
    priority = urgency=blocking
 
-2.1.2.  progressive
+2.2.  progressive
 
-   Argument syntax:
-
-   progressive = "yes" / "no"
+   The "progressive" parameter takes an sh-boolean as the value, that
+   indicates if a response can be processed progressively, i.e. provide
+   some meaningful output as chunks of the response arrive.
 
    This boolean directive indicates if a response can be processed
    progressively, i.e. provide some meaningful output as chunks of the
    response arrive.
-
-
-
-
-Oku & Pardue             Expires January 2, 2020                [Page 4]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
 
    The default value of the "progressive" directive is "no".  This
    SHOULD apply if the directive is omitted or the Priority header field
@@ -234,16 +219,24 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    the bandwidth of a connection between progressive responses that
    share the same urgency.
 
+
+
+Oku & Pardue             Expires January 2, 2020                [Page 4]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
+
+
    The following example shows a request for a JPEG file with the
-   urgency set to "non-blocking" and progressive set to "yes".
+   urgency parameter set to "non-blocking" and the progressive parameter
+   set to "1".
 
    :method = GET
    :scheme = https
    :authority = example.net
    :path = /image.jpg
-   priority = urgency=non-blocking; progressive=yes
+   priority = urgency=non-blocking, progressive=?1
 
-2.2.  Merging Client- and Server-Driven Directives
+3.  Merging Client- and Server-Driven Directives
 
    It is not always the case that the client has the best view of how
    the HTTP responses should be prioritized.  For example, whether a
@@ -252,7 +245,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    server.
 
    Therefore, a server is permitted to send a "Priority" response header
-   field.  When used, the directives found in this response header field
+   field.  When used, the parameters found in this response header field
    override those specified by the client.
 
    For example, when the client sends an HTTP request with
@@ -261,19 +254,26 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    :scheme = https
    :authority = example.net
    :path = /image.jpg
-   priority = urgency=non-blocking; progressive=yes
+   priority = urgency=non-blocking, progressive=?1
 
    and the origin responds with
 
    :status = 200
    content-type = image/jpeg
-   priority = progressive=no
+   priority = progressive=?0
 
    the intermediary's view of the progressiveness of the response
    becomes negative, because the server-provided value overrides that
    provided by the client.  The urgency is deemed as "non-blocking",
    because the server did not specify the directive.
 
+4.  Coexistence with HTTP/2 Priorities
+
+   When connecting to an HTTP/2 ([RFC7540]) server, a client that uses
+   this header-based prioritization scheme SHOULD send a
+   "SETTINGS_HEADER_BASED_PRIORITY" settings parameter (0xTBD) with a
+   value of zero.  An intermediary SHOULD set the settings parameter for
+   a connection it establishes when and only when all the requests to be
 
 
 
@@ -282,13 +282,6 @@ Oku & Pardue             Expires January 2, 2020                [Page 5]
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
-3.  Coexistence with HTTP/2 Priorities
-
-   When connecting to an HTTP/2 ([RFC7540]) server, a client that uses
-   this header-based prioritization scheme SHOULD send a
-   "SETTINGS_HEADER_BASED_PRIORITY" settings parameter (0xTBD) with a
-   value of zero.  An intermediary SHOULD set the settings parameter for
-   a connection it establishes when and only when all the requests to be
    sent over that connection originates from a client that utilizes this
    header-based prioritization scheme.
 
@@ -299,9 +292,9 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    settings parameter would respect the frame-based prioritization
    scheme.
 
-4.  Considerations
+5.  Considerations
 
-4.1.  Why is the Priority header field end-to-end?
+5.1.  Why is the Priority header field end-to-end?
 
    Contrary to the prioritization scheme of HTTP/2 that uses a hop-by-
    hop a frame, the Priority header field is defined as end-to-end.
@@ -322,10 +315,17 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    only because the header field is defined as end-to-end rather than
    hop-by-hop.
 
-5.  Security Considerations
+6.  Security Considerations
 
    TBD
 
+7.  IANA Considerations
+
+   TBD
+
+8.  References
+
+8.1.  Normative References
 
 
 
@@ -338,13 +338,10 @@ Oku & Pardue             Expires January 2, 2020                [Page 6]
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
-6.  IANA Considerations
-
-   TBD
-
-7.  References
-
-7.1.  Normative References
+   [I-D.ietf-httpbis-header-structure]
+              Nottingham, M. and P. Kamp, "Structured Headers for HTTP",
+              draft-ietf-httpbis-header-structure-10 (work in progress),
+              April 2019.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -361,7 +358,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
               DOI 10.17487/RFC7540, May 2015, <https://www.rfc-
               editor.org/info/rfc7540>.
 
-7.2.  Informative References
+8.2.  Informative References
 
    [QUIC-HTTP]
               Bishop, M., Ed., "Hypertext Transfer Protocol Version 3
@@ -380,6 +377,9 @@ Authors' Addresses
    Cloudflare
 
    Email: lucaspardue.24.7@gmail.com
+
+
+
 
 
 
