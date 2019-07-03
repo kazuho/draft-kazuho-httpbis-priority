@@ -274,8 +274,8 @@ Field Names registry established by {{?RFC3864}}:
 * Specification document(s): [this document]
 * Related information:
 
-This specification registeres the following entry in the HTTP/2 Settings
-registry established by {{?RFC7540}}:
+This specification registers the following entry in the HTTP/2 Settings registry
+established by {{?RFC7540}}:
 
 * Name: SETTINGS_HEADER_BASED_PRIORITY
 * Code: 0xTBD
