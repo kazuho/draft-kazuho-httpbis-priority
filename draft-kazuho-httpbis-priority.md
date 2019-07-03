@@ -197,15 +197,19 @@ parameter.
 When connecting to an HTTP/2 ({{!RFC7540}}) server, a client that uses this
 header-based prioritization scheme SHOULD send a
 `SETTINGS_HEADER_BASED_PRIORITY` settings parameter (0xTBD) with a value of
-zero.  An intermediary SHOULD set the settings parameter for a connection it
+one.
+
+An intermediary SHOULD set this settings parameter to one for a connection it
 establishes when and only when all the requests to be sent over that connection
 originates from a client that utilizes this header-based prioritization scheme.
+Otherwise this settings parameter SHOULD be set to zero.
 
-The existence of this settings parameter instructs the server that recognizes
-the settings parameter to use the header-based prioritization scheme instead of
-the frame-based prioritization scheme defined by HTTP/2.  A server that does not
-recognize this settings parameter would respect the frame-based prioritization
-scheme.
+The value of this settings parameter set to a non-zero value instructs the
+server that recognizes the settings parameter to use the header-based
+prioritization scheme instead of the frame-based prioritization scheme defined
+in HTTP/2.  The frame-based prioritization scheme is respected when the value of
+this settings parameter is set to zero, or when the server does not recognize
+the settings parameter.
 
 # Considerations
 
@@ -260,6 +264,22 @@ TBD
 
 # IANA Considerations
 
-TBD
+This specification registers the following entry in the Permanent Message Header
+Field Names registry established by {{?RFC3864}}:
+
+* Header field name: Priority
+* Applicable protocol: http
+* Status: standard
+* Author/change controller: IETF
+* Specification document(s): [this document]
+* Related information:
+
+This specification registeres the following entry in the HTTP/2 Settings
+registry established by {{?RFC7540}}:
+
+* Name: SETTINGS_HEADER_BASED_PRIORITY
+* Code: 0xTBD
+* Initial value: 0
+* Specification: [this document]
 
 --- back
