@@ -77,7 +77,9 @@ bandwidth among the HTTP responses.  However, the design has shortcomings:
 Based on these observations, this document defines the Priority HTTP header
 field that can be used by both the client and the server to specify the
 precedence of HTTP responses in a standardized, extensible, protocol-version-
-independent, end-to-end format.
+independent, end-to-end format. This header-based prioritization scheme can act
+as a substitute for the HTTP/2 frame-based prioritization scheme (see
+{{coexistence}}).
 
 ## Notational Conventions
 
@@ -197,24 +199,38 @@ because the server-provided value overrides that provided by the client.  The
 urgency is deemed as `non-blocking`, because the server did not specify the
 parameter.
 
-# Coexistence with HTTP/2 Priorities
+# Coexistence with HTTP/2 Priorities {#coexistence}
 
-When connecting to an HTTP/2 ({{!RFC7540}}) server, a client that uses this
-header-based prioritization scheme SHOULD send a
-`SETTINGS_HEADER_BASED_PRIORITY` settings parameter (0xTBD) with a value of
-one.
+Standard HTTP/2 ({{!RFC7540}}) endpoints use frame-based prioritization, whereby
+a client sends priority information in dedicated fields present in HEADERS and
+PRIORITY frames. A client may instead choose to use header-based prioritization
+as specified in this document.
 
-An intermediary SHOULD set this settings parameter to one for a connection it
-establishes when and only when all the requests to be sent over that connection
-originates from a client that utilizes this header-based prioritization scheme.
-Otherwise this settings parameter SHOULD be set to zero.
+## The SETTINGS_HEADER_BASED_PRIORITY SETTINGS Parameter
 
-The value of this settings parameter set to a non-zero value instructs the
-server that recognizes the settings parameter to use the header-based
-prioritization scheme instead of the frame-based prioritization scheme defined
-in HTTP/2.  The frame-based prioritization scheme is respected when the value of
-this settings parameter is set to zero, or when the server does not recognize
-the settings parameter.
+To improve communication of the client's intended prioritization scheme, this
+document specifies a new HTTP/2 SETTINGS parameter with the name
+`SETTINGS_HEADER_BASED_PRIORITY`. The value of the parameter MUST be 0 or 1; the
+initial value is 0. Frame-based prioritization is respected when the value is 0,
+or when the server does not recognize the setting.
+
+An HTTP/2 client that uses header-based priority SHOULD send a
+`SETTINGS_HEADER_BASED_PRIORITY` parameter with a value of 1 when connecting to
+a server.
+
+An intermediary SHOULD send a `SETTINGS_HEADER_BASED_PRIORITY` parameter with a
+value of 1 for a connection it establishes when, and only when, all the requests
+to be sent over that connection originate from a client that utilizes this
+header-based prioritization scheme. Otherwise this settings parameter SHOULD be
+set to 0.
+
+A client or intermediary MUST NOT send a `SETTINGS_HEADER_BASED_PRIORITY`
+parameter with the value of 0 after previously sending a value of 1.
+
+A server MUST NOT send a `SETTINGS_HEADER_BASED_PRIORITY` parameter. Upon
+receipt, a client that supports header-based prioritization MUST close the
+connection with a protocol error. Non-supporting clients will ignore this
+extension element (see {{!RFC7540}}, Section 5.5).
 
 # Considerations
 
