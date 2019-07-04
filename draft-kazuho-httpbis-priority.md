@@ -272,19 +272,37 @@ TBD
 This specification registers the following entry in the Permanent Message Header
 Field Names registry established by {{?RFC3864}}:
 
-* Header field name: Priority
-* Applicable protocol: http
-* Status: standard
-* Author/change controller: IETF
-* Specification document(s): [this document]
-* Related information:
+Header field name:
+: Priority
+
+Applicable protocol:
+: http
+
+Status:
+: standard
+
+Author/change controller:
+: IETF
+
+Specification document(s):
+: This document
+
+Related information:
+: n/a
 
 This specification registers the following entry in the HTTP/2 Settings registry
 established by {{?RFC7540}}:
 
-* Name: SETTINGS_HEADER_BASED_PRIORITY
-* Code: 0xTBD
-* Initial value: 0
-* Specification: [this document]
+Name:
+: SETTINGS_HEADER_BASED_PRIORITY:
+
+Code:
+: 0xTBD
+
+Initial value:
+: 0
+
+Specification:
+: This document
 
 --- back
