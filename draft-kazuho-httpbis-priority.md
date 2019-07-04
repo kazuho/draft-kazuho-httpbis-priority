@@ -122,9 +122,8 @@ indicates how an HTTP response affects the usage of other responses:
 
 The default value is `document`.
 
-A server that supports the Priority header field SHOULD transmit HTTP responses
-in the order of their urgency: `blocking` first, followed by `document`,
-followed by `non-blocking`.
+A server SHOULD transmit HTTP responses in the order of their urgency:
+`blocking` first, followed by `document`, followed by `non-blocking`.
 
 The following example shows a request for a CSS file with the urgency set to
 `blocking`:
@@ -145,8 +144,13 @@ as chunks of the response arrive.
 
 The default value of the `progressive` parameter is `0`.
 
-A server that supports the Priority header field SHOULD distribute the bandwidth
-of a connection between progressive responses that share the same urgency.
+A server SHOULD distribute the bandwidth of a connection between progressive
+responses that share the same urgency.
+
+A server SHOULD transmit non-progressive responses one by one, preferably in the
+order the requests were generated.  Doing so maximizes the chance of the client
+making progress in using the composition of the HTTP responses at the earliest
+moment.
 
 The following example shows a request for a JPEG file with the urgency parameter
 set to `non-blocking` and the progressive parameter set to `1`.
