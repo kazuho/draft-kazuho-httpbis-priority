@@ -250,7 +250,7 @@ HTTP response carrying an icon, because the meaning of "non-blocking" is
 shared among the endpoints.
 
 This specification restricts itself to defining just three levels of urgency, in
-order to provide sufficient guranularity for prioritizing responses for ordinary
+order to provide sufficient granularity for prioritizing responses for ordinary
 web browsing, at minimal complexity.
 
 However, that does not mean that the prioritization scheme would forever be
