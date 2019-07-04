@@ -110,7 +110,7 @@ Unknown parameters MUST be ignored.
 ## urgency
 
 The `urgency` parameter takes one of the following sh-tokens as the value, that
-indicates how an HTTP response affects the usability of other responses:
+indicates how an HTTP response affects the usage of other responses:
 
 * `blocking` indicates that the response prevents other responses from being
   used.
