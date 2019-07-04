@@ -5,8 +5,8 @@
 HTTP                                                              K. Oku
 Internet-Draft                                                    Fastly
 Intended status: Standards Track                               L. Pardue
-Expires: January 2, 2020                                      Cloudflare
-                                                           July 01, 2019
+Expires: January 5, 2020                                      Cloudflare
+                                                           July 04, 2019
 
 
                      The Priority HTTP Header Field
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 2, 2020.
+   This Internet-Draft will expire on January 5, 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Oku & Pardue             Expires January 2, 2020                [Page 1]
+Oku & Pardue             Expires January 5, 2020                [Page 1]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -72,8 +72,8 @@ Table of Contents
      5.2.  Why are there Only Three Levels of Urgency? . . . . . . .   6
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
    7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   7
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   7
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   8
      8.2.  Informative References  . . . . . . . . . . . . . . . . .   8
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   8
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Oku & Pardue             Expires January 2, 2020                [Page 2]
+Oku & Pardue             Expires January 5, 2020                [Page 2]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -165,7 +165,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue             Expires January 2, 2020                [Page 3]
+Oku & Pardue             Expires January 5, 2020                [Page 3]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -221,7 +221,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue             Expires January 2, 2020                [Page 4]
+Oku & Pardue             Expires January 5, 2020                [Page 4]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -272,25 +272,29 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    When connecting to an HTTP/2 ([RFC7540]) server, a client that uses
    this header-based prioritization scheme SHOULD send a
    "SETTINGS_HEADER_BASED_PRIORITY" settings parameter (0xTBD) with a
-   value of zero.  An intermediary SHOULD set the settings parameter for
-   a connection it establishes when and only when all the requests to be
+   value of one.
 
 
 
-Oku & Pardue             Expires January 2, 2020                [Page 5]
+
+Oku & Pardue             Expires January 5, 2020                [Page 5]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
+   An intermediary SHOULD set this settings parameter to one for a
+   connection it establishes when and only when all the requests to be
    sent over that connection originates from a client that utilizes this
-   header-based prioritization scheme.
+   header-based prioritization scheme.  Otherwise this settings
+   parameter SHOULD be set to zero.
 
-   The existence of this settings parameter instructs the server that
-   recognizes the settings parameter to use the header-based
-   prioritization scheme instead of the frame-based prioritization
-   scheme defined by HTTP/2.  A server that does not recognize this
-   settings parameter would respect the frame-based prioritization
-   scheme.
+   The value of this settings parameter set to a non-zero value
+   instructs the server that recognizes the settings parameter to use
+   the header-based prioritization scheme instead of the frame-based
+   prioritization scheme defined in HTTP/2.  The frame-based
+   prioritization scheme is respected when the value of this settings
+   parameter is set to zero, or when the server does not recognize the
+   settings parameter.
 
 5.  Considerations
 
@@ -326,17 +330,16 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    responses.  For that to work, each urgency level needs to have a
    well-defined meaning.  As an example, a server can assign the highest
    precedence among the non-blocking responses to an HTTP response
-   carrying an icon, because the meaning of "non-blocking" is shared
-   among the endpoints.
 
 
 
-
-
-Oku & Pardue             Expires January 2, 2020                [Page 6]
+Oku & Pardue             Expires January 5, 2020                [Page 6]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
+
+   carrying an icon, because the meaning of "non-blocking" is shared
+   among the endpoints.
 
    This specification restricts itself to defining just three levels of
    urgency, in order to provide sufficient guranularity for prioritizing
@@ -359,7 +362,39 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 7.  IANA Considerations
 
-   TBD
+   This specification registers the following entry in the Permanent
+   Message Header Field Names registry established by [RFC3864]:
+
+   o  Header field name: Priority
+
+   o  Applicable protocol: http
+
+   o  Status: standard
+
+   o  Author/change controller: IETF
+
+   o  Specification document(s): [this document]
+
+   o  Related information:
+
+   This specification registers the following entry in the HTTP/2
+   Settings registry established by [RFC7540]:
+
+   o  Name: SETTINGS_HEADER_BASED_PRIORITY
+
+   o  Code: 0xTBD
+
+   o  Initial value: 0
+
+
+
+
+Oku & Pardue             Expires January 5, 2020                [Page 7]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
+
+
+   o  Specification: [this document]
 
 8.  References
 
@@ -385,15 +420,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
               DOI 10.17487/RFC7540, May 2015, <https://www.rfc-
               editor.org/info/rfc7540>.
 
-
-
-
-
-Oku & Pardue             Expires January 2, 2020                [Page 7]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
-
 8.2.  Informative References
 
    [I-D.ietf-quic-http]
@@ -401,12 +427,27 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
               (HTTP/3)", draft-ietf-quic-http-20 (work in progress),
               April 2019.
 
+   [RFC3864]  Klyne, G., Nottingham, M., and J. Mogul, "Registration
+              Procedures for Message Header Fields", BCP 90, RFC 3864,
+              DOI 10.17487/RFC3864, September 2004, <https://www.rfc-
+              editor.org/info/rfc3864>.
+
 Authors' Addresses
 
    Kazuho Oku
    Fastly
 
    Email: kazuhooku@gmail.com
+
+
+
+
+
+
+
+Oku & Pardue             Expires January 5, 2020                [Page 8]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
    Lucas Pardue
@@ -445,4 +486,19 @@ Authors' Addresses
 
 
 
-Oku & Pardue             Expires January 2, 2020                [Page 8]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Oku & Pardue             Expires January 5, 2020                [Page 9]
