@@ -110,14 +110,15 @@ Unknown parameters MUST be ignored.
 ## urgency
 
 The `urgency` parameter takes one of the following sh-tokens as the value, that
-indicates how an HTTP response affects the processing of other responses:
+indicates how an HTTP response affects the usage of other responses:
 
-* `blocking` indicates that the response blocks the processing of others.
+* `blocking` indicates that the response prevents other responses from being
+  used.
 * `document` indicates that the response contains the document that is being
   processed.
-* `non-blocking` indicates that the response does not block the processing of
-  the document even though the response is being used or referred to by the
-  document.
+* `non-blocking` indicates that the response does not prevent the client from
+  using the document even though the response is being used or referred to by
+  the document.
 
 The default value is `document`.
 
