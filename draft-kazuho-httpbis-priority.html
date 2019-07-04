@@ -417,7 +417,7 @@ ul.toc li {
   <li><samp>non-blocking</samp> indicates that the response does not prevent the client from using the document even though the response is being used or referred to by the document.</li>
 </ul>
 <p id="rfc.section.2.1.p.3">The default value is <samp>document</samp>.</p>
-<p id="rfc.section.2.1.p.4">A server that supports the Priority header field SHOULD transmit HTTP responses in the order of their urgency: <samp>blocking</samp> first, followed by <samp>document</samp>, followed by <samp>non-blocking</samp>.</p>
+<p id="rfc.section.2.1.p.4">A server SHOULD transmit HTTP responses in the order of their urgency: <samp>blocking</samp> first, followed by <samp>document</samp>, followed by <samp>non-blocking</samp>.</p>
 <p id="rfc.section.2.1.p.5">The following example shows a request for a CSS file with the urgency set to <samp>blocking</samp>:</p>
 <pre>
 :method = GET
@@ -429,8 +429,9 @@ priority = urgency=blocking
 <h1 id="rfc.section.2.2"><a href="#rfc.section.2.2">2.2.</a> <a href="#progressive" id="progressive">progressive</a></h1>
 <p id="rfc.section.2.2.p.1">The <samp>progressive</samp> parameter takes an sh-boolean as the value, that indicates if a response can be processed progressively, i.e. provide some meaningful output as chunks of the response arrive.</p>
 <p id="rfc.section.2.2.p.2">The default value of the <samp>progressive</samp> parameter is <samp>0</samp>.</p>
-<p id="rfc.section.2.2.p.3">A server that supports the Priority header field SHOULD distribute the bandwidth of a connection between progressive responses that share the same urgency.</p>
-<p id="rfc.section.2.2.p.4">The following example shows a request for a JPEG file with the urgency parameter set to <samp>non-blocking</samp> and the progressive parameter set to <samp>1</samp>.</p>
+<p id="rfc.section.2.2.p.3">A server SHOULD distribute the bandwidth of a connection between progressive responses that share the same urgency.</p>
+<p id="rfc.section.2.2.p.4">A server SHOULD transmit non-progressive responses one by one, preferably in the order the requests were generated.  Doing so maximizes the chance of the client making progress in using the composition of the HTTP responses at the earliest moment.</p>
+<p id="rfc.section.2.2.p.5">The following example shows a request for a JPEG file with the urgency parameter set to <samp>non-blocking</samp> and the progressive parameter set to <samp>1</samp>.</p>
 <pre>
 :method = GET
 :scheme = https

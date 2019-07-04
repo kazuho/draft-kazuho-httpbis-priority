@@ -66,16 +66,16 @@ Table of Contents
      2.1.  urgency . . . . . . . . . . . . . . . . . . . . . . . . .   4
      2.2.  progressive . . . . . . . . . . . . . . . . . . . . . . .   4
    3.  Merging Client- and Server-Driven Parameters  . . . . . . . .   5
-   4.  Coexistence with HTTP/2 Priorities  . . . . . . . . . . . . .   5
+   4.  Coexistence with HTTP/2 Priorities  . . . . . . . . . . . . .   6
    5.  Considerations  . . . . . . . . . . . . . . . . . . . . . . .   6
      5.1.  Why use an End-to-End Header Field? . . . . . . . . . . .   6
-     5.2.  Why are there Only Three Levels of Urgency? . . . . . . .   6
+     5.2.  Why are there Only Three Levels of Urgency? . . . . . . .   7
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
    7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
    8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
      8.1.  Normative References  . . . . . . . . . . . . . . . . . .   8
      8.2.  Informative References  . . . . . . . . . . . . . . . . .   8
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   8
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   9
 
 1.  Introduction
 
@@ -193,9 +193,9 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
    The default value is "document".
 
-   A server that supports the Priority header field SHOULD transmit HTTP
-   responses in the order of their urgency: "blocking" first, followed
-   by "document", followed by "non-blocking".
+   A server SHOULD transmit HTTP responses in the order of their
+   urgency: "blocking" first, followed by "document", followed by "non-
+   blocking".
 
    The following example shows a request for a CSS file with the urgency
    set to "blocking":
@@ -214,9 +214,9 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
    The default value of the "progressive" parameter is "0".
 
-   A server that supports the Priority header field SHOULD distribute
-   the bandwidth of a connection between progressive responses that
-   share the same urgency.
+   A server SHOULD distribute the bandwidth of a connection between
+   progressive responses that share the same urgency.
+
 
 
 
@@ -225,6 +225,11 @@ Oku & Pardue             Expires January 5, 2020                [Page 4]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
+
+   A server SHOULD transmit non-progressive responses one by one,
+   preferably in the order the requests were generated.  Doing so
+   maximizes the chance of the client making progress in using the
+   composition of the HTTP responses at the earliest moment.
 
    The following example shows a request for a JPEG file with the
    urgency parameter set to "non-blocking" and the progressive parameter
@@ -267,12 +272,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    provided by the client.  The urgency is deemed as "non-blocking",
    because the server did not specify the parameter.
 
-4.  Coexistence with HTTP/2 Priorities
 
-   When connecting to an HTTP/2 ([RFC7540]) server, a client that uses
-   this header-based prioritization scheme SHOULD send a
-   "SETTINGS_HEADER_BASED_PRIORITY" settings parameter (0xTBD) with a
-   value of one.
 
 
 
@@ -281,6 +281,13 @@ Oku & Pardue             Expires January 5, 2020                [Page 5]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
+
+4.  Coexistence with HTTP/2 Priorities
+
+   When connecting to an HTTP/2 ([RFC7540]) server, a client that uses
+   this header-based prioritization scheme SHOULD send a
+   "SETTINGS_HEADER_BASED_PRIORITY" settings parameter (0xTBD) with a
+   value of one.
 
    An intermediary SHOULD set this settings parameter to one for a
    connection it establishes when and only when all the requests to be
@@ -323,13 +330,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    textual value makes the prioritization scheme extensible; see the
    discussion below.
 
-5.2.  Why are there Only Three Levels of Urgency?
-
-   One of the aims of this specification is to define a mechanism for
-   merging client- and server-provided hints for prioritizing the
-   responses.  For that to work, each urgency level needs to have a
-   well-defined meaning.  As an example, a server can assign the highest
-   precedence among the non-blocking responses to an HTTP response
 
 
 
@@ -338,6 +338,13 @@ Oku & Pardue             Expires January 5, 2020                [Page 6]
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
+5.2.  Why are there Only Three Levels of Urgency?
+
+   One of the aims of this specification is to define a mechanism for
+   merging client- and server-provided hints for prioritizing the
+   responses.  For that to work, each urgency level needs to have a
+   well-defined meaning.  As an example, a server can assign the highest
+   precedence among the non-blocking responses to an HTTP response
    carrying an icon, because the meaning of "non-blocking" is shared
    among the endpoints.
 
@@ -380,19 +387,18 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    This specification registers the following entry in the HTTP/2
    Settings registry established by [RFC7540]:
 
-   o  Name: SETTINGS_HEADER_BASED_PRIORITY
-
-   o  Code: 0xTBD
-
-   o  Initial value: 0
-
-
 
 
 Oku & Pardue             Expires January 5, 2020                [Page 7]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
+
+   o  Name: SETTINGS_HEADER_BASED_PRIORITY
+
+   o  Code: 0xTBD
+
+   o  Initial value: 0
 
    o  Specification: [this document]
 
@@ -432,12 +438,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
               DOI 10.17487/RFC3864, September 2004, <https://www.rfc-
               editor.org/info/rfc3864>.
 
-Authors' Addresses
-
-   Kazuho Oku
-   Fastly
-
-   Email: kazuhooku@gmail.com
 
 
 
@@ -450,18 +450,18 @@ Oku & Pardue             Expires January 5, 2020                [Page 8]
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
+Authors' Addresses
+
+   Kazuho Oku
+   Fastly
+
+   Email: kazuhooku@gmail.com
+
+
    Lucas Pardue
    Cloudflare
 
    Email: lucaspardue.24.7@gmail.com
-
-
-
-
-
-
-
-
 
 
 
