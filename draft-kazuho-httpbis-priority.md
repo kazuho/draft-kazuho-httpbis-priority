@@ -146,10 +146,10 @@ The default value of the `progressive` parameter is `0`.
 A server SHOULD distribute the bandwidth of a connection between progressive
 responses that share the same urgency.
 
-A server SHOULD transmit non-progressive responses one by one, in the order the
-requests were received, or if inferable, in the order the requests were
-generated.  Doing so maximizes the chance of the client making progress in
-processing the composition of the HTTP responses at the earliest moments.
+A server SHOULD transmit non-progressive responses one by one, preferably in the
+order the requests were generated.  Doing so maximizes the chance of the client
+making progress in processing the composition of the HTTP responses at the
+earliest moments.
 
 The following example shows a request for a JPEG file with the urgency parameter
 set to `non-blocking` and the progressive parameter set to `1`.
