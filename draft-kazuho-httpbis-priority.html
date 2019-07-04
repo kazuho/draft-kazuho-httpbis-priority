@@ -408,13 +408,13 @@ ul.toc li {
 <p id="rfc.section.2.p.3">Values of the parameters MUST always be present for the parameters defined in this document.  When any of the defined parameters are omitted, or if the Priority header field is not used, their default values SHOULD be applied.</p>
 <p id="rfc.section.2.p.4">Unknown parameters MUST be ignored.</p>
 <h1 id="rfc.section.2.1"><a href="#rfc.section.2.1">2.1.</a> <a href="#urgency" id="urgency">urgency</a></h1>
-<p id="rfc.section.2.1.p.1">The <samp>urgency</samp> parameter takes one of the following sh-tokens as the value, that indicates how an HTTP response affects the processing of other responses:</p>
+<p id="rfc.section.2.1.p.1">The <samp>urgency</samp> parameter takes one of the following sh-tokens as the value, that indicates how an HTTP response affects the usage of other responses:</p>
 <p/>
 
 <ul>
-  <li><samp>blocking</samp> indicates that the response blocks the processing of others.</li>
+  <li><samp>blocking</samp> indicates that the response prevents other responses from being used.</li>
   <li><samp>document</samp> indicates that the response contains the document that is being processed.</li>
-  <li><samp>non-blocking</samp> indicates that the response does not block the processing of the document even though the response is being used or referred to by the document.</li>
+  <li><samp>non-blocking</samp> indicates that the response does not prevent the client from using the document even though the response is being used or referred to by the document.</li>
 </ul>
 <p id="rfc.section.2.1.p.3">The default value is <samp>document</samp>.</p>
 <p id="rfc.section.2.1.p.4">A server that supports the Priority header field SHOULD transmit HTTP responses in the order of their urgency: <samp>blocking</samp> first, followed by <samp>document</samp>, followed by <samp>non-blocking</samp>.</p>

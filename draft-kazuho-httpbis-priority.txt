@@ -178,18 +178,18 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 2.1.  urgency
 
    The "urgency" parameter takes one of the following sh-tokens as the
-   value, that indicates how an HTTP response affects the processing of
-   other responses:
+   value, that indicates how an HTTP response affects the usage of other
+   responses:
 
-   o  "blocking" indicates that the response blocks the processing of
-      others.
+   o  "blocking" indicates that the response prevents other responses
+      from being used.
 
    o  "document" indicates that the response contains the document that
       is being processed.
 
-   o  "non-blocking" indicates that the response does not block the
-      processing of the document even though the response is being used
-      or referred to by the document.
+   o  "non-blocking" indicates that the response does not prevent the
+      client from using the document even though the response is being
+      used or referred to by the document.
 
    The default value is "document".
 
