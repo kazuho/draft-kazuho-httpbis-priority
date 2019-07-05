@@ -289,6 +289,7 @@ ul.toc li {
 <link href="#rfc.section.2.2" rel="Chapter" title="2.2 progressive"/>
 <link href="#rfc.section.3" rel="Chapter" title="3 Merging Client- and Server-Driven Parameters"/>
 <link href="#rfc.section.4" rel="Chapter" title="4 Coexistence with HTTP/2 Priorities"/>
+<link href="#rfc.section.4.1" rel="Chapter" title="4.1 The SETTINGS_HEADER_BASED_PRIORITY SETTINGS Parameter"/>
 <link href="#rfc.section.5" rel="Chapter" title="5 Considerations"/>
 <link href="#rfc.section.5.1" rel="Chapter" title="5.1 Why use an End-to-End Header Field?"/>
 <link href="#rfc.section.5.2" rel="Chapter" title="5.2 Why are there Only Three Levels of Urgency?"/>
@@ -297,6 +298,7 @@ ul.toc li {
 <link href="#rfc.references" rel="Chapter" title="8 References"/>
 <link href="#rfc.references.1" rel="Chapter" title="8.1 Normative References"/>
 <link href="#rfc.references.2" rel="Chapter" title="8.2 Informative References"/>
+<link href="#rfc.appendix.A" rel="Chapter" title="A Acknowledgements"/>
 <link href="#rfc.authors" rel="Chapter"/>
 
 
@@ -373,7 +375,8 @@ ul.toc li {
 <li>2.2.   <a href="#rfc.section.2.2">progressive</a></li>
 </ul><li>3.   <a href="#rfc.section.3">Merging Client- and Server-Driven Parameters</a></li>
 <li>4.   <a href="#rfc.section.4">Coexistence with HTTP/2 Priorities</a></li>
-<li>5.   <a href="#rfc.section.5">Considerations</a></li>
+<ul><li>4.1.   <a href="#rfc.section.4.1">The SETTINGS_HEADER_BASED_PRIORITY SETTINGS Parameter</a></li>
+</ul><li>5.   <a href="#rfc.section.5">Considerations</a></li>
 <ul><li>5.1.   <a href="#rfc.section.5.1">Why use an End-to-End Header Field?</a></li>
 <li>5.2.   <a href="#rfc.section.5.2">Why are there Only Three Levels of Urgency?</a></li>
 </ul><li>6.   <a href="#rfc.section.6">Security Considerations</a></li>
@@ -381,7 +384,8 @@ ul.toc li {
 <li>8.   <a href="#rfc.references">References</a></li>
 <ul><li>8.1.   <a href="#rfc.references.1">Normative References</a></li>
 <li>8.2.   <a href="#rfc.references.2">Informative References</a></li>
-</ul><li><a href="#rfc.authors">Authors' Addresses</a></li>
+</ul><li>Appendix A.   <a href="#rfc.appendix.A">Acknowledgements</a></li>
+<li><a href="#rfc.authors">Authors' Addresses</a></li>
 
 
   </ul>
@@ -398,10 +402,11 @@ ul.toc li {
   <li>It does not define a method that can be used by a server to express the priority of a response.  Without such a method, intermediaries cannot coordinate client-driven and server-driven priorities.</li>
   <li>The design cannot be ported cleanly to HTTP/3 (<a href="#I-D.ietf-quic-http">[I-D.ietf-quic-http]</a>).  One of the primary goals of HTTP/3 is to minimize head-of-line blocking.  Transmitting the evolving representation of a &#8220;prioritization tree&#8221; from the client to the server requires head-of-line blocking.</li>
 </ul>
-<p id="rfc.section.1.p.5">Based on these observations, this document defines the Priority HTTP header field that can be used by both the client and the server to specify the precedence of HTTP responses in a standardized, extensible, protocol-version- independent, end-to-end format.</p>
+<p id="rfc.section.1.p.5">Based on these observations, this document defines the Priority HTTP header field that can be used by both the client and the server to specify the precedence of HTTP responses in a standardized, extensible, protocol-version- independent, end-to-end format. This header-based prioritization scheme can act as a substitute for the HTTP/2 frame-based prioritization scheme (see <a href="#coexistence">Section 4</a>).</p>
 <h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#notational-conventions" id="notational-conventions">Notational Conventions</a></h1>
 <p id="rfc.section.1.1.p.1">The key words &#8220;MUST&#8221;, &#8220;MUST NOT&#8221;, &#8220;REQUIRED&#8221;, &#8220;SHALL&#8221;, &#8220;SHALL NOT&#8221;, &#8220;SHOULD&#8221;, &#8220;SHOULD NOT&#8221;, &#8220;RECOMMENDED&#8221;, &#8220;MAY&#8221;, and &#8220;OPTIONAL&#8221; in this document are to be interpreted as described in <a href="#RFC2119">[RFC2119]</a>.</p>
-<p id="rfc.section.1.1.p.2">Example HTTP requests and responses use the HTTP/2-style formatting from <a href="#RFC7540">[RFC7540]</a>.</p>
+<p id="rfc.section.1.1.p.2">The terms sh-token and sh-boolean are imported from <a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>.</p>
+<p id="rfc.section.1.1.p.3">Example HTTP requests and responses use the HTTP/2-style formatting from <a href="#RFC7540">[RFC7540]</a>.</p>
 <h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#the-priority-http-header-field" id="the-priority-http-header-field">The Priority HTTP Header Field</a></h1>
 <p id="rfc.section.2.p.1">The Priority HTTP header field can appear in requests and responses. A client uses it to specify the priority of the response. A server uses this to inform the client that the priority was overwritten. An intermediary can use the Priority information from client requests and server responses to correct or amend the precedence to suit it (see <a href="#merging">Section 3</a>).</p>
 <p id="rfc.section.2.p.2">The value of the Priority header field is a Structured Headers <a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a> Dictionary.  Each dictionary member represents a parameter of the Priority header field.  The following parameters are defined.</p>
@@ -457,10 +462,14 @@ content-type = image/jpeg
 priority = progressive=?0
 </pre>
 <p id="rfc.section.3.p.5">the intermediary&#8217;s view of the progressiveness of the response becomes negative, because the server-provided value overrides that provided by the client.  The urgency is deemed as <samp>non-blocking</samp>, because the server did not specify the parameter.</p>
-<h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#coexistence-with-http2-priorities" id="coexistence-with-http2-priorities">Coexistence with HTTP/2 Priorities</a></h1>
-<p id="rfc.section.4.p.1">When connecting to an HTTP/2 (<a href="#RFC7540">[RFC7540]</a>) server, a client that uses this header-based prioritization scheme SHOULD send a <samp>SETTINGS_HEADER_BASED_PRIORITY</samp> settings parameter (0xTBD) with a value of one.</p>
-<p id="rfc.section.4.p.2">An intermediary SHOULD set this settings parameter to one for a connection it establishes when and only when all the requests to be sent over that connection originates from a client that utilizes this header-based prioritization scheme.  Otherwise this settings parameter SHOULD be set to zero.</p>
-<p id="rfc.section.4.p.3">The value of this settings parameter set to a non-zero value instructs the server that recognizes the settings parameter to use the header-based prioritization scheme instead of the frame-based prioritization scheme defined in HTTP/2.  The frame-based prioritization scheme is respected when the value of this settings parameter is set to zero, or when the server does not recognize the settings parameter.</p>
+<h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#coexistence" id="coexistence">Coexistence with HTTP/2 Priorities</a></h1>
+<p id="rfc.section.4.p.1">Standard HTTP/2 (<a href="#RFC7540">[RFC7540]</a>) endpoints use frame-based prioritization, whereby a client sends priority information in dedicated fields present in HEADERS and PRIORITY frames. A client might instead choose to use header-based prioritization as specified in this document.</p>
+<h1 id="rfc.section.4.1"><a href="#rfc.section.4.1">4.1.</a> <a href="#the-settingsheaderbasedpriority-settings-parameter" id="the-settingsheaderbasedpriority-settings-parameter">The SETTINGS_HEADER_BASED_PRIORITY SETTINGS Parameter</a></h1>
+<p id="rfc.section.4.1.p.1">To improve communication of the client&#8217;s intended prioritization scheme, this document specifies a new HTTP/2 SETTINGS parameter with the name <samp>SETTINGS_HEADER_BASED_PRIORITY</samp>. The value of the parameter MUST be 0 or 1; the initial value is 0. Frame-based prioritization is respected when the value is 0, or when the server does not recognize the setting.</p>
+<p id="rfc.section.4.1.p.2">An HTTP/2 client that uses header-based priority SHOULD send a <samp>SETTINGS_HEADER_BASED_PRIORITY</samp> parameter with a value of 1 when connecting to a server.</p>
+<p id="rfc.section.4.1.p.3">An intermediary SHOULD send a <samp>SETTINGS_HEADER_BASED_PRIORITY</samp> parameter with a value of 1 for a connection it establishes when, and only when, all the requests to be sent over that connection originate from a client that utilizes this header-based prioritization scheme. Otherwise this settings parameter SHOULD be set to 0.</p>
+<p id="rfc.section.4.1.p.4">A client or intermediary MUST NOT send a <samp>SETTINGS_HEADER_BASED_PRIORITY</samp> parameter with the value of 0 after previously sending a value of 1.</p>
+<p id="rfc.section.4.1.p.5">A server MUST NOT send a <samp>SETTINGS_HEADER_BASED_PRIORITY</samp> parameter. Upon receipt, a client that supports header-based prioritization MUST close the connection with a protocol error. Non-supporting clients will ignore this extension element (see <a href="#RFC7540">[RFC7540]</a>, Section 5.5).</p>
 <h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#considerations" id="considerations">Considerations</a></h1>
 <h1 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1.</a> <a href="#why-use-an-end-to-end-header-field" id="why-use-an-end-to-end-header-field">Why use an End-to-End Header Field?</a></h1>
 <p id="rfc.section.5.1.p.1">Contrary to the prioritization scheme of HTTP/2 that uses a hop-by-hop a frame, the Priority header field is defined as end-to-end.</p>
@@ -470,8 +479,8 @@ priority = progressive=?0
 <h1 id="rfc.section.5.2"><a href="#rfc.section.5.2">5.2.</a> <a href="#why-are-there-only-three-levels-of-urgency" id="why-are-there-only-three-levels-of-urgency">Why are there Only Three Levels of Urgency?</a></h1>
 <p id="rfc.section.5.2.p.1">One of the aims of this specification is to define a mechanism for merging client- and server-provided hints for prioritizing the responses.  For that to work, each urgency level needs to have a well-defined meaning.  As an example, a server can assign the highest precedence among the non-blocking responses to an HTTP response carrying an icon, because the meaning of &#8220;non-blocking&#8221; is shared among the endpoints.</p>
 <p id="rfc.section.5.2.p.2">This specification restricts itself to defining just three levels of urgency, in order to provide sufficient granularity for prioritizing responses for ordinary web browsing, at minimal complexity.</p>
-<p id="rfc.section.5.2.p.3">However, that does not mean that the prioritization scheme would forever be stuck to the three levels.  The design provides extensibility.  If deemed necessary, it would be possible to divide any of the three urgency levels into sub-levels.</p>
-<p id="rfc.section.5.2.p.4">As an example, a server could assign an <samp>importance</samp> attribute to the priority of each image that it provides, so that an intermediary could prioritize certain images above others.  Or, a graphical user-agent could send a <samp>visible</samp> attribute to indicate if the resource being requested is within the viewport.</p>
+<p id="rfc.section.5.2.p.3">However, that does not mean that the prioritization scheme would forever be stuck to the three levels.  The design provides extensibility.  If deemed necessary, it would be possible to divide any of the three urgency levels into sub-levels by defining a new parameter.  As an example, a server could assign an <samp>importance</samp> parameter to the priority of each image that it provides, so that an intermediary could prioritize certain images above others.  Or, a graphical user-agent could send a <samp>visible</samp> parameter to indicate if the resource being requested is within the viewport.</p>
+<p id="rfc.section.5.2.p.4">A server can combine the hints provided in the Priority header field with other information in order to improve the prioritization of responses.  For example, a server that receives requests for a font <a href="#RFC8081">[RFC8081]</a> and images with the same urgency might give higher precedence to the font, so that a visual client can render textual information at an early moment.</p>
 <h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a></h1>
 <p id="rfc.section.6.p.1">TBD</p>
 <h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
@@ -550,8 +559,16 @@ priority = progressive=?0
       </td>
       <td class="top"><a>Klyne, G.</a>, <a>Nottingham, M.</a> and <a>J. Mogul</a>, "<a href="http://tools.ietf.org/html/rfc3864">Registration Procedures for Message Header Fields</a>", BCP 90, RFC 3864, DOI 10.17487/RFC3864, September 2004.</td>
     </tr>
+    <tr>
+      <td class="reference">
+        <b id="RFC8081">[RFC8081]</b>
+      </td>
+      <td class="top"><a>Lilley, C.</a>, "<a href="http://tools.ietf.org/html/rfc8081">The "font" Top-Level Media Type</a>", RFC 8081, DOI 10.17487/RFC8081, February 2017.</td>
+    </tr>
   </tbody>
 </table>
+<h1 id="rfc.appendix.A"><a href="#rfc.appendix.A">Appendix A.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a></h1>
+<p id="rfc.section.A.p.1">Many thanks to Robin Marx, Patrick Meenan and Ian Swett for their feedback.</p>
 <h1 id="rfc.authors">
   <a href="#rfc.authors">Authors' Addresses</a>
 </h1>
