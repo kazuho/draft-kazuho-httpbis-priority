@@ -85,6 +85,9 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in {{!RFC2119}}.
 
+The terms sh-token and sh-boolean are imported from
+{{!I-D.ietf-httpbis-header-structure}}.
+
 Example HTTP requests and responses use the HTTP/2-style formatting from
 {{?RFC7540}}.
 
