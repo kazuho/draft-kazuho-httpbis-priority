@@ -203,8 +203,8 @@ parameter.
 
 Standard HTTP/2 ({{!RFC7540}}) endpoints use frame-based prioritization, whereby
 a client sends priority information in dedicated fields present in HEADERS and
-PRIORITY frames. A client may instead choose to use header-based prioritization
-as specified in this document.
+PRIORITY frames. A client might instead choose to use header-based
+prioritization as specified in this document.
 
 ## The SETTINGS_HEADER_BASED_PRIORITY SETTINGS Parameter
 
