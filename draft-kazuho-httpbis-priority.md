@@ -306,3 +306,7 @@ Specification:
 : This document
 
 --- back
+
+# Acknowledgements
+
+Many thanks to Robin Marx, Patrick Meenan and Ian Swett for their feedback.
