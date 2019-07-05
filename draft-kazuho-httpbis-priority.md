@@ -263,11 +263,11 @@ of each image that it provides, so that an intermediary could prioritize
 certain images above others.  Or, a graphical user-agent could send a `visible`
 attribute to indicate if the resource being requested is within the viewport.
 
-Also, to improve the prioritization logic, a server can use signals other than
-that carried by the Priority header field. For example, a server might
-prioritize a response of a font {{?RFC8081}} above images that share the same
-urgency, so that a visual client can render textual information at an early
-moment.
+A server can combine the hints provided in the Priority header field with other
+information in order to improve the prioritization of responses.  For example, a
+server that receives requests for a font {{?RFC8081}} and images with the same
+urgency might give higher precedence to the font, so that a visual client can
+render textual information at an early moment.
 
 # Security Considerations
 
