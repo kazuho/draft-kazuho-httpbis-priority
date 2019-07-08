@@ -1,6 +1,6 @@
 ---
 title: The Priority HTTP Header Field
-docname: draft-kazuho-httpbis-priority-latest
+docname: draft-kazuho-httpbis-priority-00
 category: std
 
 ipr: trust200902
