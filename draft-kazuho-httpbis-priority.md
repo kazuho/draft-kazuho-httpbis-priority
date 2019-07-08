@@ -56,14 +56,14 @@ series of PRIORITY frames to communicate to the server a “priority tree”; th
 represents the client's preferred ordering and weighted distribution of the
 bandwidth among the HTTP responses.  However, the design has shortcomings:
 
-* Its complexity has led to varying levels of support by the HTTP/2 client and
+* Its complexity has led to varying levels of support by HTTP/2 clients and
   servers.
 * It is hard to coordinate with server-driven prioritization.  For example, a
-  server, with the knowledge of the document structure, might want to prioritize
-  the delivery of images that are critical to user experience above others
+  server, with knowledge of the document structure, might want to prioritize
+  the delivery of images that are critical to user experience above other
   images, but below the CSS files.  But with the HTTP/2 prioritization scheme,
   it is impossible for the server to determine how such images should be
-  prioritized against other responses that use client-driven prioritization
+  prioritized against other responses that use the client-driven prioritization
   tree, because every client builds the HTTP/2 prioritization tree in a
   different way.
 * It does not define a method that can be used by a server to express the
@@ -96,25 +96,23 @@ Example HTTP requests and responses use the HTTP/2-style formatting from
 # The Priority HTTP Header Field
 
 The Priority HTTP header field can appear in requests and responses. A client
-uses it to specify the priority of the response. A server uses this to inform
+uses it to specify the priority of the response. A server uses it to inform
 the client that the priority was overwritten. An intermediary can use the
 Priority information from client requests and server responses to correct or
 amend the precedence to suit it (see {{merging}}).
 
 The value of the Priority header field is a Structured Headers
 {{!I-D.ietf-httpbis-header-structure}} Dictionary.  Each dictionary member
-represents a parameter of the Priority header field.  The following parameters
-are defined.
-
-Values of the parameters MUST always be present for the parameters defined in
-this document.  When any of the defined parameters are omitted, or if the
-Priority header field is not used, their default values SHOULD be applied.
+represents a parameter of the Priority header field.  This document defines the
+`urgency` and `progressive` parameters. Values of these parameters MUST always
+be present.  When any of the defined parameters are omitted, or if the Priority
+header field is not used, their default values SHOULD be applied.
 
 Unknown parameters MUST be ignored.
 
 ## urgency
 
-The `urgency` parameter takes one of the following sh-tokens as the value, that
+The `urgency` parameter takes one of the following sh-tokens as the value that
 indicates how an HTTP response affects the usage of other responses:
 
 * `blocking` indicates that the response prevents other responses from being
@@ -143,7 +141,7 @@ priority = urgency=blocking
 
 ## progressive
 
-The `progressive` parameter takes an sh-boolean as the value, that indicates if
+The `progressive` parameter takes an sh-boolean as the value that indicates if
 a response can be processed progressively, i.e. provide some meaningful output
 as chunks of the response arrive.
 
@@ -239,7 +237,7 @@ extension element (see {{!RFC7540}}, Section 5.5).
 
 ## Why use an End-to-End Header Field?
 
-Contrary to the prioritization scheme of HTTP/2 that uses a hop-by-hop a frame,
+Contrary to the prioritization scheme of HTTP/2 that uses a hop-by-hop frame,
 the Priority header field is defined as end-to-end.
 
 The rationale is that the Priority header field transmits how each response
