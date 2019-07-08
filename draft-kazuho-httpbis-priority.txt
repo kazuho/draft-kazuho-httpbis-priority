@@ -77,6 +77,8 @@ Table of Contents
      8.1.  Normative References  . . . . . . . . . . . . . . . . . .   8
      8.2.  Informative References  . . . . . . . . . . . . . . . . .   9
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   9
+   Appendix B.  Change Log . . . . . . . . . . . . . . . . . . . . .   9
+     B.1.  Since draft-kazuho-httpbis-priority-00  . . . . . . . . .   9
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   9
 
 1.  Introduction
@@ -104,8 +106,6 @@ Table of Contents
 
    o  Its complexity has led to varying levels of support by HTTP/2
       clients and servers.
-
-
 
 
 
@@ -481,12 +481,29 @@ Appendix A.  Acknowledgements
    Many thanks to Robin Marx, Patrick Meenan and Ian Swett for their
    feedback.
 
+Appendix B.  Change Log
+
+B.1.  Since draft-kazuho-httpbis-priority-00
+
+   o  None yet.
+
 Authors' Addresses
 
    Kazuho Oku
    Fastly
 
    Email: kazuhooku@gmail.com
+
+
+
+
+
+
+
+
+Oku & Pardue             Expires January 9, 2020                [Page 9]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
    Lucas Pardue
@@ -501,4 +518,43 @@ Authors' Addresses
 
 
 
-Oku & Pardue             Expires January 9, 2020                [Page 9]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Oku & Pardue             Expires January 9, 2020               [Page 10]
