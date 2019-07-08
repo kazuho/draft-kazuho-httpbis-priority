@@ -212,7 +212,7 @@ prioritization as specified in this document.
 To improve communication of the client's intended prioritization scheme, this
 document specifies a new HTTP/2 SETTINGS parameter with the name
 `SETTINGS_HEADER_BASED_PRIORITY`. The value of the parameter MUST be 0 or 1; the
-initial value is 0. Frame-based prioritization is respected when the value is 0,
+default value is 0. Frame-based prioritization is respected when the value is 0,
 or when the server does not recognize the setting.
 
 An HTTP/2 client that uses header-based priority SHOULD send a
