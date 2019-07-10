@@ -112,18 +112,10 @@ Unknown parameters MUST be ignored.
 
 ## urgency
 
-The `urgency` parameter takes one of the following sh-tokens as the value that
-indicates how an HTTP response affects the usage of other responses:
+The `urgency` parameter takes one of the following sh-tokens as the value:
+`blocking`, `document`, `non-blocking`.  The default value is `document`.
 
-* `blocking` indicates that the response prevents other responses from being
-  used.
-* `document` indicates that the response contains the document that is being
-  processed.
-* `non-blocking` indicates that the response does not prevent the client from
-  using the document even though the response is being used or referred to by
-  the document.
-
-The default value is `document`.
+The values indicate how an HTTP response affects the usage of other responses.
 
 A server SHOULD transmit HTTP responses in the order of their urgency:
 `blocking` first, followed by `document`, followed by `non-blocking`.
@@ -138,6 +130,39 @@ The following example shows a request for a CSS file with the urgency set to
 :path = /style.css
 priority = urgency=blocking
 ~~~
+
+The definition of the urgencies and their expected use-case are described below.
+
+### blocking
+
+The `blocking` urgency indicates that the response prevents other responses from
+being used.
+
+For example, a stylesheet being referred from the HEAD section of an HTML
+document blocks a web browser from rendering the HTML.  In such case, the
+stylesheet is given the `blocking` urgency.
+
+### document
+
+The `document` urgency indicates that the response contains the document that is
+being processed.  This urgency is also used for responses that deserve the same
+precedence as the contents of the document.
+
+For example, when a user using a web browser navigates to a new HTML document,
+the request for that HTML is given the `document` urgency.  When that HTML
+document uses a custom font, HTTP request for that custom font SHOULD also be
+given the `document` urgency, as the usability of the HTML document partially
+depends on the availability of the font, even though the font does not block
+the use of the document as a whole.
+
+### non-blocking
+
+The `non-blocking` urgency indicates that the response does not prevent the
+client from using the document even though the response is being used or
+referred to by the document.
+
+For example, inline images typically improves the usability of an HTML document.
+Therefore, such images will be given the `non-blocking` urgency.
 
 ## progressive
 
