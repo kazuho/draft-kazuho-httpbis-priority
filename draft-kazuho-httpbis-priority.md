@@ -150,7 +150,7 @@ precedence as the contents of the document.
 
 For example, when a user using a web browser navigates to a new HTML document,
 the request for that HTML is given the `document` urgency.  When that HTML
-document uses a custom font, HTTP request for that custom font SHOULD also be
+document uses a custom font, the HTTP request for that custom font SHOULD also be
 given the `document` urgency, because it is generally assumed that the usability
 of the HTML document partially depends on the availability of the font, even
 though the font does not block the use of the document as a whole.
