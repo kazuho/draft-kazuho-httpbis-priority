@@ -170,7 +170,7 @@ priority = urgency=non-blocking, progressive=?1
 
 It is not always the case that the client has the best understanding of how the
 HTTP responses deserve to be prioritized.  For example, use of an HTML document
-might depend heavily on one of the inline images.  Existence of such dependency
+might depend heavily on one of the inline images.  Existence of such dependencies
 is typically best known to the person that administers the document.
 
 By using the "Priority" response header, a server can override the
