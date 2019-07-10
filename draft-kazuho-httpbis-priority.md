@@ -158,8 +158,8 @@ document, which is to be rendered by that font.
 ### non-blocking
 
 The `non-blocking` urgency indicates that the response does not prevent the
-client from using the document even though the response is being used or
-referred to by the document.
+client from using the document even though the response is being incorporated to
+or referred to by the document.
 
 For example, inline images typically improve the usability of an HTML document.
 Therefore, such images will be given the `non-blocking` urgency.
