@@ -161,7 +161,7 @@ The `non-blocking` urgency indicates that the response does not prevent the
 client from using the document even though the response is being used or
 referred to by the document.
 
-For example, inline images typically improves the usability of an HTML document.
+For example, inline images typically improve the usability of an HTML document.
 Therefore, such images will be given the `non-blocking` urgency.
 
 ## progressive
