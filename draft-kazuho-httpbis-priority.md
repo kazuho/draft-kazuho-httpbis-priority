@@ -148,7 +148,7 @@ being used.
 
 Value of -1 is used to represent this urgency.
 
-For example, a stylesheet being referred from the HEAD section of an HTML
+For example, a stylesheet being referred to from the HEAD section of an HTML
 document blocks a web browser from rendering the HTML.  In such case, the
 stylesheet is given the blocking urgency.
 
