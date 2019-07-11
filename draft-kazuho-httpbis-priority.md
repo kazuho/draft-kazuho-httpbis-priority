@@ -164,8 +164,8 @@ For example, when a user using a web browser navigates to a different HTML
 document, the request for that HTML is given the document urgency.  When that
 HTML document uses a custom font, the request for that custom font SHOULD also
 be given the document urgency.  This is because the availablity of the custom
-font is the precondition for the user to use the portion of the HTML document,
-which is to be rendered by that font.
+font is likely a precondition for the user to use that portion of the HTML
+document, which is to be rendered by that font.
 
 ### non-blocking
 
