@@ -228,14 +228,14 @@ priority = urgency=3, progressive=?1
 
 # Merging Client- and Server-Driven Parameters {#merging}
 
-It is not always the case that the client has the best view of how the HTTP
-responses should be prioritized.  For example, whether a JPEG image should be
-served progressively by the server depends on the structure of that image file
-- a property only known to the server.
+It is not always the case that the client has the best understanding of how the
+HTTP responses deserve to be prioritized.  For example, use of an HTML document
+might depend heavily on one of the inline images.  Existence of such
+dependencies is typically best known to the server.
 
-Therefore, a server is permitted to send a "Priority" response header field.
-When used, the parameters found in this response header field override those
-specified by the client.
+By using the "Priority" response header, a server can override the
+prioritization hints provided by the client.  When used, the parameters found
+in the response header field overrides those specified by the client.
 
 For example, when the client sends an HTTP request with
 
@@ -243,7 +243,7 @@ For example, when the client sends an HTTP request with
 :method = GET
 :scheme = https
 :authority = example.net
-:path = /image.jpg
+:path = /menu.png
 priority = urgency=3, progressive=?1
 ~~~
 
@@ -251,13 +251,14 @@ and the origin responds with
 
 ~~~ example
 :status = 200
-content-type = image/jpeg
-priority = progressive=?0
+content-type = image/png
+priority = urgency=1
 ~~~
 
-the intermediary's view of the progressiveness of the response becomes negative,
+the intermediary's understanding of the urgency is promoted from `3` to `1`,
 because the server-provided value overrides that provided by the client.  The
-urgency is deemed to be `3`, because the server did not specify the parameter.
+progressiveness continues to be `1`, the value specified by the client, as the
+server did not specify the `progressive` parameter.
 
 # Coexistence with HTTP/2 Priorities {#coexistence}
 
