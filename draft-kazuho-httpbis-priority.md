@@ -256,9 +256,9 @@ priority = urgency=1
 ~~~
 
 the intermediary's understanding of the urgency is promoted from `3` to `1`,
-because the server-provided value overrides that provided by the client.  The
-progressiveness continues to be `1`, the value specified by the client, as the
-server did not specify the `progressive` parameter.
+because the server-provided value overrides the value provided by the client.
+The progressiveness continues to be `1`, the value specified by the client, as
+the server did not specify the `progressive` parameter.
 
 # Coexistence with HTTP/2 Priorities {#coexistence}
 
