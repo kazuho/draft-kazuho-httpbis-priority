@@ -184,8 +184,9 @@ these values might be used.
 Clients SHOULD NOT use values 1 and 5.  Servers MAY use these values to
 prioritize a response above or below other non-blocking responses.
 
-Clients MAY use values 2 and 4 to indicate that a request is given relatively
-higher or lower priority within the non-blocking urgency group.
+Clients MAY use values 2 to indicate that a request is given relatively high
+priority, or 4 to indicate relatively low priority, within the non-blocking
+urgency group.
 
 For example, an image certain to be visible at the top of the page, might be
 assigned a value of 2 instead of 3, as it will have a high visual impact for the
