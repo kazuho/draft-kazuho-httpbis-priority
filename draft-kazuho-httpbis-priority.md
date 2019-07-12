@@ -192,6 +192,11 @@ prioritize a response above or below other non-blocking responses.
 Clients MAY use values 2 and 4 to indicate that a request is given relatively
 higher or lower priority within the non-blocking urgency group.
 
+For example, an image certain to be visible at the top of the page, might be
+assigned a value of 2 instead of 3, as it will have a high visual impact for the
+user.  Conversely, an asynchronously loaded JavaScript file might be assigned an
+urgency value of 4, as it will have no visual impact.
+
 When none of the considerations above is applicable, the value of 3 SHOULD be
 used.
 
