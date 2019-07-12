@@ -143,21 +143,17 @@ Endpoints SHOULD respect the definition of the values when assigning urgencies.
 
 ### blocking
 
-The blocking urgency indicates that the response prevents other responses from
-being used.
-
-Value of -1 is used to represent this urgency.
+The blocking urgency (value -1) indicates that the response prevents other
+responses from being used.
 
 For example, use of an external stylesheet can block a web browser from
 rendering the HTML. In such case, the stylesheet is given the blocking urgency.
 
 ### document
 
-The document urgency indicates that the response contains the document that is
-being processed.  This urgency is also used for responses that deserve the same
-precedence as the contents of the document.
-
-Value of zero (0) is used to represent this urgency.
+The document urgency (value 0) indicates that the response contains the document
+that is being processed.  This urgency is also used for responses that deserve
+the same precedence as the contents of the document.
 
 For example, when a user using a web browser navigates to a different HTML
 document, the request for that HTML is given the document urgency.  When that
@@ -201,10 +197,8 @@ used.
 
 ### background
 
-The background urgency is used for responses of which the delivery can be
-postponed without having an impact on using other responses.
-
-Value of 6 is used to represent this urgency.
+The background urgency (value 6) is used for responses of which the delivery can
+be postponed without having an impact on using other responses.
 
 As an example, a software update running in the background would be assigned the
 background urgency.
