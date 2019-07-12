@@ -174,13 +174,12 @@ from using the document even though the response is being incorporated to or
 referred to by the document.
 
 For example, inline images (i.e., images being fetched and displayed as part of
-the document, typically through the use of the IMG tag) are visually important
-elements of an HTML document, however their unavailability is not expected to
-prevent users from using using the document.  Display of those images is
-considered to be an improvement for visual clients rather than a prerequisite
-for all user agents.
-
-Therefore, such images will be given the non-blocking urgency.
+the document) are visually important elements of an HTML document.  As such,
+users will typically not be prevented from using the document, at least to some
+degree, before any or all of these images are loaded.  Display of those images
+are thus considered to be an improvement for visual clients rather than a
+prerequisite for all user agents.  Therefore, such images will be given the
+non-blocking urgency.
 
 Values between 1 and 5 are used to represent this urgency, to provide wiggle
 room for endpoints to give some responses more or less precedence than others
