@@ -176,10 +176,10 @@ are thus considered to be an improvement for visual clients rather than a
 prerequisite for all user agents.  Therefore, such images will be given the
 non-blocking urgency.
 
-Values between 1 and 5 are used to represent this urgency, to provide wiggle
-room for endpoints to give some responses more or less precedence than others
-that belong to the non-blocking group. {{merging}} explains how these values
-might be used.
+Values between 1 and 5 are used to represent this urgency, to provide
+flexibility to the endpoints for giving some responses more or less precedence
+than others that belong to the non-blocking group. {{merging}} explains how
+these values might be used.
 
 Clients SHOULD NOT use values 1 and 5.  Servers MAY use these values to
 prioritize a response above or below other non-blocking responses.
