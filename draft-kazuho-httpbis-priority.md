@@ -112,32 +112,97 @@ Unknown parameters MUST be ignored.
 
 ## urgency
 
-The `urgency` parameter takes one of the following sh-tokens as the value that
-indicates how an HTTP response affects the usage of other responses:
+The `urgency` parameter takes an integer between -1 and 6 as shown below:
 
-* `blocking` indicates that the response prevents other responses from being
-  used.
-* `document` indicates that the response contains the document that is being
-  processed.
-* `non-blocking` indicates that the response does not prevent the client from
-  using the document even though the response is being used or referred to by
-  the document.
+| Urgency         | Definition                      |
+|----------------:|:--------------------------------|
+|              -1 | blocking ({{blocking}})         |
+|               0 | document ({{document}})         |
+| between 1 and 5 | non-blocking ({{non-blocking}}) |
+|               6 | background ({{background}})     |
+{: #urgencies title="Urgencies"}
 
-The default value is `document`.
+The value is encoded as an sh-integer.  The default value is zero.
 
-A server SHOULD transmit HTTP responses in the order of their urgency:
-`blocking` first, followed by `document`, followed by `non-blocking`.
+A server SHOULD transmit HTTP responses in the order of their urgency values.
+The lower the value, the higher the precedence.
 
 The following example shows a request for a CSS file with the urgency set to
-`blocking`:
+`-1`:
 
 ~~~ example
 :method = GET
 :scheme = https
 :authority = example.net
 :path = /style.css
-priority = urgency=blocking
+priority = urgency=-1
 ~~~
+
+The definition of the urgencies and their expected use-case are described below.
+Endpoints SHOULD respect the definition of the values when assigning urgencies.
+
+### blocking
+
+The blocking urgency (value -1) indicates that the response prevents other
+responses from being used.
+
+For example, use of an external stylesheet can block a web browser from
+rendering the HTML. In such case, the stylesheet is given the blocking urgency.
+
+### document
+
+The document urgency (value 0) indicates that the response contains the document
+that is being processed.  This urgency is also used for responses that deserve
+the same precedence as the contents of the document.
+
+For example, when a user using a web browser navigates to a different HTML
+document, the request for that HTML is given the document urgency.  When that
+HTML document uses a custom font, the request for that custom font SHOULD also
+be given the document urgency.  This is because the availablity of the custom
+font is likely a precondition for the user to use that portion of the HTML
+document, which is to be rendered by that font.
+
+### non-blocking
+
+The non-blocking urgency indicates that the response does not prevent the client
+from using the document even though the response is being incorporated into or
+referred to by the document.
+
+For example, inline images (i.e., images being fetched and displayed as part of
+the document) are visually important elements of an HTML document.  As such,
+users will typically not be prevented from using the document, at least to some
+degree, before any or all of these images are loaded.  Display of those images
+are thus considered to be an improvement for visual clients rather than a
+prerequisite for all user agents.  Therefore, such images will be given the
+non-blocking urgency.
+
+Values between 1 and 5 are used to represent this urgency, to provide
+flexibility to the endpoints for giving some responses more or less precedence
+than others that belong to the non-blocking group. {{merging}} explains how
+these values might be used.
+
+Clients SHOULD NOT use values 1 and 5.  Servers MAY use these values to
+prioritize a response above or below other non-blocking responses.
+
+Clients MAY use values 2 to indicate that a request is given relatively high
+priority, or 4 to indicate relatively low priority, within the non-blocking
+urgency group.
+
+For example, an image certain to be visible at the top of the page, might be
+assigned a value of 2 instead of 3, as it will have a high visual impact for the
+user.  Conversely, an asynchronously loaded JavaScript file might be assigned an
+urgency value of 4, as it is less likely to have a visual impact.
+
+When none of the considerations above is applicable, the value of 3 SHOULD be
+used.
+
+### background
+
+The background urgency (value 6) is used for responses of which the delivery can
+be postponed without having an impact on using other responses.
+
+As an example, a software update running in the background would be assigned the
+background urgency.
 
 ## progressive
 
@@ -156,14 +221,14 @@ making progress in using the composition of the HTTP responses at the earliest
 moment.
 
 The following example shows a request for a JPEG file with the urgency parameter
-set to `non-blocking` and the progressive parameter set to `1`.
+set to `3` and the progressive parameter set to `1`.
 
 ~~~ example
 :method = GET
 :scheme = https
 :authority = example.net
 :path = /image.jpg
-priority = urgency=non-blocking, progressive=?1
+priority = urgency=3, progressive=?1
 ~~~
 
 # Merging Client- and Server-Driven Parameters {#merging}
@@ -184,7 +249,7 @@ For example, when the client sends an HTTP request with
 :scheme = https
 :authority = example.net
 :path = /menu.png
-priority = urgency=non-blocking, progressive=?1
+priority = urgency=3, progressive=?1
 ~~~
 
 and the origin responds with
@@ -192,13 +257,13 @@ and the origin responds with
 ~~~ example
 :status = 200
 content-type = image/png
-priority = urgency=document
+priority = urgency=1
 ~~~
 
-the intermediary's understanding of the urgency is promoted from `non-blocking`
-to `document`, because the server-provided value overrides that provided by the
-client.  The progressiveness continues to be `1`, the value specified by the
-client, as the server did not specify the `progressive` parameter.
+the intermediary's understanding of the urgency is promoted from `3` to `1`,
+because the server-provided value overrides the value provided by the client.
+The progressiveness continues to be `1`, the value specified by the client, as
+the server did not specify the `progressive` parameter.
 
 # Coexistence with HTTP/2 Priorities {#coexistence}
 
@@ -257,27 +322,24 @@ end-to-end rather than hop-by-hop.
 It should also be noted that the use of a header field carrying a textual value
 makes the prioritization scheme extensible; see the discussion below.
 
-## Why are there Only Three Levels of Urgency?
+## Why do Urgencies Have Meanings?
 
 One of the aims of this specification is to define a mechanism for merging
 client- and server-provided hints for prioritizing the responses.  For that to
 work, each urgency level needs to have a well-defined meaning.  As an example, a
 server can assign the highest precedence among the non-blocking responses to an
-HTTP response carrying an icon, because the meaning of "non-blocking" is
-shared among the endpoints.
+HTTP response carrying an icon, because the meaning of `urgency=1` is shared
+among the endpoints.
 
-This specification restricts itself to defining just three levels of urgency, in
-order to provide sufficient granularity for prioritizing responses for ordinary
-web browsing, at minimal complexity.
+This specification restricts itself to defining a minimum set of urgency levels
+in order to provide sufficient granularity for prioritizing responses for
+ordinary web browsing, at minimal complexity.
 
 However, that does not mean that the prioritization scheme would forever be
-stuck to the three levels.  The design provides extensibility.  If deemed
-necessary, it would be possible to divide any of the three urgency levels into
-sub-levels by defining a new parameter.  As an example, a server could assign
-an `importance` parameter to the priority of each image that it provides, so
-that an intermediary could prioritize certain images above others.  Or, a
-graphical user-agent could send a `visible` parameter to indicate if the
-resource being requested is within the viewport.
+stuck to the eight levels.  The design provides extensibility.  If deemed
+necessary, it would be possible to subdivide any of the eight urgency levels
+that are currently defined.  Or, a graphical user-agent could send a `visible`
+parameter to indicate if the resource being requested is within the viewport.
 
 A server can combine the hints provided in the Priority header field with other
 information in order to improve the prioritization of responses.  For example, a
