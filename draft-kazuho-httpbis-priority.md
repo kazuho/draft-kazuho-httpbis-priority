@@ -169,7 +169,7 @@ document, which is to be rendered by that font.
 ### non-blocking
 
 The non-blocking urgency indicates that the response does not prevent the client
-from using the document even though the response is being incorporated to or
+from using the document even though the response is being incorporated into or
 referred to by the document.
 
 For example, inline images (i.e., images being fetched and displayed as part of
