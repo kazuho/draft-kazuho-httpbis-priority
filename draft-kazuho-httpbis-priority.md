@@ -184,7 +184,8 @@ Therefore, such images will be given the non-blocking urgency.
 
 Values between 1 and 5 are used to represent this urgency, to provide wiggle
 room for endpoints to give some responses more or less precedence than others
-that belong to the non-blocking group.
+that belong to the non-blocking group. {{merging}} explains how these values
+might be used.
 
 Clients SHOULD NOT use values 1 and 5.  Servers MAY use these values to
 prioritize a response above or below other non-blocking responses.
