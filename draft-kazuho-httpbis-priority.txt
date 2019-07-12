@@ -62,24 +62,28 @@ Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
-   2.  The Priority HTTP Header Field  . . . . . . . . . . . . . . .   3
+   2.  The Priority HTTP Header Field  . . . . . . . . . . . . . . .   4
      2.1.  urgency . . . . . . . . . . . . . . . . . . . . . . . . .   4
-     2.2.  progressive . . . . . . . . . . . . . . . . . . . . . . .   4
-   3.  Merging Client- and Server-Driven Parameters  . . . . . . . .   5
-   4.  Coexistence with HTTP/2 Priorities  . . . . . . . . . . . . .   6
-     4.1.  The SETTINGS_HEADER_BASED_PRIORITY SETTINGS Parameter . .   6
-   5.  Considerations  . . . . . . . . . . . . . . . . . . . . . . .   6
-     5.1.  Why use an End-to-End Header Field? . . . . . . . . . . .   6
-     5.2.  Why are there Only Three Levels of Urgency? . . . . . . .   7
-   6.  Security Considerations . . . . . . . . . . . . . . . . . . .   8
-   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   8
-   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   8
-     8.1.  Normative References  . . . . . . . . . . . . . . . . . .   8
-     8.2.  Informative References  . . . . . . . . . . . . . . . . .   9
-   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .   9
-   Appendix B.  Change Log . . . . . . . . . . . . . . . . . . . . .   9
-     B.1.  Since draft-kazuho-httpbis-priority-00  . . . . . . . . .   9
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   9
+       2.1.1.  blocking  . . . . . . . . . . . . . . . . . . . . . .   5
+       2.1.2.  document  . . . . . . . . . . . . . . . . . . . . . .   5
+       2.1.3.  non-blocking  . . . . . . . . . . . . . . . . . . . .   5
+       2.1.4.  background  . . . . . . . . . . . . . . . . . . . . .   6
+     2.2.  progressive . . . . . . . . . . . . . . . . . . . . . . .   6
+   3.  Merging Client- and Server-Driven Parameters  . . . . . . . .   7
+   4.  Coexistence with HTTP/2 Priorities  . . . . . . . . . . . . .   7
+     4.1.  The SETTINGS_HEADER_BASED_PRIORITY SETTINGS Parameter . .   8
+   5.  Considerations  . . . . . . . . . . . . . . . . . . . . . . .   8
+     5.1.  Why use an End-to-End Header Field? . . . . . . . . . . .   8
+     5.2.  Why do Urgencies Have Meanings? . . . . . . . . . . . . .   9
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .   9
+   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   9
+   8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  10
+     8.1.  Normative References  . . . . . . . . . . . . . . . . . .  10
+     8.2.  Informative References  . . . . . . . . . . . . . . . . .  10
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  11
+   Appendix B.  Change Log . . . . . . . . . . . . . . . . . . . . .  11
+     B.1.  Since draft-kazuho-httpbis-priority-00  . . . . . . . . .  11
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  11
 
 1.  Introduction
 
@@ -101,11 +105,7 @@ Table of Contents
    HTTP/2 ([RFC7540]) provides such a prioritization scheme.  A client
    sends a series of PRIORITY frames to communicate to the server a
    "priority tree"; this represents the client's preferred ordering and
-   weighted distribution of the bandwidth among the HTTP responses.
-   However, the design has shortcomings:
 
-   o  Its complexity has led to varying levels of support by HTTP/2
-      clients and servers.
 
 
 
@@ -113,6 +113,12 @@ Oku & Pardue            Expires January 13, 2020                [Page 2]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
+
+   weighted distribution of the bandwidth among the HTTP responses.
+   However, the design has shortcomings:
+
+   o  Its complexity has led to varying levels of support by HTTP/2
+      clients and servers.
 
    o  It is hard to coordinate with server-driven prioritization.  For
       example, a server, with knowledge of the document structure, might
@@ -154,6 +160,16 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    Example HTTP requests and responses use the HTTP/2-style formatting
    from [RFC7540].
 
+
+
+
+
+
+Oku & Pardue            Expires January 13, 2020                [Page 3]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
+
+
 2.  The Priority HTTP Header Field
 
    The Priority HTTP header field can appear in requests and responses.
@@ -162,13 +178,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    intermediary can use the Priority information from client requests
    and server responses to correct or amend the precedence to suit it
    (see Section 3).
-
-
-
-Oku & Pardue            Expires January 13, 2020                [Page 3]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
 
    The value of the Priority header field is a Structured Headers
    [I-D.ietf-httpbis-header-structure] Dictionary.  Each dictionary
@@ -182,34 +191,121 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 2.1.  urgency
 
-   The "urgency" parameter takes one of the following sh-tokens as the
-   value that indicates how an HTTP response affects the usage of other
-   responses:
+   The "urgency" parameter takes an integer between -1 and 6 as shown
+   below:
 
-   o  "blocking" indicates that the response prevents other responses
-      from being used.
+            +-----------------+------------------------------+
+            |         Urgency | Definition                   |
+            +-----------------+------------------------------+
+            |              -1 | blocking (Section 2.1.1)     |
+            |               0 | document (Section 2.1.2)     |
+            | between 1 and 5 | non-blocking (Section 2.1.3) |
+            |               6 | background (Section 2.1.4)   |
+            +-----------------+------------------------------+
 
-   o  "document" indicates that the response contains the document that
-      is being processed.
+                            Table 1: Urgencies
 
-   o  "non-blocking" indicates that the response does not prevent the
-      client from using the document even though the response is being
-      used or referred to by the document.
+   The value is encoded as an sh-integer.  The default value is zero.
 
-   The default value is "document".
-
-   A server SHOULD transmit HTTP responses in the order of their
-   urgency: "blocking" first, followed by "document", followed by "non-
-   blocking".
+   A server SHOULD transmit HTTP responses in the order of their urgency
+   values.  The lower the value, the higher the precedence.
 
    The following example shows a request for a CSS file with the urgency
-   set to "blocking":
+   set to "-1":
 
    :method = GET
    :scheme = https
    :authority = example.net
    :path = /style.css
-   priority = urgency=blocking
+   priority = urgency=-1
+
+
+
+Oku & Pardue            Expires January 13, 2020                [Page 4]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
+
+
+   The definition of the urgencies and their expected use-case are
+   described below.  Endpoints SHOULD respect the definition of the
+   values when assigning urgencies.
+
+2.1.1.  blocking
+
+   The blocking urgency (value -1) indicates that the response prevents
+   other responses from being used.
+
+   For example, use of an external stylesheet can block a web browser
+   from rendering the HTML.  In such case, the stylesheet is given the
+   blocking urgency.
+
+2.1.2.  document
+
+   The document urgency (value 0) indicates that the response contains
+   the document that is being processed.  This urgency is also used for
+   responses that deserve the same precedence as the contents of the
+   document.
+
+   For example, when a user using a web browser navigates to a different
+   HTML document, the request for that HTML is given the document
+   urgency.  When that HTML document uses a custom font, the request for
+   that custom font SHOULD also be given the document urgency.  This is
+   because the availablity of the custom font is likely a precondition
+   for the user to use that portion of the HTML document, which is to be
+   rendered by that font.
+
+2.1.3.  non-blocking
+
+   The non-blocking urgency indicates that the response does not prevent
+   the client from using the document even though the response is being
+   incorporated into or referred to by the document.
+
+   For example, inline images (i.e., images being fetched and displayed
+   as part of the document) are visually important elements of an HTML
+   document.  As such, users will typically not be prevented from using
+   the document, at least to some degree, before any or all of these
+   images are loaded.  Display of those images are thus considered to be
+   an improvement for visual clients rather than a prerequisite for all
+   user agents.  Therefore, such images will be given the non-blocking
+   urgency.
+
+   Values between 1 and 5 are used to represent this urgency, to provide
+   flexibility to the endpoints for giving some responses more or less
+   precedence than others that belong to the non-blocking group.
+   Section 3 explains how these values might be used.
+
+
+
+
+Oku & Pardue            Expires January 13, 2020                [Page 5]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
+
+
+   Clients SHOULD NOT use values 1 and 5.  Servers MAY use these values
+   to prioritize a response above or below other non-blocking responses.
+
+   Clients MAY use values 2 to indicate that a request is given
+   relatively high priority, or 4 to indicate relatively low priority,
+   within the non-blocking urgency group.
+
+   For example, an image certain to be visible at the top of the page,
+   might be assigned a value of 2 instead of 3, as it will have a high
+   visual impact for the user.  Conversely, an asynchronously loaded
+   JavaScript file might be assigned an urgency value of 4, as it is
+   less likely to have a visual impact.
+
+   When none of the considerations above is applicable, the value of 3
+   SHOULD be used.
+
+2.1.4.  background
+
+   The background urgency (value 6) is used for responses of which the
+   delivery can be postponed without having an impact on using other
+   responses.
+
+   As an example, a software update running in the background would be
+   assigned the background urgency.
 
 2.2.  progressive
 
@@ -218,13 +314,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    some meaningful output as chunks of the response arrive.
 
    The default value of the "progressive" parameter is "0".
-
-
-
-Oku & Pardue            Expires January 13, 2020                [Page 4]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
 
    A server SHOULD distribute the bandwidth of a connection between
    progressive responses that share the same urgency.
@@ -235,14 +324,25 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    composition of the HTTP responses at the earliest moment.
 
    The following example shows a request for a JPEG file with the
-   urgency parameter set to "non-blocking" and the progressive parameter
-   set to "1".
+   urgency parameter set to "3" and the progressive parameter set to
+   "1".
+
+
+
+
+
+
+
+Oku & Pardue            Expires January 13, 2020                [Page 6]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
+
 
    :method = GET
    :scheme = https
    :authority = example.net
    :path = /image.jpg
-   priority = urgency=non-blocking, progressive=?1
+   priority = urgency=3, progressive=?1
 
 3.  Merging Client- and Server-Driven Parameters
 
@@ -263,27 +363,19 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    :scheme = https
    :authority = example.net
    :path = /menu.png
-   priority = urgency=non-blocking, progressive=?1
+   priority = urgency=3, progressive=?1
 
    and the origin responds with
 
    :status = 200
    content-type = image/png
-   priority = urgency=document
+   priority = urgency=1
 
-   the intermediary's understanding of the urgency is promoted from
-   "non-blocking" to "document", because the server-provided value
-   overrides that provided by the client.  The progressiveness continues
-
-
-
-Oku & Pardue            Expires January 13, 2020                [Page 5]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
-
-   to be "1", the value specified by the client, as the server did not
-   specify the "progressive" parameter.
+   the intermediary's understanding of the urgency is promoted from "3"
+   to "1", because the server-provided value overrides the value
+   provided by the client.  The progressiveness continues to be "1", the
+   value specified by the client, as the server did not specify the
+   "progressive" parameter.
 
 4.  Coexistence with HTTP/2 Priorities
 
@@ -292,6 +384,15 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    present in HEADERS and PRIORITY frames.  A client might instead
    choose to use header-based prioritization as specified in this
    document.
+
+
+
+
+
+Oku & Pardue            Expires January 13, 2020                [Page 7]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
+
 
 4.1.  The SETTINGS_HEADER_BASED_PRIORITY SETTINGS Parameter
 
@@ -330,14 +431,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
    The rationale is that the Priority header field transmits how each
    response affects the client's processing of those responses, rather
-
-
-
-Oku & Pardue            Expires January 13, 2020                [Page 6]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
-
    than how relatively urgent each response is to others.  The way a
    client processes a response is a property associated to that client
    generating that request.  Not that of an intermediary.  Therefore, it
@@ -349,6 +442,14 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    for caching intermediaries.  Such intermediaries can cache the value
    of the Priority header field along with the response, and utilize the
    value of the cached header field when serving the cached response,
+
+
+
+Oku & Pardue            Expires January 13, 2020                [Page 8]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
+
+
    only because the header field is defined as end-to-end rather than
    hop-by-hop.
 
@@ -356,29 +457,27 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    textual value makes the prioritization scheme extensible; see the
    discussion below.
 
-5.2.  Why are there Only Three Levels of Urgency?
+5.2.  Why do Urgencies Have Meanings?
 
    One of the aims of this specification is to define a mechanism for
    merging client- and server-provided hints for prioritizing the
    responses.  For that to work, each urgency level needs to have a
    well-defined meaning.  As an example, a server can assign the highest
    precedence among the non-blocking responses to an HTTP response
-   carrying an icon, because the meaning of "non-blocking" is shared
-   among the endpoints.
+   carrying an icon, because the meaning of "urgency=1" is shared among
+   the endpoints.
 
-   This specification restricts itself to defining just three levels of
-   urgency, in order to provide sufficient granularity for prioritizing
-   responses for ordinary web browsing, at minimal complexity.
+   This specification restricts itself to defining a minimum set of
+   urgency levels in order to provide sufficient granularity for
+   prioritizing responses for ordinary web browsing, at minimal
+   complexity.
 
    However, that does not mean that the prioritization scheme would
-   forever be stuck to the three levels.  The design provides
-   extensibility.  If deemed necessary, it would be possible to divide
-   any of the three urgency levels into sub-levels by defining a new
-   parameter.  As an example, a server could assign an "importance"
-   parameter to the priority of each image that it provides, so that an
-   intermediary could prioritize certain images above others.  Or, a
-   graphical user-agent could send a "visible" parameter to indicate if
-   the resource being requested is within the viewport.
+   forever be stuck to the eight levels.  The design provides
+   extensibility.  If deemed necessary, it would be possible to
+   subdivide any of the eight urgency levels that are currently defined.
+   Or, a graphical user-agent could send a "visible" parameter to
+   indicate if the resource being requested is within the viewport.
 
    A server can combine the hints provided in the Priority header field
    with other information in order to improve the prioritization of
@@ -386,13 +485,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    [RFC8081] and images with the same urgency might give higher
    precedence to the font, so that a visual client can render textual
    information at an early moment.
-
-
-
-Oku & Pardue            Expires January 13, 2020                [Page 7]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
 
 6.  Security Considerations
 
@@ -406,6 +498,13 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    Header field name:  Priority
 
    Applicable protocol:  http
+
+
+
+Oku & Pardue            Expires January 13, 2020                [Page 9]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
+
 
    Status:  standard
 
@@ -440,16 +539,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
               DOI 10.17487/RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
-
-
-
-
-
-Oku & Pardue            Expires January 13, 2020                [Page 8]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
-
    [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
               Protocol (HTTP/1.1): Message Syntax and Routing",
               RFC 7230, DOI 10.17487/RFC7230, June 2014,
@@ -461,6 +550,17 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
               <https://www.rfc-editor.org/info/rfc7540>.
 
 8.2.  Informative References
+
+
+
+
+
+
+
+Oku & Pardue            Expires January 13, 2020               [Page 10]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
+
 
    [I-D.ietf-quic-http]
               Bishop, M., "Hypertext Transfer Protocol Version 3
@@ -495,17 +595,6 @@ Authors' Addresses
    Email: kazuhooku@gmail.com
 
 
-
-
-
-
-
-
-Oku & Pardue            Expires January 13, 2020                [Page 9]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
-
    Lucas Pardue
    Cloudflare
 
@@ -524,37 +613,4 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Oku & Pardue            Expires January 13, 2020               [Page 10]
+Oku & Pardue            Expires January 13, 2020               [Page 11]

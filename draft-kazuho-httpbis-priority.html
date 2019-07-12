@@ -286,13 +286,17 @@ ul.toc li {
 <link href="#rfc.section.1.1" rel="Chapter" title="1.1 Notational Conventions">
 <link href="#rfc.section.2" rel="Chapter" title="2 The Priority HTTP Header Field">
 <link href="#rfc.section.2.1" rel="Chapter" title="2.1 urgency">
+<link href="#rfc.section.2.1.1" rel="Chapter" title="2.1.1 blocking">
+<link href="#rfc.section.2.1.2" rel="Chapter" title="2.1.2 document">
+<link href="#rfc.section.2.1.3" rel="Chapter" title="2.1.3 non-blocking">
+<link href="#rfc.section.2.1.4" rel="Chapter" title="2.1.4 background">
 <link href="#rfc.section.2.2" rel="Chapter" title="2.2 progressive">
 <link href="#rfc.section.3" rel="Chapter" title="3 Merging Client- and Server-Driven Parameters">
 <link href="#rfc.section.4" rel="Chapter" title="4 Coexistence with HTTP/2 Priorities">
 <link href="#rfc.section.4.1" rel="Chapter" title="4.1 The SETTINGS_HEADER_BASED_PRIORITY SETTINGS Parameter">
 <link href="#rfc.section.5" rel="Chapter" title="5 Considerations">
 <link href="#rfc.section.5.1" rel="Chapter" title="5.1 Why use an End-to-End Header Field?">
-<link href="#rfc.section.5.2" rel="Chapter" title="5.2 Why are there Only Three Levels of Urgency?">
+<link href="#rfc.section.5.2" rel="Chapter" title="5.2 Why do Urgencies Have Meanings?">
 <link href="#rfc.section.6" rel="Chapter" title="6 Security Considerations">
 <link href="#rfc.section.7" rel="Chapter" title="7 IANA Considerations">
 <link href="#rfc.references" rel="Chapter" title="8 References">
@@ -372,7 +376,15 @@ ul.toc li {
 </li>
 <ul><li>2.1.   <a href="#rfc.section.2.1">urgency</a>
 </li>
-<li>2.2.   <a href="#rfc.section.2.2">progressive</a>
+<ul><li>2.1.1.   <a href="#rfc.section.2.1.1">blocking</a>
+</li>
+<li>2.1.2.   <a href="#rfc.section.2.1.2">document</a>
+</li>
+<li>2.1.3.   <a href="#rfc.section.2.1.3">non-blocking</a>
+</li>
+<li>2.1.4.   <a href="#rfc.section.2.1.4">background</a>
+</li>
+</ul><li>2.2.   <a href="#rfc.section.2.2">progressive</a>
 </li>
 </ul><li>3.   <a href="#rfc.section.3">Merging Client- and Server-Driven Parameters</a>
 </li>
@@ -384,7 +396,7 @@ ul.toc li {
 </li>
 <ul><li>5.1.   <a href="#rfc.section.5.1">Why use an End-to-End Header Field?</a>
 </li>
-<li>5.2.   <a href="#rfc.section.5.2">Why are there Only Three Levels of Urgency?</a>
+<li>5.2.   <a href="#rfc.section.5.2">Why do Urgencies Have Meanings?</a>
 </li>
 </ul><li>6.   <a href="#rfc.section.6">Security Considerations</a>
 </li>
@@ -438,27 +450,70 @@ ul.toc li {
 <h1 id="rfc.section.2.1">
 <a href="#rfc.section.2.1">2.1.</a> <a href="#urgency" id="urgency">urgency</a>
 </h1>
-<p id="rfc.section.2.1.p.1">The <samp>urgency</samp> parameter takes one of the following sh-tokens as the value that indicates how an HTTP response affects the usage of other responses:</p>
-<p></p>
-
-<ul>
-<li>
-<samp>blocking</samp> indicates that the response prevents other responses from being used.</li>
-<li>
-<samp>document</samp> indicates that the response contains the document that is being processed.</li>
-<li>
-<samp>non-blocking</samp> indicates that the response does not prevent the client from using the document even though the response is being used or referred to by the document.</li>
-</ul>
-<p id="rfc.section.2.1.p.3">The default value is <samp>document</samp>.</p>
-<p id="rfc.section.2.1.p.4">A server SHOULD transmit HTTP responses in the order of their urgency: <samp>blocking</samp> first, followed by <samp>document</samp>, followed by <samp>non-blocking</samp>.</p>
-<p id="rfc.section.2.1.p.5">The following example shows a request for a CSS file with the urgency set to <samp>blocking</samp>:</p>
+<p id="rfc.section.2.1.p.1">The <samp>urgency</samp> parameter takes an integer between -1 and 6 as shown below:</p>
+<div id="rfc.table.1"></div>
+<div id="urgencies"></div>
+<table cellpadding="3" cellspacing="0" class="tt full center">
+<caption>Urgencies</caption>
+<thead><tr>
+<th class="right">Urgency</th>
+<th class="left">Definition</th>
+</tr></thead>
+<tbody>
+<tr>
+<td class="right">-1</td>
+<td class="left">blocking (<a href="#blocking" class="xref">Section 2.1.1</a>)</td>
+</tr>
+<tr>
+<td class="right">0</td>
+<td class="left">document (<a href="#document" class="xref">Section 2.1.2</a>)</td>
+</tr>
+<tr>
+<td class="right">between 1 and 5</td>
+<td class="left">non-blocking (<a href="#non-blocking" class="xref">Section 2.1.3</a>)</td>
+</tr>
+<tr>
+<td class="right">6</td>
+<td class="left">background (<a href="#background" class="xref">Section 2.1.4</a>)</td>
+</tr>
+</tbody>
+</table>
+<p id="rfc.section.2.1.p.2">The value is encoded as an sh-integer.  The default value is zero.</p>
+<p id="rfc.section.2.1.p.3">A server SHOULD transmit HTTP responses in the order of their urgency values.  The lower the value, the higher the precedence.</p>
+<p id="rfc.section.2.1.p.4">The following example shows a request for a CSS file with the urgency set to <samp>-1</samp>:</p>
 <pre>
 :method = GET
 :scheme = https
 :authority = example.net
 :path = /style.css
-priority = urgency=blocking
+priority = urgency=-1
 </pre>
+<p id="rfc.section.2.1.p.5">The definition of the urgencies and their expected use-case are described below.  Endpoints SHOULD respect the definition of the values when assigning urgencies.</p>
+<h1 id="rfc.section.2.1.1">
+<a href="#rfc.section.2.1.1">2.1.1.</a> <a href="#blocking" id="blocking">blocking</a>
+</h1>
+<p id="rfc.section.2.1.1.p.1">The blocking urgency (value -1) indicates that the response prevents other responses from being used.</p>
+<p id="rfc.section.2.1.1.p.2">For example, use of an external stylesheet can block a web browser from rendering the HTML. In such case, the stylesheet is given the blocking urgency.</p>
+<h1 id="rfc.section.2.1.2">
+<a href="#rfc.section.2.1.2">2.1.2.</a> <a href="#document" id="document">document</a>
+</h1>
+<p id="rfc.section.2.1.2.p.1">The document urgency (value 0) indicates that the response contains the document that is being processed.  This urgency is also used for responses that deserve the same precedence as the contents of the document.</p>
+<p id="rfc.section.2.1.2.p.2">For example, when a user using a web browser navigates to a different HTML document, the request for that HTML is given the document urgency.  When that HTML document uses a custom font, the request for that custom font SHOULD also be given the document urgency.  This is because the availablity of the custom font is likely a precondition for the user to use that portion of the HTML document, which is to be rendered by that font.</p>
+<h1 id="rfc.section.2.1.3">
+<a href="#rfc.section.2.1.3">2.1.3.</a> <a href="#non-blocking" id="non-blocking">non-blocking</a>
+</h1>
+<p id="rfc.section.2.1.3.p.1">The non-blocking urgency indicates that the response does not prevent the client from using the document even though the response is being incorporated into or referred to by the document.</p>
+<p id="rfc.section.2.1.3.p.2">For example, inline images (i.e., images being fetched and displayed as part of the document) are visually important elements of an HTML document.  As such, users will typically not be prevented from using the document, at least to some degree, before any or all of these images are loaded.  Display of those images are thus considered to be an improvement for visual clients rather than a prerequisite for all user agents.  Therefore, such images will be given the non-blocking urgency.</p>
+<p id="rfc.section.2.1.3.p.3">Values between 1 and 5 are used to represent this urgency, to provide flexibility to the endpoints for giving some responses more or less precedence than others that belong to the non-blocking group. <a href="#merging" class="xref">Section 3</a> explains how these values might be used.</p>
+<p id="rfc.section.2.1.3.p.4">Clients SHOULD NOT use values 1 and 5.  Servers MAY use these values to prioritize a response above or below other non-blocking responses.</p>
+<p id="rfc.section.2.1.3.p.5">Clients MAY use values 2 to indicate that a request is given relatively high priority, or 4 to indicate relatively low priority, within the non-blocking urgency group.</p>
+<p id="rfc.section.2.1.3.p.6">For example, an image certain to be visible at the top of the page, might be assigned a value of 2 instead of 3, as it will have a high visual impact for the user.  Conversely, an asynchronously loaded JavaScript file might be assigned an urgency value of 4, as it is less likely to have a visual impact.</p>
+<p id="rfc.section.2.1.3.p.7">When none of the considerations above is applicable, the value of 3 SHOULD be used.</p>
+<h1 id="rfc.section.2.1.4">
+<a href="#rfc.section.2.1.4">2.1.4.</a> <a href="#background" id="background">background</a>
+</h1>
+<p id="rfc.section.2.1.4.p.1">The background urgency (value 6) is used for responses of which the delivery can be postponed without having an impact on using other responses.</p>
+<p id="rfc.section.2.1.4.p.2">As an example, a software update running in the background would be assigned the background urgency.</p>
 <h1 id="rfc.section.2.2">
 <a href="#rfc.section.2.2">2.2.</a> <a href="#progressive" id="progressive">progressive</a>
 </h1>
@@ -466,13 +521,13 @@ priority = urgency=blocking
 <p id="rfc.section.2.2.p.2">The default value of the <samp>progressive</samp> parameter is <samp>0</samp>.</p>
 <p id="rfc.section.2.2.p.3">A server SHOULD distribute the bandwidth of a connection between progressive responses that share the same urgency.</p>
 <p id="rfc.section.2.2.p.4">A server SHOULD transmit non-progressive responses one by one, preferably in the order the requests were generated.  Doing so maximizes the chance of the client making progress in using the composition of the HTTP responses at the earliest moment.</p>
-<p id="rfc.section.2.2.p.5">The following example shows a request for a JPEG file with the urgency parameter set to <samp>non-blocking</samp> and the progressive parameter set to <samp>1</samp>.</p>
+<p id="rfc.section.2.2.p.5">The following example shows a request for a JPEG file with the urgency parameter set to <samp>3</samp> and the progressive parameter set to <samp>1</samp>.</p>
 <pre>
 :method = GET
 :scheme = https
 :authority = example.net
 :path = /image.jpg
-priority = urgency=non-blocking, progressive=?1
+priority = urgency=3, progressive=?1
 </pre>
 <h1 id="rfc.section.3">
 <a href="#rfc.section.3">3.</a> <a href="#merging" id="merging">Merging Client- and Server-Driven Parameters</a>
@@ -485,15 +540,15 @@ priority = urgency=non-blocking, progressive=?1
 :scheme = https
 :authority = example.net
 :path = /menu.png
-priority = urgency=non-blocking, progressive=?1
+priority = urgency=3, progressive=?1
 </pre>
 <p id="rfc.section.3.p.4">and the origin responds with</p>
 <pre>
 :status = 200
 content-type = image/png
-priority = urgency=document
+priority = urgency=1
 </pre>
-<p id="rfc.section.3.p.5">the intermediary&#8217;s understanding of the urgency is promoted from <samp>non-blocking</samp> to <samp>document</samp>, because the server-provided value overrides that provided by the client.  The progressiveness continues to be <samp>1</samp>, the value specified by the client, as the server did not specify the <samp>progressive</samp> parameter.</p>
+<p id="rfc.section.3.p.5">the intermediary&#8217;s understanding of the urgency is promoted from <samp>3</samp> to <samp>1</samp>, because the server-provided value overrides the value provided by the client.  The progressiveness continues to be <samp>1</samp>, the value specified by the client, as the server did not specify the <samp>progressive</samp> parameter.</p>
 <h1 id="rfc.section.4">
 <a href="#rfc.section.4">4.</a> <a href="#coexistence" id="coexistence">Coexistence with HTTP/2 Priorities</a>
 </h1>
@@ -517,11 +572,11 @@ priority = urgency=document
 <p id="rfc.section.5.1.p.3">Having the Priority header field defined as end-to-end is important for caching intermediaries.  Such intermediaries can cache the value of the Priority header field along with the response, and utilize the value of the cached header field when serving the cached response, only because the header field is defined as end-to-end rather than hop-by-hop.</p>
 <p id="rfc.section.5.1.p.4">It should also be noted that the use of a header field carrying a textual value makes the prioritization scheme extensible; see the discussion below.</p>
 <h1 id="rfc.section.5.2">
-<a href="#rfc.section.5.2">5.2.</a> <a href="#why-are-there-only-three-levels-of-urgency" id="why-are-there-only-three-levels-of-urgency">Why are there Only Three Levels of Urgency?</a>
+<a href="#rfc.section.5.2">5.2.</a> <a href="#why-do-urgencies-have-meanings" id="why-do-urgencies-have-meanings">Why do Urgencies Have Meanings?</a>
 </h1>
-<p id="rfc.section.5.2.p.1">One of the aims of this specification is to define a mechanism for merging client- and server-provided hints for prioritizing the responses.  For that to work, each urgency level needs to have a well-defined meaning.  As an example, a server can assign the highest precedence among the non-blocking responses to an HTTP response carrying an icon, because the meaning of &#8220;non-blocking&#8221; is shared among the endpoints.</p>
-<p id="rfc.section.5.2.p.2">This specification restricts itself to defining just three levels of urgency, in order to provide sufficient granularity for prioritizing responses for ordinary web browsing, at minimal complexity.</p>
-<p id="rfc.section.5.2.p.3">However, that does not mean that the prioritization scheme would forever be stuck to the three levels.  The design provides extensibility.  If deemed necessary, it would be possible to divide any of the three urgency levels into sub-levels by defining a new parameter.  As an example, a server could assign an <samp>importance</samp> parameter to the priority of each image that it provides, so that an intermediary could prioritize certain images above others.  Or, a graphical user-agent could send a <samp>visible</samp> parameter to indicate if the resource being requested is within the viewport.</p>
+<p id="rfc.section.5.2.p.1">One of the aims of this specification is to define a mechanism for merging client- and server-provided hints for prioritizing the responses.  For that to work, each urgency level needs to have a well-defined meaning.  As an example, a server can assign the highest precedence among the non-blocking responses to an HTTP response carrying an icon, because the meaning of <samp>urgency=1</samp> is shared among the endpoints.</p>
+<p id="rfc.section.5.2.p.2">This specification restricts itself to defining a minimum set of urgency levels in order to provide sufficient granularity for prioritizing responses for ordinary web browsing, at minimal complexity.</p>
+<p id="rfc.section.5.2.p.3">However, that does not mean that the prioritization scheme would forever be stuck to the eight levels.  The design provides extensibility.  If deemed necessary, it would be possible to subdivide any of the eight urgency levels that are currently defined.  Or, a graphical user-agent could send a <samp>visible</samp> parameter to indicate if the resource being requested is within the viewport.</p>
 <p id="rfc.section.5.2.p.4">A server can combine the hints provided in the Priority header field with other information in order to improve the prioritization of responses.  For example, a server that receives requests for a font <a href="#RFC8081" class="xref">[RFC8081]</a> and images with the same urgency might give higher precedence to the font, so that a visual client can render textual information at an early moment.</p>
 <h1 id="rfc.section.6">
 <a href="#rfc.section.6">6.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a>
