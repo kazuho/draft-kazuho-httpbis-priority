@@ -148,9 +148,8 @@ being used.
 
 Value of -1 is used to represent this urgency.
 
-For example, use of an external stylesheet blocks a web browser from rendering
-the HTML, when the stylesheet is being referred to from the HEAD section of the
-HTML.  In such case, the stylesheet is given the blocking urgency.
+For example, use of an external stylesheet can block a web browser from
+rendering the HTML. In such case, the stylesheet is given the blocking urgency.
 
 ### document
 
