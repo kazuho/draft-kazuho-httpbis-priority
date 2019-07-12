@@ -125,7 +125,7 @@ The `urgency` parameter takes an integer between -1 and 6 as shown below:
 The value is encoded as an sh-integer.  The default value is zero.
 
 A server SHOULD transmit HTTP responses in the order of their urgency values.
-The lesser the value is, the higher the precedence is.
+The lower the value, the higher the precedence.
 
 The following example shows a request for a CSS file with the urgency set to
 `-1`:
