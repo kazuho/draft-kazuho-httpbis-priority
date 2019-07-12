@@ -336,8 +336,8 @@ in order to provide sufficient granularity for prioritizing responses for
 ordinary web browsing, at minimal complexity.
 
 However, that does not mean that the prioritization scheme would forever be
-stuck to the three levels.  The design provides extensibility.  If deemed
-necessary, it would be possible to subdivide any of the three urgency levels
+stuck to the eight levels.  The design provides extensibility.  If deemed
+necessary, it would be possible to subdivide any of the eight urgency levels
 that are currently defined.  Or, a graphical user-agent could send a `visible`
 parameter to indicate if the resource being requested is within the viewport.
 
