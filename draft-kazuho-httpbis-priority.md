@@ -201,8 +201,9 @@ used.
 The background urgency (value 6) is used for responses of which the delivery can
 be postponed without having an impact on using other responses.
 
-As an example, a software update running in the background would be assigned the
-background urgency.
+As an example, the download of a large file in a web browser would be assigned
+the background urgency so it would not impact further page loads on the same
+connection.
 
 ## progressive
 
