@@ -166,7 +166,7 @@ to be rendered by that font.
 ### supplementary
 
 The supplementary urgency indicates a response that is helpful to the client
-using a composition of HTTP responses, even though the response itself is not
+using a composition of responses, even though the response itself is not
 mandatory for using those responses.
 
 For example, inline images (i.e., images being fetched and displayed as part of
