@@ -5,8 +5,8 @@
 HTTP                                                              K. Oku
 Internet-Draft                                                    Fastly
 Intended status: Standards Track                               L. Pardue
-Expires: January 13, 2020                                     Cloudflare
-                                                           July 12, 2019
+Expires: January 16, 2020                                     Cloudflare
+                                                           July 15, 2019
 
 
                      The Priority HTTP Header Field
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 13, 2020.
+   This Internet-Draft will expire on January 16, 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Oku & Pardue            Expires January 13, 2020                [Page 1]
+Oku & Pardue            Expires January 16, 2020                [Page 1]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Oku & Pardue            Expires January 13, 2020                [Page 2]
+Oku & Pardue            Expires January 16, 2020                [Page 2]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -165,7 +165,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 13, 2020                [Page 3]
+Oku & Pardue            Expires January 16, 2020                [Page 3]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -221,7 +221,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 13, 2020                [Page 4]
+Oku & Pardue            Expires January 16, 2020                [Page 4]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -277,7 +277,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 13, 2020                [Page 5]
+Oku & Pardue            Expires January 16, 2020                [Page 5]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -304,8 +304,9 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    delivery can be postponed without having an impact on using other
    responses.
 
-   As an example, a software update running in the background would be
-   assigned the background urgency.
+   As an example, the download of a large file in a web browser would be
+   assigned the background urgency so it would not impact further page
+   loads on the same connection.
 
 2.2.  progressive
 
@@ -332,8 +333,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-
-Oku & Pardue            Expires January 13, 2020                [Page 6]
+Oku & Pardue            Expires January 16, 2020                [Page 6]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -389,7 +389,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 13, 2020                [Page 7]
+Oku & Pardue            Expires January 16, 2020                [Page 7]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -445,7 +445,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 13, 2020                [Page 8]
+Oku & Pardue            Expires January 16, 2020                [Page 8]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -501,7 +501,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 13, 2020                [Page 9]
+Oku & Pardue            Expires January 16, 2020                [Page 9]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -557,7 +557,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 13, 2020               [Page 10]
+Oku & Pardue            Expires January 16, 2020               [Page 10]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -613,4 +613,4 @@ Authors' Addresses
 
 
 
-Oku & Pardue            Expires January 13, 2020               [Page 11]
+Oku & Pardue            Expires January 16, 2020               [Page 11]
