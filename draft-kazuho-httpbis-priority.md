@@ -114,12 +114,12 @@ Unknown parameters MUST be ignored.
 
 The `urgency` parameter takes an integer between -1 and 6 as shown below:
 
-| Urgency         | Definition                      |
-|----------------:|:--------------------------------|
-|              -1 | blocking ({{blocking}})         |
-|               0 | document ({{document}})         |
-| between 1 and 5 | non-blocking ({{non-blocking}}) |
-|               6 | background ({{background}})     |
+| Urgency         | Definition                        |
+|----------------:|:----------------------------------|
+|              -1 | prerequisite ({{prerequisite}})   |
+|               0 | default ({{default}})             |
+| between 1 and 5 | supplementary ({{supplementary}}) |
+|               6 | background ({{background}})       |
 {: #urgencies title="Urgencies"}
 
 The value is encoded as an sh-integer.  The default value is zero.
@@ -141,32 +141,33 @@ priority = urgency=-1
 The definition of the urgencies and their expected use-case are described below.
 Endpoints SHOULD respect the definition of the values when assigning urgencies.
 
-### blocking
+### prerequisite
 
-The blocking urgency (value -1) indicates that the response prevents other
-responses from being used.
+The prerequisite urgency (value -1) indicates that the response prevents other
+responses with an urgency of prerequisite or default from being used.
 
 For example, use of an external stylesheet can block a web browser from
-rendering the HTML. In such case, the stylesheet is given the blocking urgency.
+rendering the HTML. In such case, the stylesheet is given the prerequisite
+urgency.
 
-### document
+### default
 
-The document urgency (value 0) indicates that the response contains the document
-that is being processed.  This urgency is also used for responses that deserve
-the same precedence as the contents of the document.
+The default urgency (value 0) indicates a response that is to be used as it is
+delivered to the client, but one that does not block other responses from being
+used.
 
-For example, when a user using a web browser navigates to a different HTML
-document, the request for that HTML is given the document urgency.  When that
-HTML document uses a custom font, the request for that custom font SHOULD also
-be given the document urgency.  This is because the availablity of the custom
-font is likely a precondition for the user to use that portion of the HTML
-document, which is to be rendered by that font.
+For example, when a user using a web browser navigates to a new HTML document,
+the request for that HTML is given the default urgency.  When that HTML document
+uses a custom font, the request for that custom font SHOULD also be given the
+default urgency.  This is because the availablity of the custom font is likely
+a precondition for the user to use that portion of the HTML document, which is
+to be rendered by that font.
 
-### non-blocking
+### supplementary
 
-The non-blocking urgency indicates that the response does not prevent the client
-from using the document even though the response is being incorporated into or
-referred to by the document.
+The supplementary urgency indicates a response that is helpful to the client
+using a composition of HTTP responses, even though the response itself is not
+mandatory for using those responses.
 
 For example, inline images (i.e., images being fetched and displayed as part of
 the document) are visually important elements of an HTML document.  As such,
@@ -174,18 +175,18 @@ users will typically not be prevented from using the document, at least to some
 degree, before any or all of these images are loaded.  Display of those images
 are thus considered to be an improvement for visual clients rather than a
 prerequisite for all user agents.  Therefore, such images will be given the
-non-blocking urgency.
+supplementary urgency.
 
 Values between 1 and 5 are used to represent this urgency, to provide
 flexibility to the endpoints for giving some responses more or less precedence
-than others that belong to the non-blocking group. {{merging}} explains how
+than others that belong to the supplementary group. {{merging}} explains how
 these values might be used.
 
 Clients SHOULD NOT use values 1 and 5.  Servers MAY use these values to
-prioritize a response above or below other non-blocking responses.
+prioritize a response above or below other supplementary responses.
 
 Clients MAY use values 2 to indicate that a request is given relatively high
-priority, or 4 to indicate relatively low priority, within the non-blocking
+priority, or 4 to indicate relatively low priority, within the supplementary
 urgency group.
 
 For example, an image certain to be visible at the top of the page, might be
@@ -328,7 +329,7 @@ makes the prioritization scheme extensible; see the discussion below.
 One of the aims of this specification is to define a mechanism for merging
 client- and server-provided hints for prioritizing the responses.  For that to
 work, each urgency level needs to have a well-defined meaning.  As an example, a
-server can assign the highest precedence among the non-blocking responses to an
+server can assign the highest precedence among the supplementary responses to an
 HTTP response carrying an icon, because the meaning of `urgency=1` is shared
 among the endpoints.
 
