@@ -64,9 +64,9 @@ Table of Contents
      1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
    2.  The Priority HTTP Header Field  . . . . . . . . . . . . . . .   4
      2.1.  urgency . . . . . . . . . . . . . . . . . . . . . . . . .   4
-       2.1.1.  blocking  . . . . . . . . . . . . . . . . . . . . . .   5
-       2.1.2.  document  . . . . . . . . . . . . . . . . . . . . . .   5
-       2.1.3.  non-blocking  . . . . . . . . . . . . . . . . . . . .   5
+       2.1.1.  prerequisite  . . . . . . . . . . . . . . . . . . . .   5
+       2.1.2.  default . . . . . . . . . . . . . . . . . . . . . . .   5
+       2.1.3.  supplementary . . . . . . . . . . . . . . . . . . . .   5
        2.1.4.  background  . . . . . . . . . . . . . . . . . . . . .   6
      2.2.  progressive . . . . . . . . . . . . . . . . . . . . . . .   6
    3.  Merging Client- and Server-Driven Parameters  . . . . . . . .   7
@@ -194,14 +194,14 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    The "urgency" parameter takes an integer between -1 and 6 as shown
    below:
 
-            +-----------------+------------------------------+
-            |         Urgency | Definition                   |
-            +-----------------+------------------------------+
-            |              -1 | blocking (Section 2.1.1)     |
-            |               0 | document (Section 2.1.2)     |
-            | between 1 and 5 | non-blocking (Section 2.1.3) |
-            |               6 | background (Section 2.1.4)   |
-            +-----------------+------------------------------+
+            +-----------------+-------------------------------+
+            |         Urgency | Definition                    |
+            +-----------------+-------------------------------+
+            |              -1 | prerequisite (Section 2.1.1)  |
+            |               0 | default (Section 2.1.2)       |
+            | between 1 and 5 | supplementary (Section 2.1.3) |
+            |               6 | background (Section 2.1.4)    |
+            +-----------------+-------------------------------+
 
                             Table 1: Urgencies
 
@@ -230,35 +230,35 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    described below.  Endpoints SHOULD respect the definition of the
    values when assigning urgencies.
 
-2.1.1.  blocking
+2.1.1.  prerequisite
 
-   The blocking urgency (value -1) indicates that the response prevents
-   other responses from being used.
+   The prerequisite urgency (value -1) indicates that the response
+   prevents other responses with an urgency of prerequisite or default
+   from being used.
 
    For example, use of an external stylesheet can block a web browser
    from rendering the HTML.  In such case, the stylesheet is given the
-   blocking urgency.
+   prerequisite urgency.
 
-2.1.2.  document
+2.1.2.  default
 
-   The document urgency (value 0) indicates that the response contains
-   the document that is being processed.  This urgency is also used for
-   responses that deserve the same precedence as the contents of the
-   document.
+   The default urgency (value 0) indicates a response that is to be used
+   as it is delivered to the client, but one that does not block other
+   responses from being used.
 
-   For example, when a user using a web browser navigates to a different
-   HTML document, the request for that HTML is given the document
-   urgency.  When that HTML document uses a custom font, the request for
-   that custom font SHOULD also be given the document urgency.  This is
+   For example, when a user using a web browser navigates to a new HTML
+   document, the request for that HTML is given the default urgency.
+   When that HTML document uses a custom font, the request for that
+   custom font SHOULD also be given the default urgency.  This is
    because the availablity of the custom font is likely a precondition
    for the user to use that portion of the HTML document, which is to be
    rendered by that font.
 
-2.1.3.  non-blocking
+2.1.3.  supplementary
 
-   The non-blocking urgency indicates that the response does not prevent
-   the client from using the document even though the response is being
-   incorporated into or referred to by the document.
+   The supplementary urgency indicates a response that is helpful to the
+   client using a composition of responses, even though the response
+   itself is not mandatory for using those responses.
 
    For example, inline images (i.e., images being fetched and displayed
    as part of the document) are visually important elements of an HTML
@@ -266,12 +266,12 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    the document, at least to some degree, before any or all of these
    images are loaded.  Display of those images are thus considered to be
    an improvement for visual clients rather than a prerequisite for all
-   user agents.  Therefore, such images will be given the non-blocking
+   user agents.  Therefore, such images will be given the supplementary
    urgency.
 
    Values between 1 and 5 are used to represent this urgency, to provide
    flexibility to the endpoints for giving some responses more or less
-   precedence than others that belong to the non-blocking group.
+   precedence than others that belong to the supplementary group.
    Section 3 explains how these values might be used.
 
 
@@ -283,11 +283,12 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
    Clients SHOULD NOT use values 1 and 5.  Servers MAY use these values
-   to prioritize a response above or below other non-blocking responses.
+   to prioritize a response above or below other supplementary
+   responses.
 
    Clients MAY use values 2 to indicate that a request is given
    relatively high priority, or 4 to indicate relatively low priority,
-   within the non-blocking urgency group.
+   within the supplementary urgency group.
 
    For example, an image certain to be visible at the top of the page,
    might be assigned a value of 2 instead of 3, as it will have a high
@@ -327,7 +328,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    The following example shows a request for a JPEG file with the
    urgency parameter set to "3" and the progressive parameter set to
    "1".
-
 
 
 
@@ -463,7 +463,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    merging client- and server-provided hints for prioritizing the
    responses.  For that to work, each urgency level needs to have a
    well-defined meaning.  As an example, a server can assign the highest
-   precedence among the non-blocking responses to an HTTP response
+   precedence among the supplementary responses to an HTTP response
    carrying an icon, because the meaning of "urgency=1" is shared among
    the endpoints.
 
