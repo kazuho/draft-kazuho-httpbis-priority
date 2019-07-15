@@ -203,7 +203,7 @@ be postponed without having an impact on using other responses.
 
 As an example, the download of a large file in a web browser would be assigned
 the background urgency so it would not impact further page loads on the same
-domain.
+connection.
 
 ## progressive
 
