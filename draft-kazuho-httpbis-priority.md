@@ -99,7 +99,7 @@ The Priority HTTP header field can appear in requests and responses. A client
 uses it to specify the priority of the response. A server uses it to inform
 the client that the priority was overwritten. An intermediary can use the
 Priority information from client requests and server responses to correct or
-amend the precedence to suit it (see {{merging}}).
+amend the precedence to suit it (see {{collaboration}}).
 
 The value of the Priority header field is a Structured Headers
 {{!I-D.ietf-httpbis-header-structure}} Dictionary.  Each dictionary member
@@ -179,7 +179,7 @@ supplementary urgency.
 
 Values between 1 and 5 are used to represent this urgency, to provide
 flexibility to the endpoints for giving some responses more or less precedence
-than others that belong to the supplementary group. {{merging}} explains how
+than others that belong to the supplementary group. {{collaboration}} explains how
 these values might be used.
 
 Clients SHOULD NOT use values 1 and 5.  Servers MAY use these values to
@@ -233,18 +233,78 @@ set to `3` and the progressive parameter set to `1`.
 priority = urgency=3, progressive=?1
 ~~~
 
-# Merging Client- and Server-Driven Parameters {#merging}
+# Prioritization Process and Lifecycle
 
-It is not always the case that the client has the best understanding of how the
-HTTP responses deserve to be prioritized.  For example, use of an HTML document
-might depend heavily on one of the inline images.  Existence of such
-dependencies is typically best known to the server.
+HTTP/2 alludes to a prioritization process and does not specify many details
+about it. This might go some way to explain the different perspectives about
+prioritization that arise from different operators and use cases. The design
+also mixes concerns about prioritization between requests, streams and
+connections.
 
-By using the "Priority" response header, a server can override the
-prioritization hints provided by the client.  When used, the parameters found
-in the response header field overrides those specified by the client.
+HTTP/2's frame-based prioritization places an emphasis on the client's role in
+determining the priority of a response. {{?RFC7540}} Section 5.3 describes
+one key characteristic:
 
-For example, when the client sends an HTTP request with
+> Explicitly setting the priority for a stream is input to a
+  prioritization process.  It does not guarantee any particular
+  processing or transmission order for the stream relative to any other
+  stream.  An endpoint cannot force a peer to process concurrent
+  streams in a particular order using priority.  Expressing priority is
+  therefore only a suggestion.
+
+In practice, this approach is quite one-sided and puts a burden on the endpoint
+with the most limited amount of information. A client processing HTML and
+generating requests generally has only a URL and a type (determined by an HTML
+element or other mechanism) on which to make a prioritization prediction.
+
+A server typically has more information about the resource than the client,
+including the context around it (such as linked representations). It uses local
+knowledge, with input from the client, to generate a single selected
+representation ({{?RFC7231}}, Section 3) and respond. During response
+generation, the server can possibly determine that the client's predicted
+prioritization was incorrect (perhaps sub-optimal) for how the selected
+representation will be used. An HTTP/2 server might use this information,
+together with other inputs, to send the response at a different effective
+priority than the client suggested. However, it has no explicit means on which
+to present such a finding to the client.
+
+The frame-based prioritization process weakens further when intermediaries are
+considered because only the client is permitted to provide an explicit signal.
+
+## A Collaborative Model
+
+A collaborative model is presented that attempts to abstract priority and
+collaboration from concerns about HTTP version and active connections.
+
+Resources have an initial priority that begins with a neutral value. Requests
+and responses permit collaborative changes to the resources initial priority
+information. A client attaches suggested priority information to the request,
+omission activates a default priority. A server can (if supported) attach
+priority information to the response, omission might be an acceptance of the
+client offer or or implicit ignore. Once a request or response is in flight, an
+endpoint cannot modify the initial priority, further changes are classed as
+reprioritization that requires a non-request or non-response carriage mechanism
+(e.g. a frame).
+
+As explained above, in this model HTTP/2 does not provide an explicit
+prioritization signal for servers.
+
+## Explicit Client and Server Collaboration {#collaboration}
+
+The "Priority" header field can be attached to responses in order to provide an
+explicit signal that allows servers collaborate to collaborate on the
+prioritization process. A server sends new priority parameter values or confirms
+the client suggestion. This process works well in the case of intermediaries
+because the client suggested priorities are passed to the origin, giving it the
+opportunity to improve the priority information before the intermediary
+allocates resources to the response.
+
+For example, a client using an HTML document discovers several inline images and
+requests them with a low urgency via an intermediary. The origin server has
+knowledge that one of the images heavily affects the usage of the HTML document
+and it is therefore beneficial to promote the urgency.
+
+To illustrate, when a client sends a request with
 
 ~~~ example
 :method = GET
@@ -262,10 +322,9 @@ content-type = image/png
 priority = urgency=1
 ~~~
 
-the intermediary's understanding of the urgency is promoted from `3` to `1`,
-because the server-provided value overrides the value provided by the client.
-The progressiveness continues to be `1`, the value specified by the client, as
-the server did not specify the `progressive` parameter.
+the intermediary's understanding of the urgency is promoted from `3` to `1`. The
+origin omitted the `progressive` parameter and therefore the value `1` specified
+by the client continues to be used.
 
 # Coexistence with HTTP/2 Priorities {#coexistence}
 
