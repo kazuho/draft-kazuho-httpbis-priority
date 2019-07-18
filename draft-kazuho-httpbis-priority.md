@@ -159,7 +159,7 @@ used.
 For example, when a user using a web browser navigates to a new HTML document,
 the request for that HTML is given the default urgency.  When that HTML document
 uses a custom font, the request for that custom font SHOULD also be given the
-default urgency.  This is because the availablity of the custom font is likely
+default urgency.  This is because the availability of the custom font is likely
 a precondition for the user to use that portion of the HTML document, which is
 to be rendered by that font.
 
