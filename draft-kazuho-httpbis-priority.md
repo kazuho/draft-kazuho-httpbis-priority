@@ -233,71 +233,17 @@ set to `3` and the progressive parameter set to `1`.
 priority = urgency=3, progressive=?1
 ~~~
 
-# Prioritization Process and Lifecycle
+# Merging Client- and Server-Driven Parameters {#merging}
 
-HTTP/2 alludes to a prioritization process and does not specify many details
-about it. The prioritization scheme mixes concerns about requests, streams and
-connections, which complicates understanding. These factors might go some way to
-explain the different perspectives about prioritization that arise from
-different operators and use cases.
+The "Priority" header field is an end-to-end signal ({{end-to-end}}) that allows
+endpoints to collaborate on priorities ({{collaboration}}).
 
-HTTP/2's frame-based prioritization places an emphasis on the client's role in
-determining the priority of a response. {{?RFC7540}} Section 5.3 describes
-one key characteristic:
-
-> Explicitly setting the priority for a stream is input to a
-  prioritization process.  It does not guarantee any particular
-  processing or transmission order for the stream relative to any other
-  stream.  An endpoint cannot force a peer to process concurrent
-  streams in a particular order using priority.  Expressing priority is
-  therefore only a suggestion.
-
-In practice, this approach is quite one-sided and puts a burden on the endpoint
-with the most limited amount of information. A client processing HTML and
-generating requests generally has only a URL and a type (determined by an HTML
-element or other mechanism) on which to make a prioritization prediction.
-
-A server typically has more information about the resource than the client,
-including the context around it (such as linked representations). It uses local
-knowledge, with input from the client, to generate a single selected
-representation ({{?RFC7231}}, Section 3) and respond. During response
-generation, the server can possibly determine that the client's predicted
-prioritization was incorrect (perhaps sub-optimal) for how the selected
-representation will be used. An HTTP/2 server might use this information,
-together with other inputs, to send the response at a different effective
-priority than the client suggested. However, it has no explicit means by which
-to present such a finding to the client.
-
-The frame-based prioritization process weakens further when intermediaries are
-considered because only the client is permitted to provide an explicit signal.
-
-## A Collaborative Model
-
-A collaborative model is presented that attempts to abstract priority and
-collaboration from concerns about HTTP version and active connections.
-
-Resources have an initial priority that begins with a neutral value. Requests
-and responses permit collaborative changes to the resource's initial priority
-information. A client attaches suggested priority information to the request,
-omission activates a default priority. A server can (if supported) attach
-priority information to the response, omission might be an acceptance of the
-client offer or an implicit ignore. Once a request or response is in flight, an
-endpoint cannot modify the initial priority, any further change is classed as a
-reprioritization that requires a non-request or non-response carriage mechanism
-(e.g. a frame).
-
-As explained above, in this model HTTP/2 does not provide an explicit
-prioritization signal for servers.
-
-## Explicit Client and Server Collaboration {#collaboration}
-
-The "Priority" header field can be attached to responses, it is an explicit
-signal that allows a server to collaborate in the prioritization process by
-sending new priority parameter values or confirming the client suggestion. When
-an intermediary is present, the client-suggested priority is passed to the
-origin server, which gives it the opportunity to improve the priority
-information. The intermediary can then use the origin server response to decide how
-to best prioritize serving the response.
+Client-driven parameters are sent in requests and server-driven parameters are
+sent in responses. When an intermediary is present, the client's suggested
+priority is passed to the origin server, which gives it the opportunity to
+improve the priority information. The intermediary can then use the origin
+server response in order to decide how to best prioritize the response that it
+sends.
 
 For example, a client using an HTML document discovers several inline images and
 requests them with a low urgency via an intermediary. The origin server has
@@ -361,7 +307,71 @@ extension element (see {{!RFC7540}}, Section 5.5).
 
 # Considerations
 
-## Why use an End-to-End Header Field?
+## The Case for a Collaborative Prioritization Process {#collaboration}
+
+HTTP/2 prioritization places a lot of responsibility on the client. It provides
+a very flexible dependency-priority scheme that has the potential to model rich
+and diverse use cases. However, experience shows that HTTP/2 implementations
+have not used this for much innovation, instead preferring simpler structures.
+
+The client is well placed to decide request priority based on information such
+as the resource type and the context it will be used in. The goal and how
+information is acted on is described lightly in {{?RFC7540}} Section 5.3:
+
+>  Most importantly, priority can be used to select streams for transmitting
+   frames when there is limited capacity for sending.
+
+> Explicitly setting the priority for a stream is input to a
+  prioritization process.  It does not guarantee any particular
+  processing or transmission order for the stream relative to any other
+  stream.  An endpoint cannot force a peer to process concurrent
+  streams in a particular order using priority.  Expressing priority is
+  therefore only a suggestion.
+
+The client is not alone in understanding the best way to prioritize a request. A
+server's prioritization decision is driven by a number of factors such as the
+selected representation ({{?RFC7231}}, Section 3), data locality, resource
+contention, load balancing across multiple clients, application-specific
+annotations etc. When it generates responses it might determine that the
+client's predicted prioritization was incorrect for how the selected
+representation will be used. Rigidly following the client's suggestion could
+lead to a sub-optimal user experience, and so to avoid this, the server can send
+the response at a different effective priority than the client suggestion.
+
+The prioritization process is a collaborative activity but there are no explicit
+means by which a server can present its information. Attempting to infer reasons
+about prioritization from implicit signals is impractical and error prone due to
+the number of factors involved.
+
+This document makes a case for a revised prioritization process that has is more
+collaborative by allowing server-driven inputs to be more fully considered.
+Collaboration is foreseen to be especially beneficial when multiple endpoints
+are involved i.e. a request through an intermediary. It is important to
+highlight that the goal of the process remains the same, responses are
+prioritized in order make best use of a limited sending capacity.
+
+Resources have an initial priority that begins with a neutral value. Requests
+and responses permit collaborative changes to the resource's initial priority
+information. A client attaches suggested priority information to the request,
+omission activates a default priority. A server can (if supported) attach
+priority information to the response, omission might be an acceptance of the
+client offer or an implicit ignore. Once a request or response is in flight, an
+endpoint cannot modify the initial priority, any further change is classed as a
+reprioritization that requires a non-request or non-response carriage mechanism
+(e.g. a frame).
+
+Today's HTTP/2 priority information is exchanged as frames and restricted to
+clients. In order to support the new process, changes to frames and their
+handling are required. Extending behavior at that this level has proven hard
+achieve in Internet deployments with challenges including availability of APIs,
+configuration specification and storage, coordination across endpoints, ease of
+migration, portability across HTTP versions, and extensibility of the extension
+itself. Extending HTTP behaviours with header fields has generally been more
+succesful because this set of challenges have already been solved or are moot.
+Therefore the Priority header field is proposed by this document as the most
+appropriate way to exchange initial priority information.
+
+## Why use an End-to-End Header Field? {#end-to-end}
 
 Contrary to the prioritization scheme of HTTP/2 that uses a hop-by-hop frame,
 the Priority header field is defined as end-to-end.
