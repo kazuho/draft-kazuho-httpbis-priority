@@ -236,10 +236,10 @@ priority = urgency=3, progressive=?1
 # Prioritization Process and Lifecycle
 
 HTTP/2 alludes to a prioritization process and does not specify many details
-about it. This might go some way to explain the different perspectives about
-prioritization that arise from different operators and use cases. The design
-also mixes concerns about prioritization between requests, streams and
-connections.
+about it. The prioritization scheme mixes concerns about requests, streams and
+connections, which complicates understanding. These factors might go some way to
+explain the different perspectives about prioritization that arise from
+different operators and use cases.
 
 HTTP/2's frame-based prioritization places an emphasis on the client's role in
 determining the priority of a response. {{?RFC7540}} Section 5.3 describes
@@ -265,7 +265,7 @@ generation, the server can possibly determine that the client's predicted
 prioritization was incorrect (perhaps sub-optimal) for how the selected
 representation will be used. An HTTP/2 server might use this information,
 together with other inputs, to send the response at a different effective
-priority than the client suggested. However, it has no explicit means on which
+priority than the client suggested. However, it has no explicit means by which
 to present such a finding to the client.
 
 The frame-based prioritization process weakens further when intermediaries are
@@ -277,12 +277,12 @@ A collaborative model is presented that attempts to abstract priority and
 collaboration from concerns about HTTP version and active connections.
 
 Resources have an initial priority that begins with a neutral value. Requests
-and responses permit collaborative changes to the resources initial priority
+and responses permit collaborative changes to the resource's initial priority
 information. A client attaches suggested priority information to the request,
 omission activates a default priority. A server can (if supported) attach
 priority information to the response, omission might be an acceptance of the
-client offer or or implicit ignore. Once a request or response is in flight, an
-endpoint cannot modify the initial priority, further changes are classed as
+client offer or an implicit ignore. Once a request or response is in flight, an
+endpoint cannot modify the initial priority, any further change is classed as a
 reprioritization that requires a non-request or non-response carriage mechanism
 (e.g. a frame).
 
@@ -291,13 +291,13 @@ prioritization signal for servers.
 
 ## Explicit Client and Server Collaboration {#collaboration}
 
-The "Priority" header field can be attached to responses in order to provide an
-explicit signal that allows servers collaborate to collaborate on the
-prioritization process. A server sends new priority parameter values or confirms
-the client suggestion. This process works well in the case of intermediaries
-because the client suggested priorities are passed to the origin, giving it the
-opportunity to improve the priority information before the intermediary
-allocates resources to the response.
+The "Priority" header field can be attached to responses, it is an explicit
+signal that allows a server to collaborate in the prioritization process by
+sending new priority parameter values or confirming the client suggestion. When
+an intermediary is present, the client-suggested priority is passed to the
+origin server, which gives it the opportunity to improve the priority
+information. The intermediary can use the origin server response to decide how
+to best prioritize serving the response.
 
 For example, a client using an HTML document discovers several inline images and
 requests them with a low urgency via an intermediary. The origin server has
