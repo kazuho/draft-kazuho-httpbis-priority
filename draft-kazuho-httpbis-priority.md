@@ -296,7 +296,7 @@ signal that allows a server to collaborate in the prioritization process by
 sending new priority parameter values or confirming the client suggestion. When
 an intermediary is present, the client-suggested priority is passed to the
 origin server, which gives it the opportunity to improve the priority
-information. The intermediary can use the origin server response to decide how
+information. The intermediary can then use the origin server response to decide how
 to best prioritize serving the response.
 
 For example, a client using an HTML document discovers several inline images and
