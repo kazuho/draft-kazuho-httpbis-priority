@@ -71,7 +71,7 @@ bandwidth among the HTTP responses.  However, the design has shortcomings:
   coordinate client-driven and server-driven priorities.
 * It is hard for a server to determine the processing order of queued requests
   based on their priorities, when the server's internal request concurrency is
-  limited differently than the concurrency of HTTP/2 connections.
+  limited differently than the stream-level concurrency of HTTP/2 connections.
 * The design cannot be ported cleanly to HTTP/3 ({{?I-D.ietf-quic-http}}).  One
   of the primary goals of HTTP/3 is to minimize head-of-line blocking.
   Transmitting the evolving representation of a "prioritization tree" from the
