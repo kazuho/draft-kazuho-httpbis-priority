@@ -99,7 +99,7 @@ The Priority HTTP header field can appear in requests and responses. A client
 uses it to specify the priority of the response. A server uses it to inform
 the client that the priority was overwritten. An intermediary can use the
 Priority information from client requests and server responses to correct or
-amend the precedence to suit it (see {{collaboration}}).
+amend the precedence to suit it (see {{merging}}).
 
 The value of the Priority header field is a Structured Headers
 {{!I-D.ietf-httpbis-header-structure}} Dictionary.  Each dictionary member
@@ -329,7 +329,7 @@ information is acted on is described lightly in {{?RFC7540}} Section 5.3:
   therefore only a suggestion.
 
 The client is not alone in understanding the best way to prioritize a request. A
-server's prioritization decision is driven by a number of factors such as the
+server's prioritization decision can be driven by a number of factors such as the
 selected representation ({{?RFC7231}}, Section 3), data locality, resource
 contention, load balancing across multiple clients, application-specific
 annotations etc. When it generates responses it might determine that the
@@ -362,7 +362,7 @@ reprioritization that requires a non-request or non-response carriage mechanism
 
 Today's HTTP/2 priority information is exchanged as frames and restricted to
 clients. In order to support the new process, changes to frames and their
-handling are required. Extending behavior at that this level has proven hard
+handling are required. Extending behavior at that this level has proven hard to
 achieve in Internet deployments with challenges including availability of APIs,
 configuration specification and storage, coordination across endpoints, ease of
 migration, portability across HTTP versions, and extensibility of the extension
