@@ -304,7 +304,8 @@ ul.toc li {
 <link href="#rfc.references.2" rel="Chapter" title="8.2 Informative References">
 <link href="#rfc.appendix.A" rel="Chapter" title="A Acknowledgements">
 <link href="#rfc.appendix.B" rel="Chapter" title="B Change Log">
-<link href="#rfc.appendix.B.1" rel="Chapter" title="B.1 Since draft-kazuho-httpbis-priority-00">
+<link href="#rfc.appendix.B.1" rel="Chapter" title="B.1 Since draft-kazuho-httpbis-priority-01">
+<link href="#rfc.appendix.B.2" rel="Chapter" title="B.2 Since draft-kazuho-httpbis-priority-00">
 <link href="#rfc.authors" rel="Chapter">
 
 
@@ -313,7 +314,7 @@ ul.toc li {
 
   <meta name="dct.creator" content="Oku, K. and L. Pardue" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-kazuho-httpbis-priority-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-07-15" />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-07-21" />
   <meta name="dct.abstract" content="This document describes the Priority HTTP header field.  This header field can be used by endpoints to specify the absolute precedence of an HTTP response in an HTTP-version-independent way." />
   <meta name="description" content="This document describes the Priority HTTP header field.  This header field can be used by endpoints to specify the absolute precedence of an HTTP response in an HTTP-version-independent way." />
 
@@ -337,12 +338,12 @@ ul.toc li {
 <td class="right">L. Pardue</td>
 </tr>
 <tr>
-<td class="left">Expires: January 16, 2020</td>
+<td class="left">Expires: January 22, 2020</td>
 <td class="right">Cloudflare</td>
 </tr>
 <tr>
 <td class="left"></td>
-<td class="right">July 15, 2019</td>
+<td class="right">July 21, 2019</td>
 </tr>
 
     	
@@ -358,7 +359,7 @@ ul.toc li {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on January 16, 2020.</p>
+<p>This Internet-Draft will expire on January 22, 2020.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2019 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -412,7 +413,9 @@ ul.toc li {
 </li>
 <li>Appendix B.   <a href="#rfc.appendix.B">Change Log</a>
 </li>
-<ul><li>B.1.   <a href="#rfc.appendix.B.1">Since draft-kazuho-httpbis-priority-00</a>
+<ul><li>B.1.   <a href="#rfc.appendix.B.1">Since draft-kazuho-httpbis-priority-01</a>
+</li>
+<li>B.2.   <a href="#rfc.appendix.B.2">Since draft-kazuho-httpbis-priority-00</a>
 </li>
 </ul><li><a href="#rfc.authors">Authors' Addresses</a>
 </li>
@@ -498,7 +501,7 @@ priority = urgency=-1
 <a href="#rfc.section.2.1.2">2.1.2.</a> <a href="#default" id="default">default</a>
 </h1>
 <p id="rfc.section.2.1.2.p.1">The default urgency (value 0) indicates a response that is to be used as it is delivered to the client, but one that does not block other responses from being used.</p>
-<p id="rfc.section.2.1.2.p.2">For example, when a user using a web browser navigates to a new HTML document, the request for that HTML is given the default urgency.  When that HTML document uses a custom font, the request for that custom font SHOULD also be given the default urgency.  This is because the availablity of the custom font is likely a precondition for the user to use that portion of the HTML document, which is to be rendered by that font.</p>
+<p id="rfc.section.2.1.2.p.2">For example, when a user using a web browser navigates to a new HTML document, the request for that HTML is given the default urgency.  When that HTML document uses a custom font, the request for that custom font SHOULD also be given the default urgency.  This is because the availability of the custom font is likely a precondition for the user to use that portion of the HTML document, which is to be rendered by that font.</p>
 <h1 id="rfc.section.2.1.3">
 <a href="#rfc.section.2.1.3">2.1.3.</a> <a href="#supplementary" id="supplementary">supplementary</a>
 </h1>
@@ -663,16 +666,23 @@ priority = urgency=1
 <h1 id="rfc.appendix.A">
 <a href="#rfc.appendix.A">Appendix A.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a>
 </h1>
-<p id="rfc.section.A.p.1">Many thanks to Robin Marx, Patrick Meenan and Ian Swett for their feedback.</p>
+<p id="rfc.section.A.p.1">Roy Fielding presented the idea of using a header field for representing priorities in <a href="http://tools.ietf.org/agenda/83/slides/slides-83-httpbis-5.pdf">http://tools.ietf.org/agenda/83/slides/slides-83-httpbis-5.pdf</a>.  In <a href="https://github.com/pmeenan/http3-prioritization-proposal">https://github.com/pmeenan/http3-prioritization-proposal</a>, Patrick Meenan advocates for representing the priorities using a tuple of urgency and concurrency.</p>
+<p id="rfc.section.A.p.2">Many thanks to Robin Marx, Patrick Meenan and Ian Swett for their feedback.</p>
 <h1 id="rfc.appendix.B">
 <a href="#rfc.appendix.B">Appendix B.</a> <a href="#change-log" id="change-log">Change Log</a>
 </h1>
 <h1 id="rfc.appendix.B.1">
-<a href="#rfc.appendix.B.1">B.1.</a> <a href="#since-draft-kazuho-httpbis-priority-00" id="since-draft-kazuho-httpbis-priority-00">Since draft-kazuho-httpbis-priority-00</a>
+<a href="#rfc.appendix.B.1">B.1.</a> <a href="#since-draft-kazuho-httpbis-priority-01" id="since-draft-kazuho-httpbis-priority-01">Since draft-kazuho-httpbis-priority-01</a>
 </h1>
 <p></p>
 
 <ul><li>None yet.</li></ul>
+<h1 id="rfc.appendix.B.2">
+<a href="#rfc.appendix.B.2">B.2.</a> <a href="#since-draft-kazuho-httpbis-priority-00" id="since-draft-kazuho-httpbis-priority-00">Since draft-kazuho-httpbis-priority-00</a>
+</h1>
+<p></p>
+
+<ul><li>Expand urgency levels from 3 to 8.</li></ul>
 <h1 id="rfc.authors"><a href="#rfc.authors">Authors' Addresses</a></h1>
 <div class="avoidbreak">
   <address class="vcard">

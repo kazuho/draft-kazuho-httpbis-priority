@@ -5,8 +5,8 @@
 HTTP                                                              K. Oku
 Internet-Draft                                                    Fastly
 Intended status: Standards Track                               L. Pardue
-Expires: January 16, 2020                                     Cloudflare
-                                                           July 15, 2019
+Expires: January 22, 2020                                     Cloudflare
+                                                           July 21, 2019
 
 
                      The Priority HTTP Header Field
@@ -33,7 +33,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 16, 2020.
+   This Internet-Draft will expire on January 22, 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Oku & Pardue            Expires January 16, 2020                [Page 1]
+Oku & Pardue            Expires January 22, 2020                [Page 1]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -82,7 +82,8 @@ Table of Contents
      8.2.  Informative References  . . . . . . . . . . . . . . . . .  10
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  11
    Appendix B.  Change Log . . . . . . . . . . . . . . . . . . . . .  11
-     B.1.  Since draft-kazuho-httpbis-priority-00  . . . . . . . . .  11
+     B.1.  Since draft-kazuho-httpbis-priority-01  . . . . . . . . .  11
+     B.2.  Since draft-kazuho-httpbis-priority-00  . . . . . . . . .  11
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  11
 
 1.  Introduction
@@ -108,8 +109,7 @@ Table of Contents
 
 
 
-
-Oku & Pardue            Expires January 16, 2020                [Page 2]
+Oku & Pardue            Expires January 22, 2020                [Page 2]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -165,7 +165,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 16, 2020                [Page 3]
+Oku & Pardue            Expires January 22, 2020                [Page 3]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -221,7 +221,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 16, 2020                [Page 4]
+Oku & Pardue            Expires January 22, 2020                [Page 4]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -250,7 +250,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    document, the request for that HTML is given the default urgency.
    When that HTML document uses a custom font, the request for that
    custom font SHOULD also be given the default urgency.  This is
-   because the availablity of the custom font is likely a precondition
+   because the availability of the custom font is likely a precondition
    for the user to use that portion of the HTML document, which is to be
    rendered by that font.
 
@@ -277,7 +277,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 16, 2020                [Page 5]
+Oku & Pardue            Expires January 22, 2020                [Page 5]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -333,7 +333,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 16, 2020                [Page 6]
+Oku & Pardue            Expires January 22, 2020                [Page 6]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -389,7 +389,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 16, 2020                [Page 7]
+Oku & Pardue            Expires January 22, 2020                [Page 7]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -445,7 +445,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 16, 2020                [Page 8]
+Oku & Pardue            Expires January 22, 2020                [Page 8]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -501,7 +501,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 16, 2020                [Page 9]
+Oku & Pardue            Expires January 22, 2020                [Page 9]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -557,7 +557,7 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
 
-Oku & Pardue            Expires January 16, 2020               [Page 10]
+Oku & Pardue            Expires January 22, 2020               [Page 10]
 
 Internet-Draft       The Priority HTTP Header Field            July 2019
 
@@ -576,16 +576,32 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
               DOI 10.17487/RFC8081, February 2017,
               <https://www.rfc-editor.org/info/rfc8081>.
 
+8.3.  URIs
+
+   [1] http://tools.ietf.org/agenda/83/slides/slides-83-httpbis-5.pdf
+
+   [2] https://github.com/pmeenan/http3-prioritization-proposal
+
 Appendix A.  Acknowledgements
+
+   Roy Fielding presented the idea of using a header field for
+   representing priorities in http://tools.ietf.org/agenda/83/slides/
+   slides-83-httpbis-5.pdf [1].  In https://github.com/pmeenan/http3-
+   prioritization-proposal [2], Patrick Meenan advocates for
+   representing the priorities using a tuple of urgency and concurrency.
 
    Many thanks to Robin Marx, Patrick Meenan and Ian Swett for their
    feedback.
 
 Appendix B.  Change Log
 
-B.1.  Since draft-kazuho-httpbis-priority-00
+B.1.  Since draft-kazuho-httpbis-priority-01
 
    o  None yet.
+
+B.2.  Since draft-kazuho-httpbis-priority-00
+
+   o  Expand urgency levels from 3 to 8.
 
 Authors' Addresses
 
@@ -593,6 +609,13 @@ Authors' Addresses
    Fastly
 
    Email: kazuhooku@gmail.com
+
+
+
+
+Oku & Pardue            Expires January 22, 2020               [Page 11]
+
+Internet-Draft       The Priority HTTP Header Field            July 2019
 
 
    Lucas Pardue
@@ -613,4 +636,37 @@ Authors' Addresses
 
 
 
-Oku & Pardue            Expires January 16, 2020               [Page 11]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Oku & Pardue            Expires January 22, 2020               [Page 12]
