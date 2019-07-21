@@ -1,6 +1,6 @@
 ---
 title: The Priority HTTP Header Field
-docname: draft-kazuho-httpbis-priority-latest
+docname: draft-kazuho-httpbis-priority-01
 category: std
 
 ipr: trust200902
@@ -407,4 +407,4 @@ Many thanks to Robin Marx, Patrick Meenan and Ian Swett for their feedback.
 
 ## Since draft-kazuho-httpbis-priority-00
 
-* None yet.
+* Expand urgency levels from 3 to 8.
