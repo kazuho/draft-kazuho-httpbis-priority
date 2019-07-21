@@ -395,6 +395,12 @@ Specification:
 
 # Acknowledgements
 
+Roy Fielding presented the idea of using a header field for representing
+priorities in <http://tools.ietf.org/agenda/83/slides/slides-83-httpbis-5.pdf>.
+In <https://github.com/pmeenan/http3-prioritization-proposal>, Patrick Meenan
+advocates for representing the priorities using a tuple of urgency and
+concurrency.
+
 Many thanks to Robin Marx, Patrick Meenan and Ian Swett for their feedback.
 
 # Change Log
