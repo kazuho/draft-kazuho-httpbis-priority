@@ -349,6 +349,40 @@ server that receives requests for a font {{?RFC8081}} and images with the same
 urgency might give higher precedence to the font, so that a visual client can
 render textual information at an early moment.
 
+## Reprioritization
+
+Once a client sends a request, it cannot reprioritize the corresponding response
+by using the Priority header field.  This is because an HTTP header field can
+only be sent as part of an HTTP message.
+
+Therefore, to support reprioritization, it is necessary to define a
+HTTP-version-dependent mechanism for transmitting the priority parameters.
+
+One approach that we can use in HTTP/2 ({{?RFC7540}}) is to use a frame that
+carries the priority parameters.
+
+~~~ drawing
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +---------------------------------------------------------------+
+ |R|                        Stream ID (31)                       |
+ +---------------------------------------------------------------+
+ |                   Priority Field Value (*)                  ...
+ +---------------------------------------------------------------+
+~~~
+{: #fig-reprioritization-frame title="Reprioritization frame payload"}
+
+The Reprioritization frame would be sent on stream 0.  This frame carries the
+stream ID of the response that is being reprioritized, and the updated priority
+in ASCII text, using the same represententation as that of the Priority header
+field value.
+
+As an example, a web browser might issue a prefetch request for an HTML on
+stream 31, with the urgency parameter of the Priority request header field set
+to `background`.  Then, when the user navigates to the HTML while prefetch is in
+action, it would send a reprioritization frame with the stream ID set to 31, and
+the priority field value set to `urgency=0`.
+
 # Security Considerations
 
 TBD
