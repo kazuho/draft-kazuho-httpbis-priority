@@ -297,6 +297,7 @@ ul.toc li {
 <link href="#rfc.section.5" rel="Chapter" title="5 Considerations">
 <link href="#rfc.section.5.1" rel="Chapter" title="5.1 Why use an End-to-End Header Field?">
 <link href="#rfc.section.5.2" rel="Chapter" title="5.2 Why do Urgencies Have Meanings?">
+<link href="#rfc.section.5.3" rel="Chapter" title="5.3 Reprioritization">
 <link href="#rfc.section.6" rel="Chapter" title="6 Security Considerations">
 <link href="#rfc.section.7" rel="Chapter" title="7 IANA Considerations">
 <link href="#rfc.references" rel="Chapter" title="8 References">
@@ -314,7 +315,7 @@ ul.toc li {
 
   <meta name="dct.creator" content="Oku, K. and L. Pardue" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-kazuho-httpbis-priority-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-07-21" />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-07-22" />
   <meta name="dct.abstract" content="This document describes the Priority HTTP header field.  This header field can be used by endpoints to specify the absolute precedence of an HTTP response in an HTTP-version-independent way." />
   <meta name="description" content="This document describes the Priority HTTP header field.  This header field can be used by endpoints to specify the absolute precedence of an HTTP response in an HTTP-version-independent way." />
 
@@ -338,12 +339,12 @@ ul.toc li {
 <td class="right">L. Pardue</td>
 </tr>
 <tr>
-<td class="left">Expires: January 22, 2020</td>
+<td class="left">Expires: January 23, 2020</td>
 <td class="right">Cloudflare</td>
 </tr>
 <tr>
 <td class="left"></td>
-<td class="right">July 21, 2019</td>
+<td class="right">July 22, 2019</td>
 </tr>
 
     	
@@ -359,7 +360,7 @@ ul.toc li {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on January 22, 2020.</p>
+<p>This Internet-Draft will expire on January 23, 2020.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2019 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -398,6 +399,8 @@ ul.toc li {
 <ul><li>5.1.   <a href="#rfc.section.5.1">Why use an End-to-End Header Field?</a>
 </li>
 <li>5.2.   <a href="#rfc.section.5.2">Why do Urgencies Have Meanings?</a>
+</li>
+<li>5.3.   <a href="#rfc.section.5.3">Reprioritization</a>
 </li>
 </ul><li>6.   <a href="#rfc.section.6">Security Considerations</a>
 </li>
@@ -581,6 +584,26 @@ priority = urgency=1
 <p id="rfc.section.5.2.p.2">This specification restricts itself to defining a minimum set of urgency levels in order to provide sufficient granularity for prioritizing responses for ordinary web browsing, at minimal complexity.</p>
 <p id="rfc.section.5.2.p.3">However, that does not mean that the prioritization scheme would forever be stuck to the eight levels.  The design provides extensibility.  If deemed necessary, it would be possible to subdivide any of the eight urgency levels that are currently defined.  Or, a graphical user-agent could send a <samp>visible</samp> parameter to indicate if the resource being requested is within the viewport.</p>
 <p id="rfc.section.5.2.p.4">A server can combine the hints provided in the Priority header field with other information in order to improve the prioritization of responses.  For example, a server that receives requests for a font <a href="#RFC8081" class="xref">[RFC8081]</a> and images with the same urgency might give higher precedence to the font, so that a visual client can render textual information at an early moment.</p>
+<h1 id="rfc.section.5.3">
+<a href="#rfc.section.5.3">5.3.</a> <a href="#reprioritization" id="reprioritization">Reprioritization</a>
+</h1>
+<p id="rfc.section.5.3.p.1">Once a client sends a request, it cannot reprioritize the corresponding response by using the Priority header field.  This is because an HTTP header field can only be sent as part of an HTTP message.</p>
+<p id="rfc.section.5.3.p.2">Therefore, to support reprioritization, it is necessary to define a HTTP-version-dependent mechanism for transmitting the priority parameters.</p>
+<p id="rfc.section.5.3.p.3">One approach that we can use in HTTP/2 (<a href="#RFC7540" class="xref">[RFC7540]</a>) is to use a frame that carries the priority parameters.</p>
+<div id="rfc.figure.1"></div>
+<div id="fig-reprioritization-frame"></div>
+<pre>
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +---------------------------------------------------------------+
+ |R|                        Stream ID (31)                       |
+ +---------------------------------------------------------------+
+ |                   Priority Field Value (*)                  ...
+ +---------------------------------------------------------------+
+</pre>
+<p class="figure">Figure 1: Reprioritization frame payload</p>
+<p id="rfc.section.5.3.p.4">The Reprioritization frame would be sent on stream 0.  This frame carries the stream ID of the response that is being reprioritized, and the updated priority in ASCII text, using the same represententation as that of the Priority header field value.</p>
+<p id="rfc.section.5.3.p.5">As an example, a web browser might issue a prefetch request for an HTML on stream 31, with the urgency parameter of the Priority request header field set to <samp>background</samp>.  Then, when the user navigates to the HTML while prefetch is in action, it would send a reprioritization frame with the stream ID set to 31, and the priority field value set to <samp>urgency=0</samp>.</p>
 <h1 id="rfc.section.6">
 <a href="#rfc.section.6">6.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a>
 </h1>
