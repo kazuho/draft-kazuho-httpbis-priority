@@ -370,7 +370,7 @@ carries the priority parameters.
  |                   Priority Field Value (*)                  ...
  +---------------------------------------------------------------+
 ~~~
-{: #fig-cert-needed title="Repriotizization frame payload"}
+{: #fig-reprioritization-frame title="Reprioritization frame payload"}
 
 The Reprioritization frame would be sent on stream 0.  This frame carries the
 stream ID of the response that is being reprioritized, and the updated priority
