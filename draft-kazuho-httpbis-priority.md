@@ -367,21 +367,21 @@ carries the priority parameters.
  +---------------------------------------------------------------+
  |R|                        Stream ID (31)                       |
  +---------------------------------------------------------------+
- |                 Prioritization Parameters (*)               ...
+ |                   Priority Field Value (*)                  ...
  +---------------------------------------------------------------+
 ~~~
 {: #fig-cert-needed title="Repriotizization frame payload"}
 
-The Reprioritization frame would be sent on stream 0.  First four octets
-identify the response that is being reprioritized.  The rest of the frame
-carries the prioritization parameters in ASCII text, using the same
-represententation as that of the Priority header field value.
+The Reprioritization frame would be sent on stream 0.  This frame carries the
+stream ID of the response that is being reprioritized, and the updated priority
+in ASCII text, using the same represententation as that of the Priority header
+field value.
 
 As an example, a web browser might issue a prefetch request for an HTML on
 stream 31, with the urgency parameter of the Priority request header field set
 to `background`.  Then, when the user navigates to the HTML while prefetch is in
 action, it would send a reprioritization frame with the stream ID set to 31, and
-the prioritization parameters set to `urgency=0`.
+the priority field value set to `urgency=0`.
 
 # Security Considerations
 
