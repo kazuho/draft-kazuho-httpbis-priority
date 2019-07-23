@@ -1,6 +1,6 @@
 ---
 title: The Priority HTTP Header Field
-docname: draft-kazuho-httpbis-priority-latest
+docname: draft-kazuho-httpbis-priority-02
 category: std
 
 ipr: trust200902
@@ -441,7 +441,7 @@ Many thanks to Robin Marx, Patrick Meenan and Ian Swett for their feedback.
 
 ## Since draft-kazuho-httpbis-priority-01
 
-* None yet.
+* Explain how reprioritization might be supported.
 
 ## Since draft-kazuho-httpbis-priority-00
 
