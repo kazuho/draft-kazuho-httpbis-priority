@@ -93,6 +93,8 @@ The terms sh-token and sh-boolean are imported from
 Example HTTP requests and responses use the HTTP/2-style formatting from
 {{?RFC7540}}.
 
+This document uses the variable-length integer encoding from {{!I-D.draft-ietf-quic-transport-23}}.
+
 # The Priority HTTP Header Field
 
 The Priority HTTP header field can appear in requests and responses. A client
@@ -351,15 +353,31 @@ render textual information at an early moment.
 
 ## Reprioritization
 
-Once a client sends a request, it cannot reprioritize the corresponding response
-by using the Priority header field.  This is because an HTTP header field can
-only be sent as part of an HTTP message.
+Once a client sends a request with a priority, circumstances might change and
+mean that it is beneficial to change the priority of the response. As an
+example, a web browser might issue a prefetch request for an HTML document with
+the urgency parameter of the Priority request header field set to `background`.
+Then, when the user navigates to the HTML while prefetch is in action, it would
+send a reprioritization frame with the priority field value set to `urgency=0`.
 
-Therefore, to support reprioritization, it is necessary to define a
+However, a client cannot reprioritize a response by using the Priority header
+field.  This is because an HTTP header field can only be sent as part of an HTTP
+message. Therefore, to support reprioritization, it is necessary to define a
 HTTP-version-dependent mechanism for transmitting the priority parameters.
 
-One approach that we can use in HTTP/2 ({{?RFC7540}}) is to use a frame that
-carries the priority parameters.
+One approach that we can use in HTTP/2 ({{?RFC7540}}) and HTTP/3
+({{?I-D.draft-ietf-quic-http-23}}) is to use a frame that carries the priority
+parameters. Since reprioritization takes place after the request has been sent,
+such frames need to be sent on the version-specific control stream and reference
+the stream on which the response is delivered.
+
+### HTTP/2 REPRIORITY Frame
+
+The HTTP/2 REPRIORITY frame (type=0xF) carries the stream ID of the response that
+is being reprioritized, and the updated priority in ASCII text, using the same
+representation as that of the Priority header field value.
+
+The REPRIORITY frame is sent on stream 0.
 
 ~~~ drawing
   0                   1                   2                   3
@@ -370,18 +388,39 @@ carries the priority parameters.
  |                   Priority Field Value (*)                  ...
  +---------------------------------------------------------------+
 ~~~
-{: #fig-reprioritization-frame title="Reprioritization frame payload"}
+{: #fig-h2-reprioritization-frame title="HTTP/2 REPRIORITY Frame Payload"}
 
-The Reprioritization frame would be sent on stream 0.  This frame carries the
-stream ID of the response that is being reprioritized, and the updated priority
-in ASCII text, using the same represententation as that of the Priority header
-field value.
+### HTTP/3 REPRIORITY Frame
 
-As an example, a web browser might issue a prefetch request for an HTML on
-stream 31, with the urgency parameter of the Priority request header field set
-to `background`.  Then, when the user navigates to the HTML while prefetch is in
-action, it would send a reprioritization frame with the stream ID set to 31, and
-the priority field value set to `urgency=0`.
+The HTTP/3 REPRIORITY frame (type=0xF) carries the ID of the element that
+is being reprioritized, and the updated priority in ASCII text, using the same
+representation as that of the Priority header field value.
+
+The REPRIORITY frame is sent on the control stream
+({{!I-D.draft-ietf-quic-http-23}}, Section 6.2.1).
+
+~~~ drawing
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +---------------------------------------------------------------+
+ |T|    Empty    |   Prioritized Element ID (i)                ...
+ +---------------------------------------------------------------+
+ |                   Priority Field Value (*)                  ...
+ +---------------------------------------------------------------+
+~~~
+{: #fig-h3-reprioritization-frame title="HTTP/3 REPRIORITY Frame Payload"}
+
+The PRIORITY frame payload has the following fields:
+
+T (Prioritized Element Type):
+: A one-bit field indicating the type of element
+being prioritized. A value of 0 indicates a reprioritization for a Request
+Stream, so the Prioritized Element ID is interpreted as a Stream ID. A
+value of 1 indicates a reprioritization for a Push stream, so the Prioritized
+Element ID is interpreted as a Push ID.
+
+Empty:
+: A seven-bit field that has no semantic value.
 
 # Security Considerations
 
