@@ -302,6 +302,84 @@ receipt, a client that supports header-based prioritization MUST close the
 connection with a protocol error. Non-supporting clients will ignore this
 extension element (see {{!RFC7540}}, Section 5.5).
 
+# Reprioritization
+
+Once a client sends a request with a priority, circumstances might change and
+mean that it is beneficial to change the priority of the response. As an
+example, a web browser might issue a prefetch request for an HTML document with
+the urgency parameter of the Priority request header field set to `background`.
+Then, when the user navigates to the HTML while prefetch is in action, it would
+send a reprioritization frame with the priority field value set to `urgency=0`.
+
+However, a client cannot reprioritize a response by using the Priority header
+field.  This is because an HTTP header field can only be sent as part of an HTTP
+message. Therefore, to support reprioritization, it is necessary to define a
+HTTP-version-dependent mechanism for transmitting the priority parameters.
+
+This document specifies a new frame type for HTTP/2 ({{?RFC7540}}) and HTTP/3
+({{?I-D.draft-ietf-quic-http-23}}) that is specialized for reprioritization. It
+carries updated priority parameters and is sent on the version-specific control
+stream. The frame references the response to reprioritize based on a
+version-specific identifier; in HTTP/2 this is the Stream ID, in HTTP/3 this is
+either the Stream ID or Push ID.
+
+## HTTP/2 REPRIORITY Frame
+
+The HTTP/2 REPRIORITY frame (type=0xF) carries the stream ID of the response that
+is being reprioritized, and the updated priority in ASCII text, using the same
+representation as that of the Priority header field value.
+
+The REPRIORITY frame is sent on stream 0.
+
+~~~ drawing
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +---------------------------------------------------------------+
+ |R|                        Stream ID (31)                       |
+ +---------------------------------------------------------------+
+ |                   Priority Field Value (*)                  ...
+ +---------------------------------------------------------------+
+~~~
+{: #fig-h2-reprioritization-frame title="HTTP/2 REPRIORITY Frame Payload"}
+
+TODO: add more description of how to handle things like receiving REPRIORITY on
+wrong stream, a REPRIORITY with an invalid ID, etc.
+
+## HTTP/3 REPRIORITY Frame
+
+The HTTP/3 REPRIORITY frame (type=0xF) carries the ID of the element that
+is being reprioritized, and the updated priority in ASCII text, using the same
+representation as that of the Priority header field value.
+
+The REPRIORITY frame is sent on the control stream
+({{!I-D.draft-ietf-quic-http-23}}, Section 6.2.1).
+
+~~~ drawing
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |T|    Empty    |   Prioritized Element ID (i)                ...
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                   Priority Field Value (*)                  ...
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+~~~
+{: #fig-h3-reprioritization-frame title="HTTP/3 REPRIORITY Frame Payload"}
+
+The REPRIORITY frame payload has the following fields:
+
+T (Prioritized Element Type):
+: A one-bit field indicating the type of element
+being prioritized. A value of 0 indicates a reprioritization for a Request
+Stream, so the Prioritized Element ID is interpreted as a Stream ID. A
+value of 1 indicates a reprioritization for a Push stream, so the Prioritized
+Element ID is interpreted as a Push ID.
+
+Empty:
+: A seven-bit field that has no semantic value.
+
+TODO: add more description of how to handle things like receiving REPRIORITY on
+wrong stream, a REPRIORITY with an invalid ID, etc.
+
 # Considerations
 
 ## Why use an End-to-End Header Field?
@@ -351,77 +429,6 @@ server that receives requests for a font {{?RFC8081}} and images with the same
 urgency might give higher precedence to the font, so that a visual client can
 render textual information at an early moment.
 
-## Reprioritization
-
-Once a client sends a request with a priority, circumstances might change and
-mean that it is beneficial to change the priority of the response. As an
-example, a web browser might issue a prefetch request for an HTML document with
-the urgency parameter of the Priority request header field set to `background`.
-Then, when the user navigates to the HTML while prefetch is in action, it would
-send a reprioritization frame with the priority field value set to `urgency=0`.
-
-However, a client cannot reprioritize a response by using the Priority header
-field.  This is because an HTTP header field can only be sent as part of an HTTP
-message. Therefore, to support reprioritization, it is necessary to define a
-HTTP-version-dependent mechanism for transmitting the priority parameters.
-
-One approach that we can use in HTTP/2 ({{?RFC7540}}) and HTTP/3
-({{?I-D.draft-ietf-quic-http-23}}) is to use a frame that carries the priority
-parameters. Since reprioritization takes place after the request has been sent,
-such frames need to be sent on the version-specific control stream and reference
-the stream on which the response is delivered.
-
-### HTTP/2 REPRIORITY Frame
-
-The HTTP/2 REPRIORITY frame (type=0xF) carries the stream ID of the response that
-is being reprioritized, and the updated priority in ASCII text, using the same
-representation as that of the Priority header field value.
-
-The REPRIORITY frame is sent on stream 0.
-
-~~~ drawing
-  0                   1                   2                   3
-  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
- +---------------------------------------------------------------+
- |R|                        Stream ID (31)                       |
- +---------------------------------------------------------------+
- |                   Priority Field Value (*)                  ...
- +---------------------------------------------------------------+
-~~~
-{: #fig-h2-reprioritization-frame title="HTTP/2 REPRIORITY Frame Payload"}
-
-### HTTP/3 REPRIORITY Frame
-
-The HTTP/3 REPRIORITY frame (type=0xF) carries the ID of the element that
-is being reprioritized, and the updated priority in ASCII text, using the same
-representation as that of the Priority header field value.
-
-The REPRIORITY frame is sent on the control stream
-({{!I-D.draft-ietf-quic-http-23}}, Section 6.2.1).
-
-~~~ drawing
-  0                   1                   2                   3
-  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
- +---------------------------------------------------------------+
- |T|    Empty    |   Prioritized Element ID (i)                ...
- +---------------------------------------------------------------+
- |                   Priority Field Value (*)                  ...
- +---------------------------------------------------------------+
-~~~
-{: #fig-h3-reprioritization-frame title="HTTP/3 REPRIORITY Frame Payload"}
-
-The PRIORITY frame payload has the following fields:
-
-T (Prioritized Element Type):
-: A one-bit field indicating the type of element
-being prioritized. A value of 0 indicates a reprioritization for a Request
-Stream, so the Prioritized Element ID is interpreted as a Stream ID. A
-value of 1 indicates a reprioritization for a Push stream, so the Prioritized
-Element ID is interpreted as a Push ID.
-
-Empty:
-: A seven-bit field that has no semantic value.
-
 # Security Considerations
 
 TBD
@@ -460,6 +467,30 @@ Code:
 
 Initial value:
 : 0
+
+Specification:
+: This document
+
+This specification registers the following entry in the HTTP/2 Frame Type
+registry established by {{?RFC7540}}:
+
+Frame Type:
+: REPRIORITY
+
+Code:
+: 0xF
+
+Specification:
+: This document
+
+This specification registers the following entries in the HTTP/3 Frame Type
+registry established by {{?I-D.ietf-quic-http}}:
+
+Frame Type:
+: REPRIORITY
+
+Code:
+: 0xF
 
 Specification:
 : This document
