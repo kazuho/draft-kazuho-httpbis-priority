@@ -276,21 +276,27 @@ prioritization as specified in this document.
 
 ## The SETTINGS_HEADER_BASED_PRIORITY SETTINGS Parameter
 
-To improve communication of the client's intended prioritization scheme, this
-document specifies a new HTTP/2 SETTINGS parameter with the name
-`SETTINGS_HEADER_BASED_PRIORITY`. The value of the parameter MUST be 0 or 1; the
-initial value is 0. Frame-based prioritization is respected when the value is 0,
-or when the server does not recognize the setting.
+This header-based prioritization scheme is the second prioritization scheme that
+can be applied to HTTP/2. The fact introduces a complexity to the server
+implementations unless the server can determine which of the two priorization
+scheme is being used by the client before receiving the first request on an
+HTTP/2 connection, as the server would be required to prepare for both schemes
+and possibly balance the responses between the two groups.
 
-An HTTP/2 client that uses header-based priority SHOULD send a
-`SETTINGS_HEADER_BASED_PRIORITY` parameter with a value of 1 when connecting to
-a server.
+To address the concern, this document specifies a new HTTP/2 SETTINGS parameter
+called `SETTINGS_HEADER_BASED_PRIORITY`. The value of the parameter MUST be 0 or
+1; the initial value is 0. A value of one indicates he HTTP/2 client's intent to
+use the header-based prioritization scheme defined in this document. A value of
+zero indicates the other.
 
-An intermediary SHOULD send a `SETTINGS_HEADER_BASED_PRIORITY` parameter with a
-value of 1 for a connection it establishes when, and only when, all the requests
-to be sent over that connection originate from a client that utilizes this
-header-based prioritization scheme. Otherwise this settings parameter SHOULD be
-set to 0.
+When the client indicates its intent to use this header-based prioritization
+scheme, it SHOULD ignore the SETTINGS frame sent by the client.
+
+An intermediary acting as a client SHOULD send a
+`SETTINGS_HEADER_BASED_PRIORITY` parameter with a value of 1 for a connection it
+establishes when, and only when, all the requests to be sent over that
+connection originate from a client that utilizes this header-based
+prioritization scheme. Otherwise this settings parameter SHOULD be set to 0.
 
 A client or intermediary MUST NOT send a `SETTINGS_HEADER_BASED_PRIORITY`
 parameter with the value of 0 after previously sending a value of 1.
