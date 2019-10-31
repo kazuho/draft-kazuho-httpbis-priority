@@ -29,7 +29,7 @@ informative:
 
 --- abstract
 
-This document describes a scheme for prioritizing the delivery of the HTTP
+This document describes a scheme for prioritizing the delivery of HTTP
 responses. The prioritization scheme expresses absolute values for each HTTP
 response, rather than the relative precedence between a group of HTTP responses.
 
