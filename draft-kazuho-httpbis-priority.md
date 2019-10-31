@@ -29,15 +29,15 @@ informative:
 
 --- abstract
 
-This document describes a prioritization scheme for the HTTP protocol that is
-independent to the HTTP version being used.  It defines a header field used to
-communicate the initial priority, as well as HTTP/2 and HTTP/3 frames for
-reprioritizing the responses.
+This document describes a scheme for prioritizing the delivery of the HTTP
+responses. The prioritization scheme expresses absolute values for each HTTP
+response, rather than the relative relationship between a group of HTTP
+responses.
 
-The priority is expressed using absolute values for each HTTP message, rather
-than expressing the relative precedence between a group of HTTP messages.  The
-structure of the Priority header field and the frames is designed to provide
-future extensibility.
+This document defines the Priority header field for communicating the initial
+priority in an HTTP version-independent manner, as well as HTTP/2 and HTTP/3
+frames for reprioritizing the responses. These share a common format structure
+that is designed to provide future extensibility.
 
 --- middle
 
