@@ -300,6 +300,44 @@ receipt, a client that supports header-based prioritization MUST close the
 connection with a protocol error. Non-supporting clients will ignore this
 extension element (see {{!RFC7540}}, Section 5.5).
 
+# Security Considerations
+
+## Fairness and Coalescing Intermediaries
+
+When an intermediary coalesces HTTP requests coming from multiple clients into
+one HTTP/2 or HTTP/3 connection going to the backend server, requests that
+originate from one client might have higher precedence than those coming from
+others.
+
+It is sometimes beneficial for the server running behind to obey to the value of
+the Priority header field. As an example, a resource-constrained server might
+defer the transmission of software update files that would have the background
+urgency being associated. However, in the worst case, the asymmetry between the
+precedences declared by multiple clients might cause responses going to one end
+client to be delayed totally after those going to another client.
+
+In order to mitigate this fairness problem, a response to a request that is
+known to have come through an intermediary SHOULD be assigned the priority of
+`urgency=0, progressive=?1` (i.e. round-robin), unless the server has the
+knowledge that the intermediary is not coalescing requests from multiple
+clients.
+
+A server can determine if a request came from an intermediary through
+configuration, or by consulting if that request contains one of the following
+header fields:
+
+* Forwarded, X-Forwarded-For ({{?RFC7239}})
+* Via ({{?RFC7230}}, Section 5.7.1)
+
+Responding to requests coming through an intermediary in a round-robin manner
+works well when the network bottleneck exists between the intermediary and the
+end client, as the intermediary would be buffering the responses and then be
+forwarding the chunks of those buffered responses based on the priorization
+scheme it implements. A sophisticated server MAY use a weighted round-robin
+reflecting the urgencies expressed in the requests, so that less urgent
+responses would receive less bandwidth in case the bottleneck exists between the
+server and the intermediary.
+
 # Considerations
 
 ## Why use an End-to-End Header Field?
@@ -382,10 +420,6 @@ stream 31, with the urgency parameter of the Priority request header field set
 to `background`.  Then, when the user navigates to the HTML while prefetch is in
 action, it would send a reprioritization frame with the stream ID set to 31, and
 the priority field value set to `urgency=0`.
-
-# Security Considerations
-
-TBD
 
 # IANA Considerations
 
