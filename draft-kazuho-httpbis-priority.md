@@ -1,5 +1,5 @@
 ---
-title: Extensible Prioritization for HTTP
+title: Extensible Prioritization Scheme for HTTP
 docname: draft-kazuho-httpbis-priority-latest
 category: std
 
