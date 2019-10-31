@@ -5,18 +5,25 @@
 HTTP                                                              K. Oku
 Internet-Draft                                                    Fastly
 Intended status: Standards Track                               L. Pardue
-Expires: January 23, 2020                                     Cloudflare
-                                                           July 22, 2019
+Expires: May 3, 2020                                          Cloudflare
+                                                        October 31, 2019
 
 
-                     The Priority HTTP Header Field
+               Extensible Prioritization Scheme for HTTP
                   draft-kazuho-httpbis-priority-latest
 
 Abstract
 
-   This document describes the Priority HTTP header field.  This header
-   field can be used by endpoints to specify the absolute precedence of
-   an HTTP response in an HTTP-version-independent way.
+   This document describes a scheme for prioritizing the delivery of
+   HTTP responses.  The prioritization scheme expresses absolute values
+   for each HTTP response, rather than the relative precedence between a
+   group of HTTP responses.
+
+   This document defines the Priority header field for communicating the
+   initial priority in an HTTP version-independent manner, as well as
+   HTTP/2 and HTTP/3 frames for reprioritizing the responses.  These
+   share a common format structure that is designed to provide future
+   extensibility.
 
 Status of This Memo
 
@@ -33,7 +40,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 23, 2020.
+   This Internet-Draft will expire on May 3, 2020.
 
 Copyright Notice
 
@@ -43,6 +50,14 @@ Copyright Notice
    This document is subject to BCP 78 and the IETF Trust's Legal
    Provisions Relating to IETF Documents
    (https://trustee.ietf.org/license-info) in effect on the date of
+
+
+
+Oku & Pardue               Expires May 3, 2020                  [Page 1]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP   October 2019
+
+
    publication of this document.  Please review these documents
    carefully, as they describe your rights and restrictions with respect
    to this document.  Code Components extracted from this document must
@@ -50,18 +65,10 @@ Copyright Notice
    the Trust Legal Provisions and are provided without warranty as
    described in the Simplified BSD License.
 
-
-
-
-Oku & Pardue            Expires January 23, 2020                [Page 1]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
-
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
-     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   3
+     1.1.  Notational Conventions  . . . . . . . . . . . . . . . . .   4
    2.  The Priority HTTP Header Field  . . . . . . . . . . . . . . .   4
      2.1.  urgency . . . . . . . . . . . . . . . . . . . . . . . . .   4
        2.1.1.  prerequisite  . . . . . . . . . . . . . . . . . . . .   5
@@ -70,12 +77,12 @@ Table of Contents
        2.1.4.  background  . . . . . . . . . . . . . . . . . . . . .   6
      2.2.  progressive . . . . . . . . . . . . . . . . . . . . . . .   6
    3.  Merging Client- and Server-Driven Parameters  . . . . . . . .   7
-   4.  Coexistence with HTTP/2 Priorities  . . . . . . . . . . . . .   7
+   4.  Coexistence with HTTP/2 Priorities  . . . . . . . . . . . . .   8
      4.1.  The SETTINGS_HEADER_BASED_PRIORITY SETTINGS Parameter . .   8
    5.  Considerations  . . . . . . . . . . . . . . . . . . . . . . .   8
      5.1.  Why use an End-to-End Header Field? . . . . . . . . . . .   8
      5.2.  Why do Urgencies Have Meanings? . . . . . . . . . . . . .   9
-     5.3.  Reprioritization  . . . . . . . . . . . . . . . . . . . .   9
+     5.3.  Reprioritization  . . . . . . . . . . . . . . . . . . . .  10
    6.  Security Considerations . . . . . . . . . . . . . . . . . . .  10
    7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  10
    8.  References  . . . . . . . . . . . . . . . . . . . . . . . . .  11
@@ -83,9 +90,10 @@ Table of Contents
      8.2.  Informative References  . . . . . . . . . . . . . . . . .  11
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  12
    Appendix B.  Change Log . . . . . . . . . . . . . . . . . . . . .  12
-     B.1.  Since draft-kazuho-httpbis-priority-01  . . . . . . . . .  12
-     B.2.  Since draft-kazuho-httpbis-priority-00  . . . . . . . . .  12
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  12
+     B.1.  Since draft-kazuho-httpbis-priority-02  . . . . . . . . .  12
+     B.2.  Since draft-kazuho-httpbis-priority-01  . . . . . . . . .  12
+     B.3.  Since draft-kazuho-httpbis-priority-00  . . . . . . . . .  12
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  13
 
 1.  Introduction
 
@@ -97,6 +105,15 @@ Table of Contents
    blocked from continuing to process locally available resources.  For
    example, visual rendering of an HTML document could be blocked by the
    retrieval of a CSS file that the document refers to.  In contrast,
+
+
+
+
+Oku & Pardue               Expires May 3, 2020                  [Page 2]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP   October 2019
+
+
    inline images do not block rendering and get drawn progressively as
    the chunks of the images arrive.
 
@@ -106,14 +123,6 @@ Table of Contents
 
    HTTP/2 ([RFC7540]) provides such a prioritization scheme.  A client
    sends a series of PRIORITY frames to communicate to the server a
-
-
-
-Oku & Pardue            Expires January 23, 2020                [Page 2]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
-
    "priority tree"; this represents the client's preferred ordering and
    weighted distribution of the bandwidth among the HTTP responses.
    However, the design has shortcomings:
@@ -149,6 +158,18 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    header-based prioritization scheme can act as a substitute for the
    HTTP/2 frame-based prioritization scheme (see Section 4).
 
+
+
+
+
+
+
+
+Oku & Pardue               Expires May 3, 2020                  [Page 3]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP   October 2019
+
+
 1.1.  Notational Conventions
 
    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
@@ -156,19 +177,10 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    document are to be interpreted as described in [RFC2119].
 
    The terms sh-token and sh-boolean are imported from
-   [I-D.ietf-httpbis-header-structure].
+   [STRUCTURED-HEADERS].
 
    Example HTTP requests and responses use the HTTP/2-style formatting
    from [RFC7540].
-
-
-
-
-
-Oku & Pardue            Expires January 23, 2020                [Page 3]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
 
 2.  The Priority HTTP Header Field
 
@@ -180,12 +192,12 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    (see Section 3).
 
    The value of the Priority header field is a Structured Headers
-   [I-D.ietf-httpbis-header-structure] Dictionary.  Each dictionary
-   member represents a parameter of the Priority header field.  This
-   document defines the "urgency" and "progressive" parameters.  Values
-   of these parameters MUST always be present.  When any of the defined
-   parameters are omitted, or if the Priority header field is not used,
-   their default values SHOULD be applied.
+   Dictionary ([STRUCTURED-HEADERS]).  Each dictionary member represents
+   a parameter of the Priority header field.  This document defines the
+   "urgency" and "progressive" parameters.  Values of these parameters
+   MUST always be present.  When any of the defined parameters are
+   omitted, or if the Priority header field is not used, their default
+   values SHOULD be applied.
 
    Unknown parameters MUST be ignored.
 
@@ -207,6 +219,13 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
    The value is encoded as an sh-integer.  The default value is zero.
 
+
+
+Oku & Pardue               Expires May 3, 2020                  [Page 4]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP   October 2019
+
+
    A server SHOULD transmit HTTP responses in the order of their urgency
    values.  The lower the value, the higher the precedence.
 
@@ -218,13 +237,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    :authority = example.net
    :path = /style.css
    priority = urgency=-1
-
-
-
-Oku & Pardue            Expires January 23, 2020                [Page 4]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
 
    The definition of the urgencies and their expected use-case are
    described below.  Endpoints SHOULD respect the definition of the
@@ -262,6 +274,14 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
    For example, inline images (i.e., images being fetched and displayed
    as part of the document) are visually important elements of an HTML
+
+
+
+Oku & Pardue               Expires May 3, 2020                  [Page 5]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP   October 2019
+
+
    document.  As such, users will typically not be prevented from using
    the document, at least to some degree, before any or all of these
    images are loaded.  Display of those images are thus considered to be
@@ -273,14 +293,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    flexibility to the endpoints for giving some responses more or less
    precedence than others that belong to the supplementary group.
    Section 3 explains how these values might be used.
-
-
-
-
-Oku & Pardue            Expires January 23, 2020                [Page 5]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
 
    Clients SHOULD NOT use values 1 and 5.  Servers MAY use these values
    to prioritize a response above or below other supplementary
@@ -317,6 +329,15 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
    The default value of the "progressive" parameter is "0".
 
+
+
+
+
+Oku & Pardue               Expires May 3, 2020                  [Page 6]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP   October 2019
+
+
    A server SHOULD distribute the bandwidth of a connection between
    progressive responses that share the same urgency.
 
@@ -328,15 +349,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    The following example shows a request for a JPEG file with the
    urgency parameter set to "3" and the progressive parameter set to
    "1".
-
-
-
-
-
-Oku & Pardue            Expires January 23, 2020                [Page 6]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
 
    :method = GET
    :scheme = https
@@ -374,6 +386,14 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    the intermediary's understanding of the urgency is promoted from "3"
    to "1", because the server-provided value overrides the value
    provided by the client.  The progressiveness continues to be "1", the
+
+
+
+Oku & Pardue               Expires May 3, 2020                  [Page 7]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP   October 2019
+
+
    value specified by the client, as the server did not specify the
    "progressive" parameter.
 
@@ -384,15 +404,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    present in HEADERS and PRIORITY frames.  A client might instead
    choose to use header-based prioritization as specified in this
    document.
-
-
-
-
-
-Oku & Pardue            Expires January 23, 2020                [Page 7]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
 
 4.1.  The SETTINGS_HEADER_BASED_PRIORITY SETTINGS Parameter
 
@@ -431,6 +442,14 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
    The rationale is that the Priority header field transmits how each
    response affects the client's processing of those responses, rather
+
+
+
+Oku & Pardue               Expires May 3, 2020                  [Page 8]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP   October 2019
+
+
    than how relatively urgent each response is to others.  The way a
    client processes a response is a property associated to that client
    generating that request.  Not that of an intermediary.  Therefore, it
@@ -442,14 +461,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    for caching intermediaries.  Such intermediaries can cache the value
    of the Priority header field along with the response, and utilize the
    value of the cached header field when serving the cached response,
-
-
-
-Oku & Pardue            Expires January 23, 2020                [Page 8]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
-
    only because the header field is defined as end-to-end rather than
    hop-by-hop.
 
@@ -486,6 +497,15 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    precedence to the font, so that a visual client can render textual
    information at an early moment.
 
+
+
+
+
+Oku & Pardue               Expires May 3, 2020                  [Page 9]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP   October 2019
+
+
 5.3.  Reprioritization
 
    Once a client sends a request, it cannot reprioritize the
@@ -496,15 +516,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    Therefore, to support reprioritization, it is necessary to define a
    HTTP-version-dependent mechanism for transmitting the priority
    parameters.
-
-
-
-
-
-Oku & Pardue            Expires January 23, 2020                [Page 9]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
 
    One approach that we can use in HTTP/2 ([RFC7540]) is to use a frame
    that carries the priority parameters.
@@ -544,6 +555,13 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
    Applicable protocol:  http
 
+
+
+Oku & Pardue               Expires May 3, 2020                 [Page 10]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP   October 2019
+
+
    Status:  standard
 
    Author/change controller:  IETF
@@ -554,13 +572,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 
    This specification registers the following entry in the HTTP/2
    Settings registry established by [RFC7540]:
-
-
-
-Oku & Pardue            Expires January 23, 2020               [Page 10]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
 
    Name:  SETTINGS_HEADER_BASED_PRIORITY:
 
@@ -573,11 +584,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
 8.  References
 
 8.1.  Normative References
-
-   [I-D.ietf-httpbis-header-structure]
-              Nottingham, M. and P. Kamp, "Structured Headers for HTTP",
-              draft-ietf-httpbis-header-structure-11 (work in progress),
-              July 2019.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -594,12 +600,28 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
               DOI 10.17487/RFC7540, May 2015,
               <https://www.rfc-editor.org/info/rfc7540>.
 
+   [STRUCTURED-HEADERS]
+              Nottingham, M. and P. Kamp, "Structured Headers for HTTP",
+              draft-ietf-httpbis-header-structure-13 (work in progress),
+              August 2019.
+
 8.2.  Informative References
+
+
+
+
+
+
+
+Oku & Pardue               Expires May 3, 2020                 [Page 11]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP   October 2019
+
 
    [I-D.ietf-quic-http]
               Bishop, M., "Hypertext Transfer Protocol Version 3
-              (HTTP/3)", draft-ietf-quic-http-22 (work in progress),
-              July 2019.
+              (HTTP/3)", draft-ietf-quic-http-23 (work in progress),
+              September 2019.
 
    [RFC3864]  Klyne, G., Nottingham, M., and J. Mogul, "Registration
               Procedures for Message Header Fields", BCP 90, RFC 3864,
@@ -609,14 +631,6 @@ Internet-Draft       The Priority HTTP Header Field            July 2019
    [RFC8081]  Lilley, C., "The "font" Top-Level Media Type", RFC 8081,
               DOI 10.17487/RFC8081, February 2017,
               <https://www.rfc-editor.org/info/rfc8081>.
-
-
-
-
-Oku & Pardue            Expires January 23, 2020               [Page 11]
-
-Internet-Draft       The Priority HTTP Header Field            July 2019
-
 
 8.3.  URIs
 
@@ -637,13 +651,28 @@ Appendix A.  Acknowledgements
 
 Appendix B.  Change Log
 
-B.1.  Since draft-kazuho-httpbis-priority-01
+B.1.  Since draft-kazuho-httpbis-priority-02
 
-   o  None yet.
+   o  TBD
 
-B.2.  Since draft-kazuho-httpbis-priority-00
+B.2.  Since draft-kazuho-httpbis-priority-01
+
+   o  Explain how reprioritization might be supported.
+
+B.3.  Since draft-kazuho-httpbis-priority-00
 
    o  Expand urgency levels from 3 to 8.
+
+
+
+
+
+
+
+Oku & Pardue               Expires May 3, 2020                 [Page 12]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP   October 2019
+
 
 Authors' Addresses
 
@@ -669,4 +698,31 @@ Authors' Addresses
 
 
 
-Oku & Pardue            Expires January 23, 2020               [Page 12]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Oku & Pardue               Expires May 3, 2020                 [Page 13]

@@ -5,7 +5,7 @@
 <head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
   <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
 
-  <title>The Priority HTTP Header Field</title>
+  <title>Extensible Prioritization Scheme for HTTP</title>
 
   
 <style type="text/css">/*<![CDATA[*/
@@ -305,8 +305,9 @@ ul.toc li {
 <link href="#rfc.references.2" rel="Chapter" title="8.2 Informative References">
 <link href="#rfc.appendix.A" rel="Chapter" title="A Acknowledgements">
 <link href="#rfc.appendix.B" rel="Chapter" title="B Change Log">
-<link href="#rfc.appendix.B.1" rel="Chapter" title="B.1 Since draft-kazuho-httpbis-priority-01">
-<link href="#rfc.appendix.B.2" rel="Chapter" title="B.2 Since draft-kazuho-httpbis-priority-00">
+<link href="#rfc.appendix.B.1" rel="Chapter" title="B.1 Since draft-kazuho-httpbis-priority-02">
+<link href="#rfc.appendix.B.2" rel="Chapter" title="B.2 Since draft-kazuho-httpbis-priority-01">
+<link href="#rfc.appendix.B.3" rel="Chapter" title="B.3 Since draft-kazuho-httpbis-priority-00">
 <link href="#rfc.authors" rel="Chapter">
 
 
@@ -315,9 +316,9 @@ ul.toc li {
 
   <meta name="dct.creator" content="Oku, K. and L. Pardue" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-kazuho-httpbis-priority-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-07-22" />
-  <meta name="dct.abstract" content="This document describes the Priority HTTP header field.  This header field can be used by endpoints to specify the absolute precedence of an HTTP response in an HTTP-version-independent way." />
-  <meta name="description" content="This document describes the Priority HTTP header field.  This header field can be used by endpoints to specify the absolute precedence of an HTTP response in an HTTP-version-independent way." />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-10-31" />
+  <meta name="dct.abstract" content="This document describes a scheme for prioritizing the delivery of HTTP responses. The prioritization scheme expresses absolute values for each HTTP response, rather than the relative precedence between a group of HTTP responses.This document defines the Priority header field for communicating the initial priority in an HTTP version-independent manner, as well as HTTP/2 and HTTP/3 frames for reprioritizing the responses. These share a common format structure that is designed to provide future extensibility." />
+  <meta name="description" content="This document describes a scheme for prioritizing the delivery of HTTP responses. The prioritization scheme expresses absolute values for each HTTP response, rather than the relative precedence between a group of HTTP responses.This document defines the Priority header field for communicating the initial priority in an HTTP version-independent manner, as well as HTTP/2 and HTTP/3 frames for reprioritizing the responses. These share a common format structure that is designed to provide future extensibility." />
 
 </head>
 
@@ -339,28 +340,29 @@ ul.toc li {
 <td class="right">L. Pardue</td>
 </tr>
 <tr>
-<td class="left">Expires: January 23, 2020</td>
+<td class="left">Expires: May 3, 2020</td>
 <td class="right">Cloudflare</td>
 </tr>
 <tr>
 <td class="left"></td>
-<td class="right">July 22, 2019</td>
+<td class="right">October 31, 2019</td>
 </tr>
 
     	
     </tbody>
   </table>
 
-  <p class="title">The Priority HTTP Header Field<br />
+  <p class="title">Extensible Prioritization Scheme for HTTP<br />
   <span class="filename">draft-kazuho-httpbis-priority-latest</span></p>
   
   <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
-<p>This document describes the Priority HTTP header field.  This header field can be used by endpoints to specify the absolute precedence of an HTTP response in an HTTP-version-independent way.</p>
+<p>This document describes a scheme for prioritizing the delivery of HTTP responses. The prioritization scheme expresses absolute values for each HTTP response, rather than the relative precedence between a group of HTTP responses.</p>
+<p>This document defines the Priority header field for communicating the initial priority in an HTTP version-independent manner, as well as HTTP/2 and HTTP/3 frames for reprioritizing the responses. These share a common format structure that is designed to provide future extensibility.</p>
 <h1 id="rfc.status"><a href="#rfc.status">Status of This Memo</a></h1>
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on January 23, 2020.</p>
+<p>This Internet-Draft will expire on May 3, 2020.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2019 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -416,9 +418,11 @@ ul.toc li {
 </li>
 <li>Appendix B.   <a href="#rfc.appendix.B">Change Log</a>
 </li>
-<ul><li>B.1.   <a href="#rfc.appendix.B.1">Since draft-kazuho-httpbis-priority-01</a>
+<ul><li>B.1.   <a href="#rfc.appendix.B.1">Since draft-kazuho-httpbis-priority-02</a>
 </li>
-<li>B.2.   <a href="#rfc.appendix.B.2">Since draft-kazuho-httpbis-priority-00</a>
+<li>B.2.   <a href="#rfc.appendix.B.2">Since draft-kazuho-httpbis-priority-01</a>
+</li>
+<li>B.3.   <a href="#rfc.appendix.B.3">Since draft-kazuho-httpbis-priority-00</a>
 </li>
 </ul><li><a href="#rfc.authors">Authors' Addresses</a>
 </li>
@@ -445,13 +449,13 @@ ul.toc li {
 <a href="#rfc.section.1.1">1.1.</a> <a href="#notational-conventions" id="notational-conventions">Notational Conventions</a>
 </h1>
 <p id="rfc.section.1.1.p.1">The key words &#8220;MUST&#8221;, &#8220;MUST NOT&#8221;, &#8220;REQUIRED&#8221;, &#8220;SHALL&#8221;, &#8220;SHALL NOT&#8221;, &#8220;SHOULD&#8221;, &#8220;SHOULD NOT&#8221;, &#8220;RECOMMENDED&#8221;, &#8220;MAY&#8221;, and &#8220;OPTIONAL&#8221; in this document are to be interpreted as described in <a href="#RFC2119" class="xref">[RFC2119]</a>.</p>
-<p id="rfc.section.1.1.p.2">The terms sh-token and sh-boolean are imported from <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>.</p>
+<p id="rfc.section.1.1.p.2">The terms sh-token and sh-boolean are imported from <a href="#STRUCTURED-HEADERS" class="xref">[STRUCTURED-HEADERS]</a>.</p>
 <p id="rfc.section.1.1.p.3">Example HTTP requests and responses use the HTTP/2-style formatting from <a href="#RFC7540" class="xref">[RFC7540]</a>.</p>
 <h1 id="rfc.section.2">
 <a href="#rfc.section.2">2.</a> <a href="#the-priority-http-header-field" id="the-priority-http-header-field">The Priority HTTP Header Field</a>
 </h1>
 <p id="rfc.section.2.p.1">The Priority HTTP header field can appear in requests and responses. A client uses it to specify the priority of the response. A server uses it to inform the client that the priority was overwritten. An intermediary can use the Priority information from client requests and server responses to correct or amend the precedence to suit it (see <a href="#merging" class="xref">Section 3</a>).</p>
-<p id="rfc.section.2.p.2">The value of the Priority header field is a Structured Headers <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a> Dictionary.  Each dictionary member represents a parameter of the Priority header field.  This document defines the <samp>urgency</samp> and <samp>progressive</samp> parameters. Values of these parameters MUST always be present.  When any of the defined parameters are omitted, or if the Priority header field is not used, their default values SHOULD be applied.</p>
+<p id="rfc.section.2.p.2">The value of the Priority header field is a Structured Headers Dictionary (<a href="#STRUCTURED-HEADERS" class="xref">[STRUCTURED-HEADERS]</a>). Each dictionary member represents a parameter of the Priority header field. This document defines the <samp>urgency</samp> and <samp>progressive</samp> parameters. Values of these parameters MUST always be present. When any of the defined parameters are omitted, or if the Priority header field is not used, their default values SHOULD be applied.</p>
 <p id="rfc.section.2.p.3">Unknown parameters MUST be ignored.</p>
 <h1 id="rfc.section.2.1">
 <a href="#rfc.section.2.1">2.1.</a> <a href="#urgency" id="urgency">urgency</a>
@@ -647,11 +651,6 @@ priority = urgency=1
 <a href="#rfc.references.1">8.1.</a> Normative References</h1>
 <table><tbody>
 <tr>
-<td class="reference"><b id="I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</b></td>
-<td class="top">
-<a>Nottingham, M.</a> and <a>P. Kamp</a>, "<a href="https://tools.ietf.org/html/draft-ietf-httpbis-header-structure-11">Structured Headers for HTTP</a>", Internet-Draft draft-ietf-httpbis-header-structure-11, July 2019.</td>
-</tr>
-<tr>
 <td class="reference"><b id="RFC2119">[RFC2119]</b></td>
 <td class="top">
 <a>Bradner, S.</a>, "<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>", BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997.</td>
@@ -666,6 +665,11 @@ priority = urgency=1
 <td class="top">
 <a>Belshe, M.</a>, <a>Peon, R.</a> and <a>M. Thomson</a>, "<a href="https://tools.ietf.org/html/rfc7540">Hypertext Transfer Protocol Version 2 (HTTP/2)</a>", RFC 7540, DOI 10.17487/RFC7540, May 2015.</td>
 </tr>
+<tr>
+<td class="reference"><b id="STRUCTURED-HEADERS">[STRUCTURED-HEADERS]</b></td>
+<td class="top">
+<a>Nottingham, M.</a> and <a>P. Kamp</a>, "<a href="https://tools.ietf.org/html/draft-ietf-httpbis-header-structure-13">Structured Headers for HTTP</a>", Internet-Draft draft-ietf-httpbis-header-structure-13, August 2019.</td>
+</tr>
 </tbody></table>
 <h1 id="rfc.references.2">
 <a href="#rfc.references.2">8.2.</a> Informative References</h1>
@@ -673,7 +677,7 @@ priority = urgency=1
 <tr>
 <td class="reference"><b id="I-D.ietf-quic-http">[I-D.ietf-quic-http]</b></td>
 <td class="top">
-<a>Bishop, M.</a>, "<a href="https://tools.ietf.org/html/draft-ietf-quic-http-22">Hypertext Transfer Protocol Version 3 (HTTP/3)</a>", Internet-Draft draft-ietf-quic-http-22, July 2019.</td>
+<a>Bishop, M.</a>, "<a href="https://tools.ietf.org/html/draft-ietf-quic-http-23">Hypertext Transfer Protocol Version 3 (HTTP/3)</a>", Internet-Draft draft-ietf-quic-http-23, September 2019.</td>
 </tr>
 <tr>
 <td class="reference"><b id="RFC3864">[RFC3864]</b></td>
@@ -695,13 +699,19 @@ priority = urgency=1
 <a href="#rfc.appendix.B">Appendix B.</a> <a href="#change-log" id="change-log">Change Log</a>
 </h1>
 <h1 id="rfc.appendix.B.1">
-<a href="#rfc.appendix.B.1">B.1.</a> <a href="#since-draft-kazuho-httpbis-priority-01" id="since-draft-kazuho-httpbis-priority-01">Since draft-kazuho-httpbis-priority-01</a>
+<a href="#rfc.appendix.B.1">B.1.</a> <a href="#since-draft-kazuho-httpbis-priority-02" id="since-draft-kazuho-httpbis-priority-02">Since draft-kazuho-httpbis-priority-02</a>
 </h1>
 <p></p>
 
-<ul><li>None yet.</li></ul>
+<ul><li>TBD</li></ul>
 <h1 id="rfc.appendix.B.2">
-<a href="#rfc.appendix.B.2">B.2.</a> <a href="#since-draft-kazuho-httpbis-priority-00" id="since-draft-kazuho-httpbis-priority-00">Since draft-kazuho-httpbis-priority-00</a>
+<a href="#rfc.appendix.B.2">B.2.</a> <a href="#since-draft-kazuho-httpbis-priority-01" id="since-draft-kazuho-httpbis-priority-01">Since draft-kazuho-httpbis-priority-01</a>
+</h1>
+<p></p>
+
+<ul><li>Explain how reprioritization might be supported.</li></ul>
+<h1 id="rfc.appendix.B.3">
+<a href="#rfc.appendix.B.3">B.3.</a> <a href="#since-draft-kazuho-httpbis-priority-00" id="since-draft-kazuho-httpbis-priority-00">Since draft-kazuho-httpbis-priority-00</a>
 </h1>
 <p></p>
 
