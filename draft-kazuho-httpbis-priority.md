@@ -1,6 +1,6 @@
 ---
 title: The Priority HTTP Header Field
-docname: draft-kazuho-httpbis-priority-02
+docname: draft-kazuho-httpbis-priority-latest
 category: std
 
 ipr: trust200902
@@ -438,6 +438,10 @@ concurrency.
 Many thanks to Robin Marx, Patrick Meenan and Ian Swett for their feedback.
 
 # Change Log
+
+## Since draft-kazuho-httpbis-priority-02
+
+* TBD
 
 ## Since draft-kazuho-httpbis-priority-01
 
