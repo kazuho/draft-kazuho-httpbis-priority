@@ -1,5 +1,5 @@
 ---
-title: The Priority HTTP Header Field
+title: Extensible Prioritization Scheme for HTTP
 docname: draft-kazuho-httpbis-priority-latest
 category: std
 
@@ -29,9 +29,14 @@ informative:
 
 --- abstract
 
-This document describes the Priority HTTP header field.  This header field can
-be used by endpoints to specify the absolute precedence of an HTTP response
-in an HTTP-version-independent way.
+This document describes a scheme for prioritizing the delivery of HTTP
+responses. The prioritization scheme expresses absolute values for each HTTP
+response, rather than the relative precedence between a group of HTTP responses.
+
+This document defines the Priority header field for communicating the initial
+priority in an HTTP version-independent manner, as well as HTTP/2 and HTTP/3
+frames for reprioritizing the responses. These share a common format structure
+that is designed to provide future extensibility.
 
 --- middle
 
