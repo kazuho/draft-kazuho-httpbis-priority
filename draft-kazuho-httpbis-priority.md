@@ -314,7 +314,7 @@ the Priority header field. As an example, a resource-constrained server might
 defer the transmission of software update files that would have the background
 urgency being associated. However, in the worst case, the asymmetry between the
 precedences declared by multiple clients might cause responses going to one end
-client to be delayed totally after those going to another client.
+client to be delayed totally after those going to another.
 
 In order to mitigate this fairness problem, a response to a request that is
 known to have come through an intermediary SHOULD be assigned the priority of
