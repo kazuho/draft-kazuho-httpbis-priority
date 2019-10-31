@@ -365,38 +365,17 @@ because the server-provided value overrides the value provided by the client.
 The progressiveness continues to be `1`, the value specified by the client, as
 the server did not specify the `progressive` parameter.
 
-# Coexistence with HTTP/2 Priorities {#coexistence}
+# Negotiation
 
-Standard HTTP/2 ({{!RFC7540}}) endpoints use frame-based prioritization, whereby
-a client sends priority information in dedicated fields present in HEADERS and
-PRIORITY frames. A client might instead choose to use header-based
-prioritization as specified in this document.
+When HTTP/2 or HTTP/3 is being used on a particular hop, the prioritization
+scheme to be applied by the server of that hop is negotiated using
+{{!PRIORITY-SETTING=I-D.lassey-priority-setting}}. The identifier used for this
+specification is 0xTBD.
 
-## The SETTINGS_HEADER_BASED_PRIORITY SETTINGS Parameter
-
-To improve communication of the client's intended prioritization scheme, this
-document specifies a new HTTP/2 SETTINGS parameter with the name
-`SETTINGS_HEADER_BASED_PRIORITY`. The value of the parameter MUST be 0 or 1; the
-initial value is 0. Frame-based prioritization is respected when the value is 0,
-or when the server does not recognize the setting.
-
-An HTTP/2 client that uses header-based priority SHOULD send a
-`SETTINGS_HEADER_BASED_PRIORITY` parameter with a value of 1 when connecting to
-a server.
-
-An intermediary SHOULD send a `SETTINGS_HEADER_BASED_PRIORITY` parameter with a
-value of 1 for a connection it establishes when, and only when, all the requests
-to be sent over that connection originate from a client that utilizes this
-header-based prioritization scheme. Otherwise this settings parameter SHOULD be
-set to 0.
-
-A client or intermediary MUST NOT send a `SETTINGS_HEADER_BASED_PRIORITY`
-parameter with the value of 0 after previously sending a value of 1.
-
-A server MUST NOT send a `SETTINGS_HEADER_BASED_PRIORITY` parameter. Upon
-receipt, a client that supports header-based prioritization MUST close the
-connection with a protocol error. Non-supporting clients will ignore this
-extension element (see {{!RFC7540}}, Section 5.5).
+Endpoints SHOULD emit the Priority header field regardless of the result of the
+negotitation, as that negotiation is a hop-by-hop agreement, whereas the
+Priority header field is an end-to-end signal, that might have meaningful effect
+to other nodes that handle the HTTP message.
 
 # Security Considerations
 
