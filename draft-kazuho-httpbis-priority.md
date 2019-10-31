@@ -29,9 +29,9 @@ informative:
 
 --- abstract
 
-This document describes a scheme for prioritizing the delivery of HTTP
-responses. The prioritization scheme expresses absolute values for each HTTP
-response, rather than the relative precedence between a group of HTTP responses.
+This document describes a scheme for prioritizing the HTTP responses. The
+prioritization scheme expresses absolute values for each HTTP response, rather
+than the relative precedence between a group of HTTP responses.
 
 This document defines the Priority header field for communicating the initial
 priority in an HTTP version-independent manner, as well as HTTP/2 and HTTP/3
