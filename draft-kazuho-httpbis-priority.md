@@ -88,7 +88,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 interpreted as described in {{!RFC2119}}.
 
 The terms sh-token and sh-boolean are imported from
-{{!I-D.ietf-httpbis-header-structure}}.
+{{!STRUCTURED-HEADERS=I-D.ietf-httpbis-header-structure}}.
 
 Example HTTP requests and responses use the HTTP/2-style formatting from
 {{?RFC7540}}.
@@ -101,12 +101,12 @@ the client that the priority was overwritten. An intermediary can use the
 Priority information from client requests and server responses to correct or
 amend the precedence to suit it (see {{merging}}).
 
-The value of the Priority header field is a Structured Headers
-{{!I-D.ietf-httpbis-header-structure}} Dictionary.  Each dictionary member
-represents a parameter of the Priority header field.  This document defines the
-`urgency` and `progressive` parameters. Values of these parameters MUST always
-be present.  When any of the defined parameters are omitted, or if the Priority
-header field is not used, their default values SHOULD be applied.
+The value of the Priority header field is a Structured Headers Dictionary
+({{!STRUCTURED-HEADERS}}). Each dictionary member represents a parameter of the
+Priority header field. This document defines the `urgency` and `progressive`
+parameters. Values of these parameters MUST always be present. When any of the
+defined parameters are omitted, or if the Priority header field is not used,
+their default values SHOULD be applied.
 
 Unknown parameters MUST be ignored.
 
