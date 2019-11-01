@@ -323,13 +323,13 @@ stream. The frame references the response to reprioritize based on a
 version-specific identifier; in HTTP/2 this is the Stream ID, in HTTP/3 this is
 either the Stream ID or Push ID.
 
-## HTTP/2 REPRIORITY Frame
+## HTTP/2 PRIORITY_UPDATE Frame
 
-The HTTP/2 REPRIORITY frame (type=0xF) carries the stream ID of the response that
-is being reprioritized, and the updated priority in ASCII text, using the same
-representation as that of the Priority header field value.
+The HTTP/2 PRIORITY_UPDATE frame (type=0xF) carries the stream ID of the
+response that is being reprioritized, and the updated priority in ASCII text,
+using the same representation as that of the Priority header field value.
 
-The REPRIORITY frame is sent on stream 0.
+The PRIORITY_UPDATE frame is sent on stream 0.
 
 ~~~ drawing
   0                   1                   2                   3
@@ -340,18 +340,18 @@ The REPRIORITY frame is sent on stream 0.
  |                   Priority Field Value (*)                  ...
  +---------------------------------------------------------------+
 ~~~
-{: #fig-h2-reprioritization-frame title="HTTP/2 REPRIORITY Frame Payload"}
+{: #fig-h2-reprioritization-frame title="HTTP/2 PRIORITY_UPDATE Frame Payload"}
 
-TODO: add more description of how to handle things like receiving REPRIORITY on
-wrong stream, a REPRIORITY with an invalid ID, etc.
+TODO: add more description of how to handle things like receiving
+PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
 
-## HTTP/3 REPRIORITY Frame
+## HTTP/3 PRIORITY_UPDATE Frame
 
-The HTTP/3 REPRIORITY frame (type=0xF) carries the ID of the element that
-is being reprioritized, and the updated priority in ASCII text, using the same
-representation as that of the Priority header field value.
+The HTTP/3 PRIORITY_UPDATE frame (type=0xF) carries the identifer of the element
+that is being reprioritized, and the updated priority in ASCII text, using the
+same representation as that of the Priority header field value.
 
-The REPRIORITY frame is sent on the control stream
+The PRIORITY_UPDATE frame is sent on the control stream
 ({{!I-D.draft-ietf-quic-http-23}}, Section 6.2.1).
 
 ~~~ drawing
@@ -363,9 +363,9 @@ The REPRIORITY frame is sent on the control stream
  |                   Priority Field Value (*)                  ...
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ~~~
-{: #fig-h3-reprioritization-frame title="HTTP/3 REPRIORITY Frame Payload"}
+{: #fig-h3-reprioritization-frame title="HTTP/3 PRIORITY_UPDATE Frame Payload"}
 
-The REPRIORITY frame payload has the following fields:
+The PRIORITY_UPDATE frame payload has the following fields:
 
 T (Prioritized Element Type):
 : A one-bit field indicating the type of element
@@ -377,8 +377,8 @@ Element ID is interpreted as a Push ID.
 Empty:
 : A seven-bit field that has no semantic value.
 
-TODO: add more description of how to handle things like receiving REPRIORITY on
-wrong stream, a REPRIORITY with an invalid ID, etc.
+TODO: add more description of how to handle things like receiving
+PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
 
 # Considerations
 
@@ -475,7 +475,7 @@ This specification registers the following entry in the HTTP/2 Frame Type
 registry established by {{?RFC7540}}:
 
 Frame Type:
-: REPRIORITY
+: PRIORITY_UPDATE
 
 Code:
 : 0xF
@@ -487,7 +487,7 @@ This specification registers the following entries in the HTTP/3 Frame Type
 registry established by {{?I-D.ietf-quic-http}}:
 
 Frame Type:
-: REPRIORITY
+: PRIORITY_UPDATE
 
 Code:
 : 0xF
