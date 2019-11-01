@@ -157,7 +157,7 @@ avoid changing the agreed upon prioritization scheme.
 If there is a prioritization scheme supported by both the client and server,
 then the servers's preference order prevails and both peers SHOULD
 only use the agreed upon priority scheme for the remainder of the session.
-The server chooses becasue it is in the best position to know what
+The server chooses because it is in the best position to know what
 information from the client is of the most value.
 
 An 8 bit value of 1 in HTTP/2 indicates support for HTTP/2 priorities
