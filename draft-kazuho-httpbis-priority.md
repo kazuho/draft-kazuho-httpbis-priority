@@ -69,7 +69,7 @@ bandwidth among the HTTP responses.  However, the design has shortcomings:
 * It does not define a method that can be used by a server to express the
   priority of a response.  Without such a method, intermediaries cannot
   coordinate client-driven and server-driven priorities.
-* The design cannot be ported cleanly to HTTP/3 ({{?I-D.ietf-quic-http}}).  One
+* The design cannot be ported cleanly to HTTP/3 ({{!I-D.ietf-quic-http}}).  One
   of the primary goals of HTTP/3 is to minimize head-of-line blocking.
   Transmitting the evolving representation of a "prioritization tree" from the
   client to the server requires head-of-line blocking.
@@ -93,7 +93,7 @@ The terms sh-token and sh-boolean are imported from
 Example HTTP requests and responses use the HTTP/2-style formatting from
 {{?RFC7540}}.
 
-This document uses the variable-length integer encoding from {{!I-D.draft-ietf-quic-transport-23}}.
+This document uses the variable-length integer encoding from {{!I-D.ietf-quic-transport}}.
 
 # The Priority HTTP Header Field
 
@@ -304,20 +304,20 @@ extension element (see {{!RFC7540}}, Section 5.5).
 
 # Reprioritization
 
-Once a client sends a request with a priority, circumstances might change and
-mean that it is beneficial to change the priority of the response. As an
-example, a web browser might issue a prefetch request for an HTML document with
-the urgency parameter of the Priority request header field set to `background`.
-Then, when the user navigates to the HTML while prefetch is in action, it would
-send a reprioritization frame with the priority field value set to `urgency=0`.
+Once a client sends a request, circumstances might change and mean that it is
+beneficial to change the priority of the response. As an example, a web browser
+might issue a prefetch request for an HTML document with the urgency parameter
+of the Priority request header field set to `background`. Then, when the user
+navigates to the HTML while prefetch is in action, it would send a
+reprioritization frame with the priority field value set to `urgency=0`.
 
 However, a client cannot reprioritize a response by using the Priority header
 field.  This is because an HTTP header field can only be sent as part of an HTTP
 message. Therefore, to support reprioritization, it is necessary to define a
 HTTP-version-dependent mechanism for transmitting the priority parameters.
 
-This document specifies a new frame type for HTTP/2 ({{?RFC7540}}) and HTTP/3
-({{?I-D.draft-ietf-quic-http-23}}) that is specialized for reprioritization. It
+This document specifies a new frame type for HTTP/2 ({{!RFC7540}}) and HTTP/3
+({{!I-D.ietf-quic-http}}) that is specialized for reprioritization. It
 carries updated priority parameters and is sent on the version-specific control
 stream. The frame references the response to reprioritize based on a
 version-specific identifier; in HTTP/2 this is the Stream ID, in HTTP/3 this is
@@ -329,7 +329,7 @@ The HTTP/2 PRIORITY_UPDATE frame (type=0xF) carries the stream ID of the
 response that is being reprioritized, and the updated priority in ASCII text,
 using the same representation as that of the Priority header field value.
 
-The PRIORITY_UPDATE frame is sent on stream 0.
+The stream identifier for a PRIORITY_UPDATE frame MUST be zero (0x0).
 
 ~~~ drawing
   0                   1                   2                   3
@@ -352,7 +352,7 @@ that is being reprioritized, and the updated priority in ASCII text, using the
 same representation as that of the Priority header field value.
 
 The PRIORITY_UPDATE frame is sent on the control stream
-({{!I-D.draft-ietf-quic-http-23}}, Section 6.2.1).
+({{!I-D.ietf-quic-http}}, Section 6.2.1).
 
 ~~~ drawing
   0                   1                   2                   3
@@ -457,7 +457,7 @@ Related information:
 : n/a
 
 This specification registers the following entry in the HTTP/2 Settings registry
-established by {{?RFC7540}}:
+established by {{!RFC7540}}:
 
 Name:
 : SETTINGS_HEADER_BASED_PRIORITY:
@@ -484,7 +484,7 @@ Specification:
 : This document
 
 This specification registers the following entries in the HTTP/3 Frame Type
-registry established by {{?I-D.ietf-quic-http}}:
+registry established by {{!I-D.ietf-quic-http}}:
 
 Frame Type:
 : PRIORITY_UPDATE
