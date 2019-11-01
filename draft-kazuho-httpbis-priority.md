@@ -113,7 +113,7 @@ defined and take steps to compensate for that.
 
 The intent of this negotiation is to provide a signalling mechanism
 for each peer to communicate which, if any, priority schemes are
-supported, as well as a ranked preference.
+supported, as well as the client's ranked preference.
 
 For both HTTP/2 and HTTP/3, either peer's SETTINGS may arrive first,
 so any negotiation must be unilateral and not rely upon receiving
