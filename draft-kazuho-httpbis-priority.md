@@ -113,7 +113,7 @@ defined and take steps to compensate for that.
 
 The intent of this negotiation is to provide a signalling mechanism
 for each peer to communicate which, if any, priority schemes are
-supported, as well as the client's ranked preference.
+supported, as well as the server's ranked preference.
 
 For both HTTP/2 and HTTP/3, either peer's SETTINGS may arrive first,
 so any negotiation must be unilateral and not rely upon receiving
@@ -125,10 +125,11 @@ setting MUST be sent prior to the first request if it is ever sent.
 In HTTP/3, SETTINGS may arrive after the first request even if
 they are sent first.  In order to avoid the server incorrectly
 choosing a priority scheme in HTTP/3, the client SHOULD only send
-priority information via its most preferred scheme until it knows
-what is supported by the server.  The client may also delay
-sending priority information until after it knows what the server
-supports.
+priority information prior to receiving the server's SETTINGS if
+it only offers a single scheme.  If it offers multiple schemes,
+the client SHOULD delay sending priority information until
+after it knows what the server supports, or risk the server
+choosing a sub-optimal scheme.
 
 ## The SETTINGS_PRIORITIES SETTINGS Parameter
 
@@ -154,8 +155,10 @@ MUST NOT process the setting if it's received multiple times in order to
 avoid changing the agreed upon prioritization scheme.
 
 If there is a prioritization scheme supported by both the client and server,
-then the client's preference order prevails and both peers SHOULD
+then the servers's preference order prevails and both peers SHOULD
 only use the agreed upon priority scheme for the remainder of the session.
+The server chooses becasue it is in the best position to know what
+information from the client is of the most value.
 
 An 8 bit value of 1 in HTTP/2 indicates support for HTTP/2 priorities
 as defined in Section 5.3 of [RFC7540] and is an error in HTTP/3 because
