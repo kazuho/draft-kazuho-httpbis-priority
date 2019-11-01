@@ -109,22 +109,26 @@ Section 5.3, which some implementers have opted not to fully support.
 The lack of signalling about the status of the implementation has
 caused several implementations to implement heuristics to detect when
 the clients they are connected to do not support priorities as
-defined and take steps to compensate for that.  The intent of this
-negotiation is to provide an affirmative signalling mechanism for each
-peer to communicate which, if any, priority schemes are supported,
-including the priority scheme as defined in [RFC7540], Section 5.3.
+defined and take steps to compensate for that.
+
+The intent of this negotiation is to provide a signalling mechanism
+for each peer to communicate which, if any, priority schemes are
+supported, as well as a ranked preference.
 
 For both HTTP/2 and HTTP/3, either peer's SETTINGS may arrive first,
 so any negotiation must be unilateral and not rely upon receiving
 the peer's SETTINGS value.
 
 Implementations are likely to only use one prioritization scheme at
-once, so the SETTINGS SHOULD be sent prior to the first request.
-In HTTP/3, the SETTINGS may arrive after the first request even if
-they are sent first.  In order to avoid the server choosing
-incorrectly in HTTP/3, the client SHOULD only send priority
-information via its most preferred scheme until it knows what is
-supported by the server.
+once, and may be unable to change the scheme once established, so the
+setting MUST be sent prior to the first request if it is ever sent.
+In HTTP/3, SETTINGS may arrive after the first request even if
+they are sent first.  In order to avoid the server incorrectly
+choosing a priority scheme in HTTP/3, the client SHOULD only send
+priority information via its most preferred scheme until it knows
+what is supported by the server.  The client may also delay
+sending priority information until after it knows what the server
+supports.
 
 ## The SETTINGS_PRIORITIES SETTINGS Parameter
 
@@ -142,7 +146,8 @@ lack thereof of priority frames.
 If the value is non-zero, then the least significant 8 bits indicates the
 peer's preferred priority scheme, the second least significant 8 bits
 indicates the peer's second choice, and so on.  This allows expressing
-support for 4 schemes in HTTP/2 and 7 in HTTP/3.
+support for 4 schemes in HTTP/2 and 7 in HTTP/3.  If the value is non-zero,
+all 8 bit scheme identifiers MUST NOT be 0.
 
 In HTTP/2, the setting SHOULD appear in the first SETTINGS frame and peers
 MUST NOT process the setting if it's received multiple times in order to
@@ -152,9 +157,9 @@ If there is a prioritization scheme supported by both the client and server,
 then the client's preference order prevails and both peers SHOULD
 only use the agreed upon priority scheme for the remainder of the session.
 
-An 8 bit value of 1 in HTTP/2 indicates support for HTTP/2 priorities as defined
-in Section 5.3 of [RFC7540] and is an error in HTTP/3 because there is not
-a clean mapping to HTTP/3.
+An 8 bit value of 1 in HTTP/2 indicates support for HTTP/2 priorities
+as defined in Section 5.3 of [RFC7540] and is an error in HTTP/3 because
+there is not a clean mapping to HTTP/3.
 
 
 
