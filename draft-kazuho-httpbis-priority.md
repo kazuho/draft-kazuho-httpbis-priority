@@ -59,32 +59,14 @@ those HTTP responses, that it sends.
 HTTP/2 ({{?RFC7540}}) provides such a prioritization scheme. A client sends a
 series of PRIORITY frames to communicate to the server a “priority tree”; this
 represents the client's preferred ordering and weighted distribution of the
-bandwidth among the HTTP responses.  However, the design has shortcomings:
+bandwidth among the HTTP responses. However, the design and implementation of
+this scheme has been observed to have shortcomings, explained in {{motivation}}.
 
-* Its complexity has led to varying levels of support by HTTP/2 clients and
-  servers.
-* It is hard to coordinate with server-driven prioritization.  For example, a
-  server, with knowledge of the document structure, might want to prioritize
-  the delivery of images that are critical to user experience above other
-  images, but below the CSS files.  But with the HTTP/2 prioritization scheme,
-  it is impossible for the server to determine how such images should be
-  prioritized against other responses that use the client-driven prioritization
-  tree, because every client builds the HTTP/2 prioritization tree in a
-  different way.
-* It does not define a method that can be used by a server to express the
-  priority of a response.  Without such a method, intermediaries cannot
-  coordinate client-driven and server-driven priorities.
-* The design cannot be ported cleanly to HTTP/3 ({{!I-D.ietf-quic-http}}).  One
-  of the primary goals of HTTP/3 is to minimize head-of-line blocking.
-  Transmitting the evolving representation of a "prioritization tree" from the
-  client to the server requires head-of-line blocking.
-
-Based on these observations, this document defines the Priority HTTP header
-field that can be used by both the client and the server to specify the
-precedence of HTTP responses in a standardized, extensible, protocol-version-
-independent, end-to-end format. This header-based prioritization scheme can act
-as a substitute for the HTTP/2 frame-based prioritization scheme (see
-{{coexistence}}).
+This document defines the Priority HTTP header field that can be used by both
+client and server to specify the precedence of HTTP responses in a
+standardized, extensible, protocol-version- independent, end-to-end format. This
+header-based prioritization scheme can act as a substitute for the HTTP/2
+frame-based prioritization scheme (see {{coexistence}}).
 
 ## Notational Conventions
 
@@ -102,18 +84,65 @@ This document uses the variable-length integer encoding from
 {{!I-D.ietf-quic-transport}}.
 
 
+# Motivation for Replacing HTTP/2 Priorities {#motivation}
+
+An important feature of any implementation of a protocol that provides
+multiplexing is the ability to prioritize the sending of information. This was
+an important realization in the design of HTTP/2. Prioritization is a
+difficult problem, so it will always be suboptimal, particularly if one endpoint
+operates in ignorance of the needs of its peer.
+
+HTTP/2 introduced a complex prioritization signaling scheme that used a
+combination of dependencies and weights, formed into an unbalanced tree. This
+scheme suffers from poor deployment and interoperability.
+
+The rich flexibility permitted in tree building is rarely excersised by clients;
+they generally either chosen a model optimized for a web use case or do nothing
+at all.
+
+Many server implementations do not include support for this scheme, some
+favoring instead bespoke server-driven schemes based on heuristics and other
+hints, like the content type of resources and the order in which requests
+arrive. For example, a server, with knowledge of the document structure, might
+want to prioritize the delivery of images that are critical to user experience
+above other images, but below the CSS files. But with the HTTP/2 prioritization
+scheme, it is impossible for the server to determine how such images should be
+prioritized against other responses that use the client-driven prioritization
+tree, because every client builds the HTTP/2 prioritization tree in a different
+way.
+
+Intermediaries can coalesce multiple HTTP/2 clients into a single upstream
+HTTP/2 connection and the prioritization scheme allows for this. However most
+intermediaries do not support this and it does not define a method that can be
+used by a server to express the priority of a response. Without such a method,
+intermediaries cannot coordinate client-driven and server-driven priorities.
+
+HTTP/2 describes denial-of-service considerations for implementations. On
+2019-08-13 Netflix issued an advisory notice about the discovery of several
+resource exhaustion vectors affecting multiple HTTP/2 implementations. One
+attack, CVE-2019-9513 aka "Resource Loop", is based on manipulation of the
+priority tree.
+
+The HTTP/2 scheme depends on in-order delivery, so it is unsuitable for use in
+protocols like HTTP/3 {{?I-D.ietf-quic-http}}, which attempts to avoid global
+ordering.
+
+Considering the problems with deployment and adaptability to HTTP/3, retaining
+the HTTP/2 priority scheme increases the complexity of the entire system without
+any evidence that the value it provides offsets that complexity.
+
+The problems laid out above are motivation for the alternative prioriization
+scheme presented in this document. In order to support deployement of new
+schemes, a general-purpose negotiation mechanism is specified in
+{{negotiating-priorities}}.
+
+
+
 # Negotiating Priorities
 
-The HTTP/2 specification defines a priority scheme in [RFC7540],
-Section 5.3, which some implementers have opted not to fully support.
-The lack of signalling about the status of the implementation has
-caused several implementations to implement heuristics to detect when
-the clients they are connected to do not support priorities as
-defined and take steps to compensate for that.
-
-The intent of this negotiation is to provide a signalling mechanism
-for each peer to communicate which, if any, priority schemes are
-supported, as well as the server's ranked preference.
+The document specifies a negotiation mechanism that allows each peer to
+communicate which, if any, priority schemes are supported, as well as the
+server's ranked preference.
 
 For both HTTP/2 and HTTP/3, either peer's SETTINGS may arrive first,
 so any negotiation must be unilateral and not rely upon receiving
@@ -583,6 +612,11 @@ priorities in <http://tools.ietf.org/agenda/83/slides/slides-83-httpbis-5.pdf>.
 In <https://github.com/pmeenan/http3-prioritization-proposal>, Patrick Meenan
 advocates for representing the priorities using a tuple of urgency and
 concurrency.
+
+The motivation for defining an alternative to HTTP/2 priorities is drawn from
+discussion within the broad HTTP community. Special thanks to Roberto Peon,
+Martin Thomson and Netflix for text that was incorporated explicitly in this
+document.
 
 Many thanks to Robin Marx, Patrick Meenan and Ian Swett for their feedback.
 
