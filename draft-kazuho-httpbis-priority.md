@@ -316,7 +316,7 @@ one HTTP/2 or HTTP/3 connection going to the backend server, requests that
 originate from one client might have higher precedence than those coming from
 others.
 
-It is sometimes beneficial for the server running behind to obey to the value of
+It is sometimes beneficial for the server running behind an intermediary to obey to the value of
 the Priority header field. As an example, a resource-constrained server might
 defer the transmission of software update files that would have the background
 urgency being associated. However, in the worst case, the asymmetry between the
