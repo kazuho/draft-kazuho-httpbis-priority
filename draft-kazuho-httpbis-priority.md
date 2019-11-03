@@ -323,11 +323,12 @@ background urgency being associated. However, in the worst case, the asymmetry
 between the precedences declared by multiple clients might cause responses going
 to one end client to be delayed totally after those going to another.
 
-In order to mitigate this fairness problem, a response to a request that is
-known to have come through an intermediary SHOULD be assigned the priority of
-`urgency=0, progressive=?1` (i.e. round-robin), unless the server has the
-knowledge that the intermediary is not coalescing requests from multiple
-clients.
+In order to mitigate this fairness problem, when a server responds to a request
+that is known to have come through an intermediary, the server SHOULD prioritize
+the response as if it was assigned the priority of  `urgency=0, progressive=?1`
+(i.e. round-robin) regardless of the value of the Priority header field being
+transmitted, unless the server has the knowledge that no intermediaries are
+coalescing requests from multiple clients.
 
 A server can determine if a request came from an intermediary through
 configuration, or by consulting if that request contains one of the following
