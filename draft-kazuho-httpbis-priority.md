@@ -217,19 +217,23 @@ has negotiated the use of the extensible priority scheme (see {{fairness}}).
 
 # Urgency Prioritization
 
-Urgency prioritization uses two parameters, `urgency` and `progressive` to
-indicate the relative urgency of requests and whether responses should be
-interleaved with other responses at the same priority.
+The extensible priority scheme allows endpoints to exchange parameters in order
+to control the priortization of responses. Endpoints MUST ignore unknown
+parameters.
 
-The fields are encoded as a Structured Headers Dictionary
-({{!STRUCTURED-HEADERS}}). Each dictionary member represents a parameter of the
-Priority header field. This document defines the `urgency` and `progressive`
-parameters. Values of these parameters MUST always be present. When any of the
-defined parameters are omitted, or if the Priority header field is not used,
-their default values SHOULD be applied.
+The document defines two parameters: `urgency` - an integer value that indicates
+the relative urgency of requests, and `progressive` - a boolean value that
+indicates whether responses should be interleaved with other responses at the
+same priority.
 
-Unknown parameters MUST be ignored.
-
+Parameters are transmitted as an HTTP Priority header field ({{header-field}})
+or version-specific PRIORITY_UPDATE frame ({{frames}}). The field-value or frame
+payload is encoded using a Structured Headers Dictionary
+({{!STRUCTURED-HEADERS}}). Each parameter is represented as a dictionary member:
+`urgency` encoded as an sh-integer and `progressive` as an sh-boolean. Values of
+these parameters MUST always be present. When any of the defined parameters are
+ommitted, or the if the Priority header is not used, their default values SHOULD
+be applied.
 
 ## urgency
 
@@ -333,7 +337,7 @@ making progress in using the composition of the HTTP responses at the earliest
 moment.
 
 
-# The Priority HTTP Header Field
+# The Priority HTTP Header Field {#header-field}
 
 The Priority HTTP header field can appear in requests and responses. A client
 uses it to specify the priority of the response. A server uses it to inform
@@ -368,7 +372,7 @@ set to `3` and the progressive parameter set to `1`.
 priority = urgency=3, progressive=?1
 ~~~
 
-# Reprioritization
+# Reprioritization {#frames}
 
 Once a client sends a request, circumstances might change and mean that it is
 beneficial to change the priority of the response. As an example, a web browser
