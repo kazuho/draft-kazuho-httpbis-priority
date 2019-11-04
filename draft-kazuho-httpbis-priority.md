@@ -173,11 +173,17 @@ parameter with a value of 0, clients SHOULD NOT send hop-by-hop prioritiy
 signals (e.g., HTTP/2 PRIORITY frame) and servers SHOULD NOT make any
 assumptions based on the presence or lack thereof of such signals.
 
-If the value is non-zero, then the least significant 8 bits indicates the
+If the value is non-zero, then the least significant 8 bits indicate the
 sender's most preferred priority scheme, the second least significant 8 bits
-indicates the sender's second choice, and so on.  This allows expressing
-support for 4 schemes in HTTP/2 and 7 in HTTP/3.  If any octet is 0,
-all more significant octets MUST also be 0.
+indicate the sender's second choice, and so on. This allows expressing
+support for 4 schemes in HTTP/2 and 7 in HTTP/3.
+
+A sender MUST comply with the following restrictions when constructing a
+preference list: duplicate 8-bit values (excluding the value 0) MUST NOT be used,
+and if any byte is 0 then all more significant bytes MUST also be 0. An endpoint
+that receives a setting in violation of these requirements MUST treat it as a
+connection error of type PROTOCOL_ERROR for HTTP/2 {{!RFC7540}}, or of type
+HTTP_SETTINGS_ERROR for HTTP/3 {{!I-D.ietf-quic-http}}.
 
 In HTTP/2, the setting SHOULD appear in the first SETTINGS frame and peers
 MUST NOT process the setting if it's received multiple times in order to
