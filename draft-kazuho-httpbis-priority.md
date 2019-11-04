@@ -66,8 +66,7 @@ This document defines the Priority HTTP header field that can be used by both
 client and server to specify the precedence of HTTP responses in a standardized,
 extensible, protocol-version-independent, end-to-end format. Along with the
 protocol-version-specific frame for reprioritization, this prioritization scheme
-acts as a substitute for the original prioritization scheme of HTTP/2 (see
-{{coexistence}}).
+acts as a substitute for the original prioritization scheme of HTTP/2.
 
 ## Notational Conventions
 
