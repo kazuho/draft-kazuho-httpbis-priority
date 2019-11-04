@@ -126,9 +126,10 @@ resource exhaustion vectors affecting multiple HTTP/2 implementations. One
 attack, CVE-2019-9513 aka "Resource Loop", is based on manipulation of the
 priority tree.
 
-The HTTP/2 scheme depends on in-order delivery, so it is unsuitable for direct
-use in protocols like HTTP/3 {{?I-D.ietf-quic-http}}, which attempts to avoid
-global ordering.
+The HTTP/2 scheme depends on in-order delivery of signals, leading to challenges
+in porting the scheme to protocols that do not provide global ordering. For
+example, the scheme cannot be used in HTTP/3 {{?I-D.ietf-quic-http}} without
+changing the signal and its processing.
 
 Considering the problems with deployment and adaptability to HTTP/3, retaining
 the HTTP/2 priority scheme increases the complexity of the entire system without
