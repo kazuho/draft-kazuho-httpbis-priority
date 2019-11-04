@@ -252,6 +252,17 @@ The value is encoded as an sh-integer.  The default value is zero.
 A server SHOULD transmit HTTP responses in the order of their urgency values.
 The lower the value, the higher the precedence.
 
+The following example shows a request for a CSS file with the urgency set to
+`-1`:
+
+~~~ example
+:method = GET
+:scheme = https
+:authority = example.net
+:path = /style.css
+priority = urgency=-1
+~~~
+
 The definition of the urgencies and their expected use-case are described below.
 Endpoints SHOULD respect the definition of the values when assigning urgencies.
 
@@ -336,31 +347,6 @@ order the requests were generated.  Doing so maximizes the chance of the client
 making progress in using the composition of the HTTP responses at the earliest
 moment.
 
-
-# The Priority HTTP Header Field {#header-field}
-
-The Priority HTTP header field can appear in requests and responses. A client
-uses it to specify the priority of the response. A server uses it to inform
-the client that the priority was overwritten. An intermediary can use the
-Priority information from client requests and server responses to correct or
-amend the precedence to suit it (see {{merging}}).
-
-
-## urgency
-
-The following example shows a request for a CSS file with the urgency set to
-`-1`:
-
-~~~ example
-:method = GET
-:scheme = https
-:authority = example.net
-:path = /style.css
-priority = urgency=-1
-~~~
-
-## progressive
-
 The following example shows a request for a JPEG file with the urgency parameter
 set to `3` and the progressive parameter set to `1`.
 
@@ -371,6 +357,16 @@ set to `3` and the progressive parameter set to `1`.
 :path = /image.jpg
 priority = urgency=3, progressive=?1
 ~~~
+
+# The Priority HTTP Header Field {#header-field}
+
+The Priority HTTP header field can appear in requests and responses. A client
+uses it to specify the priority of the response. A server uses it to inform
+the client that the priority was overwritten. An intermediary can use the
+Priority information from client requests and server responses to correct or
+amend the precedence to suit it (see {{merging}}).
+
+Examples of the Priority header field are provided in {{urgency}} and {{progressive}}.
 
 # Reprioritization {#frames}
 
