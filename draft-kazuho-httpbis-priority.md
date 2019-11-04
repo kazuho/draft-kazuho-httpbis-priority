@@ -215,9 +215,9 @@ The H2_TREE priority scheme identifier MUST NOT be be sent in an HTTP/3 settings
 because there is no defined mapping of this scheme. Endpoints MUST treat receipt
 of H2_TREE as a connection error of type H3_SETTINGS_ERROR.
 
-### EXT_PRI {#settings-this-scheme}
+### URGENCY {#settings-this-scheme}
 
-This document defines the priority scheme identifier EXT_PRI (8-bit value of 2)
+This document defines the priority scheme identifier URGENCY (8-bit value of 2)
 that indicates support for the extensible priority scheme defined in the present
 document.
 
@@ -705,7 +705,7 @@ The entries in the following table are registered by this document.
 | Prioritization Scheme |  Code  | Specification              |
 | --------------------- | :----: | -------------------------- |
 | H2_TREE               |   1    | {{settings-h2-scheme}}     |
-| EXT_PRI               |   2    | {{settings-this-scheme}}   |
+| URGENCY               |   2    | {{settings-this-scheme}}   |
 | --------------------- | ------ | -------------------------- |
 
 --- back
