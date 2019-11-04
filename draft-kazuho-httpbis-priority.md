@@ -174,11 +174,15 @@ parameter with a value of 0, clients SHOULD NOT send priority frames
 and servers SHOULD NOT make any assumptions based on the presence or
 lack thereof of priority frames.
 
-If the value is non-zero, then the least significant 8 bits indicates the
+If the value is non-zero, then the least significant 8 bits indicate the
 sender's most preferred priority scheme, the second least significant 8 bits
-indicates the sender's second choice, and so on.  This allows expressing
-support for 4 schemes in HTTP/2 and 7 in HTTP/3.  If any octet is 0,
-all more significant octets MUST also be 0.
+indicate the sender's second choice, and so on. This allows expressing
+support for 4 schemes in HTTP/2 and 7 in HTTP/3.
+
+With the exception of 0, duplicate 8 bit values are not allowed. If any byte
+is 0, all more significant bytes MUST also be 0. A violation of either or both
+these restrictions MUST be treated as an error of type PROTOCOL_ERROR for HTTP/2
+[RFC7540], or of type HTTP_SETTINGS_ERROR for HTTP/3 {{?I-D.ietf-quic-http}}.
 
 In HTTP/2, the setting SHOULD appear in the first SETTINGS frame and peers
 MUST NOT process the setting if it's received multiple times in order to
