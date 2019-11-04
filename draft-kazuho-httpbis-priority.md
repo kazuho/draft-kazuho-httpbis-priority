@@ -195,6 +195,12 @@ only use the agreed upon priority scheme for the remainder of the session.
 The server chooses because it is in the best position to know what
 information from the client is of the most value.
 
+Once the negotiation is complete, endpoints MAY stop sending hop-by-hop
+prioritization signals that were not negotiated in order to conserve bandwidth.
+However, endpoints SHOULD continue sending end-to-end signals (e.g., the
+Priority header field), as that might have meaningful effect to other nodes that
+handle the HTTP message.
+
 An 8 bit value of 1 in HTTP/2 indicates support for HTTP/2 priorities
 as defined in Section 5.3 of [RFC7540] and is an error in HTTP/3 because
 there is not a clean mapping to HTTP/3.
@@ -203,11 +209,6 @@ there is not a clean mapping to HTTP/3.
 
 The extensible priority scheme is negotiated using the described mechanism. It is
 identified by the 8-bit value of 2.
-
-Endpoints using this scheme SHOULD emit the Priority header field regardless of
-the result of the negotiation, as that negotiation is a hop-by-hop agreement,
-whereas the Priority header field is an end-to-end signal that might have
-meaningful effect to other nodes that handle the HTTP message.
 
 An intermediary connecting to a backend server SHOULD declare support for the
 extensible priority scheme when and only when all the requests that are to be
