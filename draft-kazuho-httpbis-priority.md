@@ -63,10 +63,11 @@ bandwidth among the HTTP responses. However, the design and implementation of
 this scheme has been observed to have shortcomings, explained in {{motivation}}.
 
 This document defines the Priority HTTP header field that can be used by both
-client and server to specify the precedence of HTTP responses in a
-standardized, extensible, protocol-version- independent, end-to-end format. This
-header-based prioritization scheme can act as a substitute for the HTTP/2
-frame-based prioritization scheme (see {{coexistence}}).
+client and server to specify the precedence of HTTP responses in a standardized,
+extensible, protocol-version-independent, end-to-end format. Along with the
+protocol-version-specific frame for reprioritization, this prioritization scheme
+acts as a substitute for the original prioritization scheme of HTTP/2 (see
+{{coexistence}}).
 
 ## Notational Conventions
 
