@@ -359,10 +359,11 @@ priority = urgency=3, progressive=?1
 
 Once a client sends a request, circumstances might change and mean that it is
 beneficial to change the priority of the response. As an example, a web browser
-might issue a prefetch request for an HTML document with the urgency parameter
-of the Priority request header field set to `background`. Then, when the user
-navigates to the HTML while prefetch is in action, it would send a
-reprioritization frame with the priority field value set to `urgency=0`.
+might issue a prefetch request for a JavaScript file with the urgency parameter
+of the Priority request header field set to `urgency=6` (background). Then, when
+the user navigates to a page which references the new JavaScript file, while the
+prefetch is in progress, the browser would send a reprioritization frame with the
+priority field value set to `urgency=-1` (prerequisite).
 
 However, a client cannot reprioritize a response by using the Priority header
 field.  This is because an HTTP header field can only be sent as part of an HTTP
