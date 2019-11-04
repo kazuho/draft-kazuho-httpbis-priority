@@ -66,8 +66,7 @@ This document defines the Priority HTTP header field that can be used by both
 client and server to specify the precedence of HTTP responses in a standardized,
 extensible, protocol-version-independent, end-to-end format. Along with the
 protocol-version-specific frame for reprioritization, this prioritization scheme
-acts as a substitute for the original prioritization scheme of HTTP/2 (see
-{{coexistence}}).
+acts as a substitute for the original prioritization scheme of HTTP/2.
 
 ## Notational Conventions
 
@@ -194,7 +193,20 @@ An 8 bit value of 1 in HTTP/2 indicates support for HTTP/2 priorities
 as defined in Section 5.3 of [RFC7540] and is an error in HTTP/3 because
 there is not a clean mapping to HTTP/3.
 
+## Negotiating the Extensible Priority Scheme {#settings-this-scheme}
 
+The extensible priority scheme is negotiated using the described mechanism. It is
+identified by the 8-bit value of 2.
+
+Endpoints using this scheme SHOULD emit the Priority header field regardless of
+the result of the negotiation, as that negotiation is a hop-by-hop agreement,
+whereas the Priority header field is an end-to-end signal that might have
+meaningful effect to other nodes that handle the HTTP message.
+
+An intermediary connecting to a backend server SHOULD declare support for the
+extensible priority scheme when and only when all the requests that are to be
+sent on that backend connection originates from one client-side connection that
+has negotiated the use of the extensible priority scheme (see {{fairness}}).
 
 # The Priority HTTP Header Field
 
@@ -212,6 +224,7 @@ defined parameters are omitted, or if the Priority header field is not used,
 their default values SHOULD be applied.
 
 Unknown parameters MUST be ignored.
+
 
 ## urgency
 
@@ -456,38 +469,6 @@ because the server-provided value overrides the value provided by the client.
 The progressiveness continues to be `1`, the value specified by the client, as
 the server did not specify the `progressive` parameter.
 
-# Coexistence with HTTP/2 Priorities {#coexistence}
-
-Standard HTTP/2 ({{!RFC7540}}) endpoints use frame-based prioritization, whereby
-a client sends priority information in dedicated fields present in HEADERS and
-PRIORITY frames. A client might instead choose to use header-based
-prioritization as specified in this document.
-
-## The SETTINGS_HEADER_BASED_PRIORITY SETTINGS Parameter
-
-To improve communication of the client's intended prioritization scheme, this
-document specifies a new HTTP/2 SETTINGS parameter with the name
-`SETTINGS_HEADER_BASED_PRIORITY`. The value of the parameter MUST be 0 or 1; the
-initial value is 0. Frame-based prioritization is respected when the value is 0,
-or when the server does not recognize the setting.
-
-An HTTP/2 client that uses header-based priority SHOULD send a
-`SETTINGS_HEADER_BASED_PRIORITY` parameter with a value of 1 when connecting to
-a server.
-
-An intermediary SHOULD send a `SETTINGS_HEADER_BASED_PRIORITY` parameter with a
-value of 1 for a connection it establishes when, and only when, all the requests
-to be sent over that connection originate from a client that utilizes this
-header-based prioritization scheme. Otherwise this settings parameter SHOULD be
-set to 0.
-
-A client or intermediary MUST NOT send a `SETTINGS_HEADER_BASED_PRIORITY`
-parameter with the value of 0 after previously sending a value of 1.
-
-A server MUST NOT send a `SETTINGS_HEADER_BASED_PRIORITY` parameter. Upon
-receipt, a client that supports header-based prioritization MUST close the
-connection with a protocol error. Non-supporting clients will ignore this
-extension element (see {{!RFC7540}}, Section 5.5).
 
 # Security Considerations
 
@@ -510,7 +491,9 @@ that is known to have come through an intermediary, the server SHOULD prioritize
 the response as if it was assigned the priority of  `urgency=0, progressive=?1`
 (i.e. round-robin) regardless of the value of the Priority header field being
 transmitted, unless the server has the knowledge that no intermediaries are
-coalescing requests from multiple clients.
+coalescing requests from multiple clients. That can be determined by the
+settings when the intermediaries support this specification (see
+{{settings-this-scheme}}), or else through configuration.
 
 A server can determine if a request came from an intermediary through
 configuration, or by consulting if that request contains one of the following
