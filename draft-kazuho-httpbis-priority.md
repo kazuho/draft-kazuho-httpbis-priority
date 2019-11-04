@@ -331,6 +331,92 @@ set to `3` and the progressive parameter set to `1`.
 priority = urgency=3, progressive=?1
 ~~~
 
+# Reprioritization
+
+Once a client sends a request, circumstances might change and mean that it is
+beneficial to change the priority of the response. As an example, a web browser
+might issue a prefetch request for an HTML document with the urgency parameter
+of the Priority request header field set to `background`. Then, when the user
+navigates to the HTML while prefetch is in action, it would send a
+reprioritization frame with the priority field value set to `urgency=0`.
+
+However, a client cannot reprioritize a response by using the Priority header
+field.  This is because an HTTP header field can only be sent as part of an HTTP
+message. Therefore, to support reprioritization, it is necessary to define a
+HTTP-version-dependent mechanism for transmitting the priority parameters.
+
+This document specifies a new PRIORITY_UPDATE frame type for HTTP/2
+({{!RFC7540}}) and HTTP/3 ({{!I-D.ietf-quic-http}}) that is specialized for
+reprioritization. It carries updated priority parameters and references the
+target of the reprioritization based on a version-specific identifier; in
+HTTP/2 this is the Stream ID, in HTTP/3 this is either the Stream ID or Push ID.
+
+In HTTP/2 and HTTP/3 a request message sent on a stream transitions it into a
+state that prevents the client from sending additional frames on the stream.
+Modifying this behavior requires a semantic change to the protocol, this is
+avoided by restricting the stream on which a PRIORITY_UPDATE frame can be sent.
+In HTTP/2 the frame is on stream zero and in HTTP/3 it is sent on the control
+stream ({{!I-D.ietf-quic-http}}, Section 6.2.1).
+
+
+## HTTP/2 PRIORITY_UPDATE Frame
+
+The HTTP/2 PRIORITY_UPDATE frame (type=0xF) carries the stream ID of the
+response that is being reprioritized, and the updated priority in ASCII text,
+using the same representation as that of the Priority header field value.
+
+The Stream Identifier field ({{!RFC7540}}, Section 4.1) in the PRIORITY_UPDATE
+frame header MUST be zero (0x0).
+
+~~~ drawing
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +---------------------------------------------------------------+
+ |R|                        Stream ID (31)                       |
+ +---------------------------------------------------------------+
+ |                   Priority Field Value (*)                  ...
+ +---------------------------------------------------------------+
+~~~
+{: #fig-h2-reprioritization-frame title="HTTP/2 PRIORITY_UPDATE Frame Payload"}
+
+TODO: add more description of how to handle things like receiving
+PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
+
+## HTTP/3 PRIORITY_UPDATE Frame
+
+The HTTP/3 PRIORITY_UPDATE frame (type=0xF) carries the identifer of the element
+that is being reprioritized, and the updated priority in ASCII text, using the
+same representation as that of the Priority header field value.
+
+The PRIORITY_UPDATE frame MUST be sent on the control stream
+({{!I-D.ietf-quic-http}}, Section 6.2.1).
+
+~~~ drawing
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |T|    Empty    |   Prioritized Element ID (i)                ...
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |                   Priority Field Value (*)                  ...
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+~~~
+{: #fig-h3-reprioritization-frame title="HTTP/3 PRIORITY_UPDATE Frame Payload"}
+
+The PRIORITY_UPDATE frame payload has the following fields:
+
+T (Prioritized Element Type):
+: A one-bit field indicating the type of element
+being prioritized. A value of 0 indicates a reprioritization for a Request
+Stream, so the Prioritized Element ID is interpreted as a Stream ID. A
+value of 1 indicates a reprioritization for a Push stream, so the Prioritized
+Element ID is interpreted as a Push ID.
+
+Empty:
+: A seven-bit field that has no semantic value.
+
+TODO: add more description of how to handle things like receiving
+PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
+
 # Merging Client- and Server-Driven Parameters {#merging}
 
 It is not always the case that the client has the best understanding of how the
@@ -437,92 +523,6 @@ scheme it implements. A sophisticated server MAY use a weighted round-robin
 reflecting the urgencies expressed in the requests, so that less urgent
 responses would receive less bandwidth in case the bottleneck exists between the
 server and the intermediary.
-
-# Reprioritization
-
-Once a client sends a request, circumstances might change and mean that it is
-beneficial to change the priority of the response. As an example, a web browser
-might issue a prefetch request for an HTML document with the urgency parameter
-of the Priority request header field set to `background`. Then, when the user
-navigates to the HTML while prefetch is in action, it would send a
-reprioritization frame with the priority field value set to `urgency=0`.
-
-However, a client cannot reprioritize a response by using the Priority header
-field.  This is because an HTTP header field can only be sent as part of an HTTP
-message. Therefore, to support reprioritization, it is necessary to define a
-HTTP-version-dependent mechanism for transmitting the priority parameters.
-
-This document specifies a new PRIORITY_UPDATE frame type for HTTP/2
-({{!RFC7540}}) and HTTP/3 ({{!I-D.ietf-quic-http}}) that is specialized for
-reprioritization. It carries updated priority parameters and references the
-target of the reprioritization based on a version-specific identifier; in
-HTTP/2 this is the Stream ID, in HTTP/3 this is either the Stream ID or Push ID.
-
-In HTTP/2 and HTTP/3 a request message sent on a stream transitions it into a
-state that prevents the client from sending additional frames on the stream.
-Modifying this behavior requires a semantic change to the protocol, this is
-avoided by restricting the stream on which a PRIORITY_UPDATE frame can be sent.
-In HTTP/2 the frame is on stream zero and in HTTP/3 it is sent on the control
-stream ({{!I-D.ietf-quic-http}}, Section 6.2.1).
-
-
-## HTTP/2 PRIORITY_UPDATE Frame
-
-The HTTP/2 PRIORITY_UPDATE frame (type=0xF) carries the stream ID of the
-response that is being reprioritized, and the updated priority in ASCII text,
-using the same representation as that of the Priority header field value.
-
-The Stream Identifier field ({{!RFC7540}}, Section 4.1) in the PRIORITY_UPDATE
-frame header MUST be zero (0x0).
-
-~~~ drawing
-  0                   1                   2                   3
-  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
- +---------------------------------------------------------------+
- |R|                        Stream ID (31)                       |
- +---------------------------------------------------------------+
- |                   Priority Field Value (*)                  ...
- +---------------------------------------------------------------+
-~~~
-{: #fig-h2-reprioritization-frame title="HTTP/2 PRIORITY_UPDATE Frame Payload"}
-
-TODO: add more description of how to handle things like receiving
-PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
-
-## HTTP/3 PRIORITY_UPDATE Frame
-
-The HTTP/3 PRIORITY_UPDATE frame (type=0xF) carries the identifer of the element
-that is being reprioritized, and the updated priority in ASCII text, using the
-same representation as that of the Priority header field value.
-
-The PRIORITY_UPDATE frame MUST be sent on the control stream
-({{!I-D.ietf-quic-http}}, Section 6.2.1).
-
-~~~ drawing
-  0                   1                   2                   3
-  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |T|    Empty    |   Prioritized Element ID (i)                ...
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                   Priority Field Value (*)                  ...
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-~~~
-{: #fig-h3-reprioritization-frame title="HTTP/3 PRIORITY_UPDATE Frame Payload"}
-
-The PRIORITY_UPDATE frame payload has the following fields:
-
-T (Prioritized Element Type):
-: A one-bit field indicating the type of element
-being prioritized. A value of 0 indicates a reprioritization for a Request
-Stream, so the Prioritized Element ID is interpreted as a Stream ID. A
-value of 1 indicates a reprioritization for a Push stream, so the Prioritized
-Element ID is interpreted as a Push ID.
-
-Empty:
-: A seven-bit field that has no semantic value.
-
-TODO: add more description of how to handle things like receiving
-PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
 
 # Considerations
 
