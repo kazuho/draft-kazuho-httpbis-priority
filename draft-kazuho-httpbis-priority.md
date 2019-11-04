@@ -188,7 +188,7 @@ An 8 bit value of 1 in HTTP/2 indicates support for HTTP/2 priorities
 as defined in Section 5.3 of [RFC7540] and is an error in HTTP/3 because
 there is not a clean mapping to HTTP/3.
 
-## Negotiating the Extensible Priority Scheme
+## Negotiating the Extensible Priority Scheme {#settings-this-scheme}
 
 The extensible priority scheme is negotiated using the described mechanism. It is
 identified by the 8-bit value of 2.
@@ -400,7 +400,9 @@ that is known to have come through an intermediary, the server SHOULD prioritize
 the response as if it was assigned the priority of  `urgency=0, progressive=?1`
 (i.e. round-robin) regardless of the value of the Priority header field being
 transmitted, unless the server has the knowledge that no intermediaries are
-coalescing requests from multiple clients.
+coalescing requests from multiple clients. That can be determined by the
+settings when the intermediaries support this specification (see
+{{settings-this-scheme}}), or else through configuration.
 
 A server can determine if a request came from an intermediary through
 configuration, or by consulting if that request contains one of the following
