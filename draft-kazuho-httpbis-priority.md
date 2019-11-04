@@ -398,6 +398,46 @@ receipt, a client that supports header-based prioritization MUST close the
 connection with a protocol error. Non-supporting clients will ignore this
 extension element (see {{!RFC7540}}, Section 5.5).
 
+# Security Considerations
+
+## Fairness and Coalescing Intermediaries {#fairness}
+
+When an intermediary coalesces HTTP requests coming from multiple clients into
+one HTTP/2 or HTTP/3 connection going to the backend server, requests that
+originate from one client might have higher precedence than those coming from
+others.
+
+It is sometimes beneficial for the server running behind an intermediary to obey
+to the value of the Priority header field. As an example, a resource-constrained
+server might defer the transmission of software update files that would have the
+background urgency being associated. However, in the worst case, the asymmetry
+between the precedences declared by multiple clients might cause responses going
+to one end client to be delayed totally after those going to another.
+
+In order to mitigate this fairness problem, when a server responds to a request
+that is known to have come through an intermediary, the server SHOULD prioritize
+the response as if it was assigned the priority of  `urgency=0, progressive=?1`
+(i.e. round-robin) regardless of the value of the Priority header field being
+transmitted, unless the server has the knowledge that no intermediaries are
+coalescing requests from multiple clients.
+
+A server can determine if a request came from an intermediary through
+configuration, or by consulting if that request contains one of the following
+header fields:
+
+* CDN-Loop ({{?RFC8586}})
+* Forwarded, X-Forwarded-For ({{?RFC7239}})
+* Via ({{?RFC7230}}, Section 5.7.1)
+
+Responding to requests coming through an intermediary in a round-robin manner
+works well when the network bottleneck exists between the intermediary and the
+end client, as the intermediary would be buffering the responses and then be
+forwarding the chunks of those buffered responses based on the priorization
+scheme it implements. A sophisticated server MAY use a weighted round-robin
+reflecting the urgencies expressed in the requests, so that less urgent
+responses would receive less bandwidth in case the bottleneck exists between the
+server and the intermediary.
+
 # Reprioritization
 
 Once a client sends a request, circumstances might change and mean that it is
@@ -533,9 +573,26 @@ server that receives requests for a font {{?RFC8081}} and images with the same
 urgency might give higher precedence to the font, so that a visual client can
 render textual information at an early moment.
 
-# Security Considerations
+## Can an Intermediary Send it's own Signal?
 
-TBD
+There might be a benefit in recommending a coalescing intermediary to embed its
+own prioritization hints into the HTTP request that it forwards to the backend
+server, as otherwise the Priority header field would not be as helpful to the
+backend (see {{fairness}}).
+
+One way of achieving that, without dropping the original signal, would be to let
+the intermediary express its own signal using the Priority header field, at the
+same time transplanting the original value to a different header field.
+
+As an example, when a client sends an HTTP request carrying a priority of
+`urgency=-1` and the intermediary wants to instead associate
+`urgency=0; progressive=?1`, the intermediary would send a HTTP request that
+contains to the following two header fields to the backend server:
+
+~~~
+priority = urgency=0; progresive=?1
+original-priority = urgency=-1
+~~~
 
 # IANA Considerations
 
