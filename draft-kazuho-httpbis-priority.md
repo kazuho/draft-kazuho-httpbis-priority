@@ -682,7 +682,10 @@ Many thanks to Robin Marx, Patrick Meenan and Ian Swett for their feedback.
 
 ## Since draft-kazuho-httpbis-priority-02
 
-* TBD
+* Consolidation of the problem statement (#61, #73)
+* Define SETTINGS_PRIORITIES for negotiation (#58, #69)
+* Define PRIORITY_UPDATE frame for HTTP/2 and HTTP/3 (#51)
+* Explain fairness issue and mitigations (#56)
 
 ## Since draft-kazuho-httpbis-priority-01
 
