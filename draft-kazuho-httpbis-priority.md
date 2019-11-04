@@ -162,21 +162,21 @@ stream-level priority signal prior to receiving the SETTINGS frame.
 
 ## The SETTINGS_PRIORITIES SETTINGS Parameter
 
-This document adds a new SETTINGS parameter to those defined by
-[RFC7540], Section 6.5.2.
+This document defines a new SETTINGS_PRIORITIES parameter (0x9) for HTTP/2 and
+HTTP/3, which allows both peers to indicate which prioritization schemes they
+support. The value of this parameter is interpreted in two ways depending on if it is
+zero or non-zero.
 
-The new parameter name is SETTINGS_PRIORITIES, which allows both
-peers to indicate which prioritization schemes they support.
+If the setting has a value of zero it indicates no support for priorities. If
+either side sends the parameter with a value of zero, clients SHOULD NOT send
+hop-by-hop priority signals (e.g., HTTP/2 PRIORITY frame) and servers SHOULD NOT
+make any assumptions based on the presence or lack thereof of such signals.
 
-A value of 0 indicates no support for priorities. If either side sends the
-parameter with a value of 0, clients SHOULD NOT send hop-by-hop priority
-signals (e.g., HTTP/2 PRIORITY frame) and servers SHOULD NOT make any
-assumptions based on the presence or lack thereof of such signals.
-
-If the value is non-zero, then the least significant 8 bits indicate the
-sender's most preferred priority scheme, the second least significant 8 bits
-indicate the sender's second choice, and so on. This allows expressing
-support for 4 schemes in HTTP/2 and 7 in HTTP/3.
+If the value is non-zero, then it is interpreted as an ordered preference list
+of prioritization schemes represented by 8-bit values. The least significant 8
+bits indicate the sender's most preferred priority scheme, the second least
+significant 8 bits indicate the sender's second choice, and so on. This allows
+expressing support for 4 schemes in HTTP/2 and 7 in HTTP/3.
 
 A sender MUST comply with the following restrictions when constructing a
 preference list: duplicate 8-bit values (excluding the value 0) MUST NOT be used,
@@ -201,14 +201,25 @@ However, endpoints SHOULD continue sending end-to-end signals (e.g., the
 Priority header field), as that might have meaningful effect to other nodes that
 handle the HTTP message.
 
-An 8 bit value of 1 in HTTP/2 indicates support for HTTP/2 priorities
-as defined in Section 5.3 of [RFC7540] and is an error in HTTP/3 because
-there is not a clean mapping to HTTP/3.
+## Defined Prioritization Scheme Values
 
-## Negotiating the Extensible Priority Scheme {#settings-this-scheme}
+This document defines two prioritization scheme values for use with the
+SETTINGS_PRIORITIES setting.
 
-The extensible priority scheme is negotiated using the described mechanism. It is
-identified by the 8-bit value of 2.
+### H2_TREE {#settings-h2-scheme}
+
+This document defines the priority scheme identifier H2_TREE (8-bit value of 1)
+that indicates support for HTTP/2-style priorities ({{!RFC7540}}, Section 5.3).
+
+The H2_TREE priority scheme identifier MUST NOT be be sent in an HTTP/3 settings
+because there is no defined mapping of this scheme. Endpoints MUST treat receipt
+of H2_TREE as a connection error of type H3_SETTINGS_ERROR.
+
+### URGENCY {#settings-this-scheme}
+
+This document defines the priority scheme identifier URGENCY (8-bit value of 2)
+that indicates support for the extensible priority scheme defined in the present
+document.
 
 An intermediary connecting to a backend server SHOULD declare support for the
 extensible priority scheme when and only when all the requests that are to be
@@ -410,9 +421,9 @@ PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
 
 ## HTTP/3 PRIORITY_UPDATE Frame
 
-The HTTP/3 PRIORITY_UPDATE frame (type=0xF) carries the identifier of the element
-that is being reprioritized, and the updated priority in ASCII text, using the
-same representation as that of the Priority header field value.
+The HTTP/3 PRIORITY_UPDATE frame (type=0xF) carries the identifier of the
+element that is being reprioritized, and the updated priority in ASCII text,
+using the same representation as that of the Priority header field value.
 
 The PRIORITY_UPDATE frame MUST be sent on the control stream
 ({{!I-D.ietf-quic-http}}, Section 6.2.1).
@@ -617,10 +628,25 @@ This specification registers the following entry in the HTTP/2 Settings registry
 established by {{!RFC7540}}:
 
 Name:
-: SETTINGS_HEADER_BASED_PRIORITY:
+: SETTINGS_PRIORITIES
 
 Code:
-: 0xTBD
+: 0x9
+
+Initial value:
+: 0
+
+Specification:
+: This document
+
+This specification registers the following entry in the HTTP/2 Settings registry
+established by {{!I-D.ietf-quic-http}}:
+
+Name:
+: SETTINGS_PRIORITIES
+
+Code:
+: 0x9
 
 Initial value:
 : 0
@@ -652,6 +678,36 @@ Code:
 Specification:
 : This document
 
+## HTTP Prioritization Scheme Registry
+
+This document establishes a registry for HTTP prioritization scheme codes to be
+used in conjunction with the SETTINGS_PRIORITIES parameter. The "HTTP
+Prioritization Scheme" registry manages an 8-bit space. The "HTTP Prioritization
+Scheme" registry operates under either of the "IETF Review" or "IESG Approval"
+policies {{!RFC5226}} for values between 0x00 and 0xef, with values between 0xf0
+and 0xff being reserved for Experimental Use.
+
+New entries in this registry require the following information:
+
+Prioritization Scheme:
+: A name or label for the prioritization scheme.
+
+Code:
+: The 8-bit code assigned to the prioritization scheme.
+
+Specification:
+: A reference to a specification that includes a description of the
+prioritization scheme.
+
+The entries in the following table are registered by this document.
+
+| ----------------------| ------ | -------------------------- |
+| Prioritization Scheme |  Code  | Specification              |
+| --------------------- | :----: | -------------------------- |
+| H2_TREE               |   1    | {{settings-h2-scheme}}     |
+| URGENCY               |   2    | {{settings-this-scheme}}   |
+| --------------------- | ------ | -------------------------- |
+
 --- back
 
 # Acknowledgements
@@ -660,14 +716,18 @@ Roy Fielding presented the idea of using a header field for representing
 priorities in <http://tools.ietf.org/agenda/83/slides/slides-83-httpbis-5.pdf>.
 In <https://github.com/pmeenan/http3-prioritization-proposal>, Patrick Meenan
 advocates for representing the priorities using a tuple of urgency and
-concurrency.
+concurrency. The negotiation scheme described in this document is based on
+{{?I-D.lassey-priority-setting}}, authored by Brad Lassey and Lucas Pardue.
 
 The motivation for defining an alternative to HTTP/2 priorities is drawn from
 discussion within the broad HTTP community. Special thanks to Roberto Peon,
 Martin Thomson and Netflix for text that was incorporated explicitly in this
 document.
 
-Many thanks to Robin Marx, Patrick Meenan and Ian Swett for their feedback.
+In addition to the people above, this document owes a lot to the extensive
+discussion in the HTTP priority design team, consisting of Alan Frindell,
+Andrew Galloni, Craig Taylor, Ian Swett, Kazuho Oku, Lucas Pardue, Matthew Cox,
+Mike Bishop, Roberto Peon, Robin Marx, Roy Fielding.
 
 # Change Log
 
