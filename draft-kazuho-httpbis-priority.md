@@ -96,26 +96,27 @@ HTTP/2 introduced a complex prioritization signaling scheme that used a
 combination of dependencies and weights, formed into an unbalanced tree. This
 scheme suffers from poor deployment and interoperability.
 
-The rich flexibility permitted in tree building is rarely excersised by clients;
-they generally either chosen a model optimized for a web use case or do nothing
-at all.
+The rich flexibility of client-driven HTTP/2 prioritization tree building is
+rarely excercised; experience shows that clients either choose a single model
+optimized for a web use case (and don't vary it) or do nothing at all. But every
+client builds their in a different way, which makes it difficult for servers to
+understand their intent and act accordingly.
 
-Many server implementations do not include support for this scheme, some
-favoring instead bespoke server-driven schemes based on heuristics and other
-hints, like the content type of resources and the order in which requests
-arrive. For example, a server, with knowledge of the document structure, might
-want to prioritize the delivery of images that are critical to user experience
-above other images, but below the CSS files. But with the HTTP/2 prioritization
-scheme, it is impossible for the server to determine how such images should be
-prioritized against other responses that use the client-driven prioritization
-tree, because every client builds the HTTP/2 prioritization tree in a different
-way.
+Many server implementations do not include support for the HTTP/2 priority
+scheme, some favoring instead bespoke server-driven schemes based on heuristics
+and other hints, like the content type of resources and the order in which
+requests arrive. For example, a server, with knowledge of the document
+structure, might want to prioritize the delivery of images that are critical to
+user experience above other images, but below the CSS files. Since client trees
+vary, it is impossible for the server to determine how such images should be
+prioritized against other responses.
 
-Intermediaries can coalesce multiple HTTP/2 clients into a single upstream
-HTTP/2 connection and the prioritization scheme allows for this. However most
-intermediaries do not support this and it does not define a method that can be
-used by a server to express the priority of a response. Without such a method,
-intermediaries cannot coordinate client-driven and server-driven priorities.
+The HTTP/2 scheme allows intermediaries to coalesce multiple client trees into a
+single tree that is used for a single upstream HTTP/2 connection. However, most
+intermediaries do not support this. The scheme does not define a method that can
+be used by a server to express the priority of a response. Without such a
+method, intermediaries cannot coordinate client-driven and server-driven
+priorities.
 
 HTTP/2 describes denial-of-service considerations for implementations. On
 2019-08-13 Netflix issued an advisory notice about the discovery of several
