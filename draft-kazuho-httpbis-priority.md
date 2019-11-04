@@ -660,14 +660,18 @@ Roy Fielding presented the idea of using a header field for representing
 priorities in <http://tools.ietf.org/agenda/83/slides/slides-83-httpbis-5.pdf>.
 In <https://github.com/pmeenan/http3-prioritization-proposal>, Patrick Meenan
 advocates for representing the priorities using a tuple of urgency and
-concurrency.
+concurrency. The negotiation scheme described in this document is based on
+{{?I-D.lassey-priority-setting}}, authored by Brad Lassey and Lucas Pardue.
 
 The motivation for defining an alternative to HTTP/2 priorities is drawn from
 discussion within the broad HTTP community. Special thanks to Roberto Peon,
 Martin Thomson and Netflix for text that was incorporated explicitly in this
 document.
 
-Many thanks to Robin Marx, Patrick Meenan and Ian Swett for their feedback.
+This document owes a lot to the extensive discussion in the priority design
+team, consisting of Alan Frindell, Andrew Galloni, Craig Taylor, Ian Swett,
+Kazuho Oku, Lucas Pardue, Matthew Cox, Mike Bishop, Roberto Peon, Robin Marx,
+Roy Fielding.
 
 # Change Log
 
