@@ -183,7 +183,7 @@ preference list: duplicate 8-bit values (excluding the value 0) MUST NOT be used
 and if any byte is 0 then all more significant bytes MUST also be 0. An endpoint
 that receives a setting in violation of these requirements MUST treat it as a
 connection error of type PROTOCOL_ERROR for HTTP/2 {{!RFC7540}}, or of type
-HTTP_SETTINGS_ERROR for HTTP/3 {{!I-D.ietf-quic-http}}.
+H3_SETTINGS_ERROR for HTTP/3 {{!I-D.ietf-quic-http}}.
 
 In HTTP/2, the setting SHOULD appear in the first SETTINGS frame and peers
 MUST NOT process the setting if it's received multiple times in order to
@@ -586,7 +586,7 @@ As an example, when a client sends an HTTP request carrying a priority of
 contains to the following two header fields to the backend server:
 
 ~~~
-priority = urgency=0; progresive=?1
+priority = urgency=0; progressive=?1
 original-priority = urgency=-1
 ~~~
 
