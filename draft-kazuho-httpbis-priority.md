@@ -198,6 +198,10 @@ the result of the negotiation, as that negotiation is a hop-by-hop agreement,
 whereas the Priority header field is an end-to-end signal that might have
 meaningful effect to other nodes that handle the HTTP message.
 
+An intermediary connecting to a backend server SHOULD declare support for the
+extensible priority scheme when and only when all the requests that are to be
+sent on that backend connection originates from one client-side connection that
+has negotiated the use of the extensible priority scheme (see {{fairness}}).
 
 # The Priority HTTP Header Field
 
