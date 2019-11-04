@@ -175,8 +175,8 @@ and servers SHOULD NOT make any assumptions based on the presence or
 lack thereof of priority frames.
 
 If the value is non-zero, then the least significant 8 bits indicates the
-peer's preferred priority scheme, the second least significant 8 bits
-indicates the peer's second choice, and so on.  This allows expressing
+sender's most preferred priority scheme, the second least significant 8 bits
+indicates the sender's second choice, and so on.  This allows expressing
 support for 4 schemes in HTTP/2 and 7 in HTTP/3.  If any octet is 0,
 all more significant octets MUST also be 0.
 
