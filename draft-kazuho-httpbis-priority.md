@@ -97,12 +97,12 @@ combination of dependencies and weights, formed into an unbalanced tree. This
 scheme suffers from poor deployment and interoperability.
 
 The rich flexibility of client-driven HTTP/2 prioritization tree building is
-rarely excercised; experience shows that clients either choose a single model
+rarely exercised; experience shows that clients either choose a single model
 optimized for a web use case (and don't vary it) or do nothing at all. But every
-client builds their in a different way, which makes it difficult for servers to
-understand their intent and act accordingly.
+client builds their prioritization tree in a different way, which makes it
+difficult for servers to understand their intent and act accordingly.
 
-Many server implementations do not include support for the HTTP/2 priority
+Many HTTP/2 server implementations do not include support for the priority
 scheme, some favoring instead bespoke server-driven schemes based on heuristics
 and other hints, like the content type of resources and the order in which
 requests arrive. For example, a server, with knowledge of the document
@@ -132,8 +132,8 @@ Considering the problems with deployment and adaptability to HTTP/3, retaining
 the HTTP/2 priority scheme increases the complexity of the entire system without
 any evidence that the value it provides offsets that complexity.
 
-The problems laid out above are motivation for the alternative prioriization
-scheme presented in this document. In order to support deployement of new
+The problems laid out above are motivation for the alternative prioritization
+scheme presented in this document. In order to support deployment of new
 schemes, a general-purpose negotiation mechanism is specified in
 {{negotiating-priorities}}.
 
