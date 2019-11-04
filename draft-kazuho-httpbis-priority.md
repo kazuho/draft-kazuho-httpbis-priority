@@ -668,10 +668,10 @@ discussion within the broad HTTP community. Special thanks to Roberto Peon,
 Martin Thomson and Netflix for text that was incorporated explicitly in this
 document.
 
-This document owes a lot to the extensive discussion in the priority design
-team, consisting of Alan Frindell, Andrew Galloni, Craig Taylor, Ian Swett,
-Kazuho Oku, Lucas Pardue, Matthew Cox, Mike Bishop, Roberto Peon, Robin Marx,
-Roy Fielding.
+In addition to the people above, this document owes a lot to the extensive
+discussion in the priority design team, consisting of Alan Frindell, Andrew
+Galloni, Craig Taylor, Ian Swett, Kazuho Oku, Lucas Pardue, Matthew Cox,
+Mike Bishop, Roberto Peon, Robin Marx, Roy Fielding.
 
 # Change Log
 
