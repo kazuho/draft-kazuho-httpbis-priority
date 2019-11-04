@@ -195,10 +195,10 @@ only use the agreed upon priority scheme for the remainder of the session.
 The server chooses because it is in the best position to know what
 information from the client is of the most value.
 
-Once the negotiation is complete, endpoints MAY stop sending hop-by-hop	
-prioritization signals that were not negotiated in order to conserve bandwidth.	
-However, endpoints SHOULD continue sending end-to-end signals (e.g., the	
-Priority header field), as that might have meaningful effect to other nodes that	
+Once the negotiation is complete, endpoints MAY stop sending hop-by-hop
+prioritization signals that were not negotiated in order to conserve bandwidth.
+However, endpoints SHOULD continue sending end-to-end signals (e.g., the
+Priority header field), as that might have meaningful effect to other nodes that
 handle the HTTP message.
 
 An 8 bit value of 1 in HTTP/2 indicates support for HTTP/2 priorities
@@ -217,7 +217,7 @@ has negotiated the use of the extensible priority scheme (see {{fairness}}).
 
 # Urgency Prioritization
 
-Urgency based prioritization uses two fields, `urgency` and `progressive` to
+Urgency prioritization uses two parameters, `urgency` and `progressive` to
 indicate the relative urgency of requests and whether responses should be
 interleaved with other responses at the same priority.
 
@@ -340,8 +340,6 @@ uses it to specify the priority of the response. A server uses it to inform
 the client that the priority was overwritten. An intermediary can use the
 Priority information from client requests and server responses to correct or
 amend the precedence to suit it (see {{merging}}).
-
-Unknown parameters MUST be ignored.
 
 
 ## urgency
