@@ -138,8 +138,6 @@ scheme presented in this document. In order to support deployment of new
 schemes, a general-purpose negotiation mechanism is specified in
 {{negotiating-priorities}}.
 
-
-
 # Negotiating Priorities
 
 The document specifies a negotiation mechanism that allows each peer to
@@ -150,17 +148,13 @@ For both HTTP/2 and HTTP/3, either peer's SETTINGS may arrive first,
 so any negotiation must be unilateral and not rely upon receiving
 the peer's SETTINGS value.
 
-Implementations are likely to only use one prioritization scheme at
-once, and may be unable to change the scheme once established, so the
-setting MUST be sent prior to the first request if it is ever sent.
-In HTTP/3, SETTINGS may arrive after the first request even if
-they are sent first.  In order to avoid the server incorrectly
-choosing a priority scheme in HTTP/3, the client SHOULD only send
-priority information prior to receiving the server's SETTINGS if
-it only offers a single scheme.  If it offers multiple schemes,
-the client SHOULD delay sending priority information until
-after it knows what the server supports, or risk the server
-choosing a sub-optimal scheme.
+Servers are likely to only use one prioritization scheme at once per each
+connection, and may be unable to change the scheme once established, so the
+setting MUST be sent prior to the first request if it is ever sent. In HTTP/3,
+SETTINGS might arrive after the first request even if they are sent first.
+Therefore, future specifications that define alternative prioritization schemes
+for HTTP/3 SHOULD define how the server would act when it receives a
+stream-level priority signal prior to receiving the SETTINGS frame.
 
 ## The SETTINGS_PRIORITIES SETTINGS Parameter
 
