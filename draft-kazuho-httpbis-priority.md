@@ -169,7 +169,7 @@ The new parameter name is SETTINGS_PRIORITIES, which allows both
 peers to indicate which prioritization schemes they support.
 
 A value of 0 indicates no support for priorities. If either side sends the
-parameter with a value of 0, clients SHOULD NOT send hop-by-hop prioritiy
+parameter with a value of 0, clients SHOULD NOT send hop-by-hop priority
 signals (e.g., HTTP/2 PRIORITY frame) and servers SHOULD NOT make any
 assumptions based on the presence or lack thereof of such signals.
 
@@ -186,11 +186,11 @@ connection error of type PROTOCOL_ERROR for HTTP/2 {{!RFC7540}}, or of type
 H3_SETTINGS_ERROR for HTTP/3 {{!I-D.ietf-quic-http}}.
 
 In HTTP/2, the setting SHOULD appear in the first SETTINGS frame and peers
-MUST NOT process the setting if it's received multiple times in order to
+MUST NOT process the setting if it is received multiple times in order to
 avoid changing the agreed upon prioritization scheme.
 
 If there is a prioritization scheme supported by both the client and server,
-then the servers's preference order prevails and both peers SHOULD
+then the server's preference order prevails and both peers SHOULD
 only use the agreed upon priority scheme for the remainder of the session.
 The server chooses because it is in the best position to know what
 information from the client is of the most value.
@@ -410,7 +410,7 @@ PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
 
 ## HTTP/3 PRIORITY_UPDATE Frame
 
-The HTTP/3 PRIORITY_UPDATE frame (type=0xF) carries the identifer of the element
+The HTTP/3 PRIORITY_UPDATE frame (type=0xF) carries the identifier of the element
 that is being reprioritized, and the updated priority in ASCII text, using the
 same representation as that of the Priority header field value.
 
@@ -491,7 +491,7 @@ It is sometimes beneficial for the server running behind an intermediary to obey
 to the value of the Priority header field. As an example, a resource-constrained
 server might defer the transmission of software update files that would have the
 background urgency being associated. However, in the worst case, the asymmetry
-between the precedences declared by multiple clients might cause responses going
+between the precedence declared by multiple clients might cause responses going
 to one end client to be delayed totally after those going to another.
 
 In order to mitigate this fairness problem, when a server responds to a request
@@ -514,7 +514,7 @@ header fields:
 Responding to requests coming through an intermediary in a round-robin manner
 works well when the network bottleneck exists between the intermediary and the
 end client, as the intermediary would be buffering the responses and then be
-forwarding the chunks of those buffered responses based on the priorization
+forwarding the chunks of those buffered responses based on the prioritization
 scheme it implements. A sophisticated server MAY use a weighted round-robin
 reflecting the urgencies expressed in the requests, so that less urgent
 responses would receive less bandwidth in case the bottleneck exists between the
@@ -569,7 +569,7 @@ server that receives requests for a font {{?RFC8081}} and images with the same
 urgency might give higher precedence to the font, so that a visual client can
 render textual information at an early moment.
 
-## Can an Intermediary Send it's own Signal?
+## Can an Intermediary Send its own Signal?
 
 There might be a benefit in recommending a coalescing intermediary to embed its
 own prioritization hints into the HTTP request that it forwards to the backend
