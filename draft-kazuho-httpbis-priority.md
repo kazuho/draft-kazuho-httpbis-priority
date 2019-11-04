@@ -95,13 +95,14 @@ operates in ignorance of the needs of its peer.
 
 HTTP/2 introduced a complex prioritization signaling scheme that used a
 combination of dependencies and weights, formed into an unbalanced tree. This
-scheme suffers from poor deployment and interoperability.
+scheme has suffered from poor deployment and interoperability.
 
 The rich flexibility of client-driven HTTP/2 prioritization tree building is
 rarely exercised; experience shows that clients either choose a single model
 optimized for a web use case (and don't vary it) or do nothing at all. But every
 client builds their prioritization tree in a different way, which makes it
-difficult for servers to understand their intent and act accordingly.
+difficult for servers to understand their intent and act or intervene
+accordingly.
 
 Many HTTP/2 server implementations do not include support for the priority
 scheme, some favoring instead bespoke server-driven schemes based on heuristics
@@ -125,18 +126,22 @@ resource exhaustion vectors affecting multiple HTTP/2 implementations. One
 attack, CVE-2019-9513 aka "Resource Loop", is based on manipulation of the
 priority tree.
 
-The HTTP/2 scheme depends on in-order delivery, so it is unsuitable for use in
-protocols like HTTP/3 {{?I-D.ietf-quic-http}}, which attempts to avoid global
-ordering.
+The HTTP/2 scheme depends on in-order delivery of signals, leading to challenges
+in porting the scheme to protocols that do not provide global ordering. For
+example, the scheme cannot be used in HTTP/3 {{?I-D.ietf-quic-http}} without
+changing the signal and its processing.
 
 Considering the problems with deployment and adaptability to HTTP/3, retaining
 the HTTP/2 priority scheme increases the complexity of the entire system without
-any evidence that the value it provides offsets that complexity.
+any evidence that the value it provides offsets that complexity. In fact,
+multiple experiments from independent research have shown that simpler schemes
+can reach at least equivalent performance characteristics compared to the more
+complex HTTP/2 setups seen in practice, at least for the web use case.
 
-The problems laid out above are motivation for the alternative prioritization
-scheme presented in this document. In order to support deployment of new
-schemes, a general-purpose negotiation mechanism is specified in
-{{negotiating-priorities}}.
+The problems and insights laid out above are motivation for the alternative and
+more straightforward prioritization scheme presented in this document. In order
+to support deployment of new schemes, a general-purpose negotiation mechanism is
+specified in {{negotiating-priorities}}.
 
 # Negotiating Priorities
 
