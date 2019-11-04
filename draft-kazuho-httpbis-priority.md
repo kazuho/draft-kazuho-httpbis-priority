@@ -170,9 +170,9 @@ The new parameter name is SETTINGS_PRIORITIES, which allows both
 peers to indicate which prioritization schemes they support.
 
 A value of 0 indicates no support for priorities. If either side sends the
-parameter with a value of 0, clients SHOULD NOT send priority frames
-and servers SHOULD NOT make any assumptions based on the presence or
-lack thereof of priority frames.
+parameter with a value of 0, clients SHOULD NOT send hop-by-hop prioritiy
+signals (e.g., HTTP/2 PRIORITY frame) and servers SHOULD NOT make any
+assumptions based on the presence or lack thereof of such signals.
 
 If the value is non-zero, then the least significant 8 bits indicates the
 sender's most preferred priority scheme, the second least significant 8 bits
