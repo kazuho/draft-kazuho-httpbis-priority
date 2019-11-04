@@ -179,10 +179,12 @@ sender's most preferred priority scheme, the second least significant 8 bits
 indicate the sender's second choice, and so on. This allows expressing
 support for 4 schemes in HTTP/2 and 7 in HTTP/3.
 
-With the exception of 0, duplicate 8 bit values are not allowed. If any byte
-is 0, all more significant bytes MUST also be 0. A violation of either or both
-these restrictions MUST be treated as an error of type PROTOCOL_ERROR for HTTP/2
-[RFC7540], or of type HTTP_SETTINGS_ERROR for HTTP/3 {{?I-D.ietf-quic-http}}.
+A sender MUST comply with the following restrictions when constructing a
+preference list: duplicate 8-bit values (excluding the value 0) MUST NOT be used,
+and if any byte is 0 then all more significant bytes MUST also be 0. An endpoint
+that receives a setting in violation of these requirements MUST treat it as a
+connection error of type PROTOCOL_ERROR for HTTP/2 [RFC7540], or of type
+HTTP_SETTINGS_ERROR for HTTP/3 {{!I-D.ietf-quic-http}}.
 
 In HTTP/2, the setting SHOULD appear in the first SETTINGS frame and peers
 MUST NOT process the setting if it's received multiple times in order to
