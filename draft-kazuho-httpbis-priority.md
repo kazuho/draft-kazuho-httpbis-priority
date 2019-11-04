@@ -189,6 +189,15 @@ An 8 bit value of 1 in HTTP/2 indicates support for HTTP/2 priorities
 as defined in Section 5.3 of [RFC7540] and is an error in HTTP/3 because
 there is not a clean mapping to HTTP/3.
 
+## Negotiating the Extensible Priority Scheme
+
+The extensible priority scheme is negotiated using the described mechanism. It is
+identified by the 8-bit value of 2.
+
+Endpoints using this scheme SHOULD emit the Priority header field regardless of
+the result of the negotiation, as that negotiation is a hop-by-hop agreement,
+whereas the Priority header field is an end-to-end signal that might have
+meaningful effect to other nodes that handle the HTTP message.
 
 
 # The Priority HTTP Header Field
@@ -207,6 +216,7 @@ defined parameters are omitted, or if the Priority header field is not used,
 their default values SHOULD be applied.
 
 Unknown parameters MUST be ignored.
+
 
 ## urgency
 
@@ -365,17 +375,6 @@ because the server-provided value overrides the value provided by the client.
 The progressiveness continues to be `1`, the value specified by the client, as
 the server did not specify the `progressive` parameter.
 
-# Negotiation
-
-When HTTP/2 or HTTP/3 is being used on a particular hop, the prioritization
-scheme to be applied by the server of that hop is negotiated using
-{{!PRIORITY-SETTING=I-D.lassey-priority-setting}}. The identifier used for this
-specification is 0xTBD.
-
-Endpoints SHOULD emit the Priority header field regardless of the result of the
-negotitation, as that negotiation is a hop-by-hop agreement, whereas the
-Priority header field is an end-to-end signal that might have meaningful effect
-to other nodes that handle the HTTP message.
 
 # Security Considerations
 
