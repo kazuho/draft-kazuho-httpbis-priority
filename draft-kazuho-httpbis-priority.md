@@ -218,8 +218,8 @@ of H2_TREE as a connection error of type H3_SETTINGS_ERROR.
 ### EXT_PRI {#settings-this-scheme}
 
 This document defines the priority scheme identifier EXT_PRI (8-bit value of 2)
-that indicates support for the extensible priority scheme defined by the in the
-present document.
+that indicates support for the extensible priority scheme defined in the present
+document.
 
 An intermediary connecting to a backend server SHOULD declare support for the
 extensible priority scheme when and only when all the requests that are to be
