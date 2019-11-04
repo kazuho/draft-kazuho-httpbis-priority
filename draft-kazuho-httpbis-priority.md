@@ -33,10 +33,10 @@ This document describes a scheme for prioritizing HTTP responses. This scheme
 expresses the priority of each HTTP response using absolute values, rather than
 as a relative relationship between a group of HTTP responses.
 
-This document defines the Priority header field for communicating the initial
-priority in an HTTP version-independent manner, as well as HTTP/2 and HTTP/3
-frames for reprioritizing the responses. These share a common format structure
-that is designed to provide future extensibility.
+This document defines a new priority scheme, a Priority header field for
+communicating the initial priority in an HTTP version-independent manner,
+as well as HTTP/2 and HTTP/3 frames for reprioritizing the responses. These
+share a common format structure that is designed to provide future extensibility.
 
 --- middle
 
@@ -195,12 +195,6 @@ only use the agreed upon priority scheme for the remainder of the session.
 The server chooses because it is in the best position to know what
 information from the client is of the most value.
 
-Once the negotiation is complete, endpoints MAY stop sending hop-by-hop
-prioritization signals that were not negotiated in order to conserve bandwidth.
-However, endpoints SHOULD continue sending end-to-end signals (e.g., the
-Priority header field), as that might have meaningful effect to other nodes that
-handle the HTTP message.
-
 An 8 bit value of 1 in HTTP/2 indicates support for HTTP/2 priorities
 as defined in Section 5.3 of [RFC7540] and is an error in HTTP/3 because
 there is not a clean mapping to HTTP/3.
@@ -210,20 +204,23 @@ there is not a clean mapping to HTTP/3.
 The extensible priority scheme is negotiated using the described mechanism. It is
 identified by the 8-bit value of 2.
 
+Endpoints using this scheme SHOULD emit the Priority header field regardless of
+the result of the negotiation, as that negotiation is a hop-by-hop agreement,
+whereas the Priority header field is an end-to-end signal that might have
+meaningful effect to other nodes that handle the HTTP message.
+
 An intermediary connecting to a backend server SHOULD declare support for the
 extensible priority scheme when and only when all the requests that are to be
 sent on that backend connection originates from one client-side connection that
 has negotiated the use of the extensible priority scheme (see {{fairness}}).
 
-# The Priority HTTP Header Field
+# Urgency Prioritization
 
-The Priority HTTP header field can appear in requests and responses. A client
-uses it to specify the priority of the response. A server uses it to inform
-the client that the priority was overwritten. An intermediary can use the
-Priority information from client requests and server responses to correct or
-amend the precedence to suit it (see {{merging}}).
+Urgency based prioritization uses two fields, `urgency` and `progressive` to
+indicate the relative urgency of requests and whether responses should be
+interleaved with other responses at the same priority.
 
-The value of the Priority header field is a Structured Headers Dictionary
+The fields are encoded as a Structured Headers Dictionary
 ({{!STRUCTURED-HEADERS}}). Each dictionary member represents a parameter of the
 Priority header field. This document defines the `urgency` and `progressive`
 parameters. Values of these parameters MUST always be present. When any of the
@@ -249,17 +246,6 @@ The value is encoded as an sh-integer.  The default value is zero.
 
 A server SHOULD transmit HTTP responses in the order of their urgency values.
 The lower the value, the higher the precedence.
-
-The following example shows a request for a CSS file with the urgency set to
-`-1`:
-
-~~~ example
-:method = GET
-:scheme = https
-:authority = example.net
-:path = /style.css
-priority = urgency=-1
-~~~
 
 The definition of the urgencies and their expected use-case are described below.
 Endpoints SHOULD respect the definition of the values when assigning urgencies.
@@ -344,6 +330,33 @@ A server SHOULD transmit non-progressive responses one by one, preferably in the
 order the requests were generated.  Doing so maximizes the chance of the client
 making progress in using the composition of the HTTP responses at the earliest
 moment.
+
+
+# The Priority HTTP Header Field
+
+The Priority HTTP header field can appear in requests and responses. A client
+uses it to specify the priority of the response. A server uses it to inform
+the client that the priority was overwritten. An intermediary can use the
+Priority information from client requests and server responses to correct or
+amend the precedence to suit it (see {{merging}}).
+
+Unknown parameters MUST be ignored.
+
+
+## urgency
+
+The following example shows a request for a CSS file with the urgency set to
+`-1`:
+
+~~~ example
+:method = GET
+:scheme = https
+:authority = example.net
+:path = /style.css
+priority = urgency=-1
+~~~
+
+## progressive
 
 The following example shows a request for a JPEG file with the urgency parameter
 set to `3` and the progressive parameter set to `1`.
