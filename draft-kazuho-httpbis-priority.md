@@ -248,10 +248,10 @@ the client that the priority was overwritten. An intermediary can use the
 Priority information from client requests and server responses to correct or
 amend the precedence to suit it (see {{merging}}).
 
-This document defines the `u` and `i` parameters which stand for urgent and
-incremental. Values of these parameters MUST always be present. When any of
-the defined parameters are omitted, or if the Priority header field is not
-used, their default values SHOULD be applied.
+This document defines the urgency(`u`) and incremental(`i`) parameters which
+stand for urgent and incremental. Values of these parameters MUST always be
+present. When any of the defined parameters are omitted, or if the Priority
+header field is not used, their default values SHOULD be applied.
 
 The Priority header field is an end-to-end signal of the request
 priority from the client or the response priority from the server.
