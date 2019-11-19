@@ -257,7 +257,7 @@ priority, as shown below:
 |               7 | background ({{background}})       |
 {: #urgencies title="Urgencies"}
 
-The value is encoded as an sh-integer. The default value is zero.
+The value is encoded as an sh-integer. The default value is 1.
 
 A server SHOULD transmit HTTP responses in the order of their urgency values.
 The lower the value, the higher the precedence.
