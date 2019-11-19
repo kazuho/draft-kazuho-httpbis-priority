@@ -405,12 +405,13 @@ reprioritization. It carries updated priority parameters and references the
 target of the reprioritization based on a version-specific identifier; in
 HTTP/2 this is the Stream ID, in HTTP/3 this is either the Stream ID or Push ID.
 
-In HTTP/2 and HTTP/3 a request message sent on a stream transitions it into a
-state that prevents the client from sending additional frames on the stream.
-Modifying this behavior requires a semantic change to the protocol, this is
-avoided by restricting the stream on which a PRIORITY_UPDATE frame can be sent.
-In HTTP/2 the frame is on stream zero and in HTTP/3 it is sent on the control
-stream ({{!I-D.ietf-quic-http}}, Section 6.2.1).
+In HTTP/2 and HTTP/3, after a request message is sent on a stream, the stream
+transitions it into a state that prevents the client from sending additional
+frames on the stream. Modifying this behavior would require a semantic change
+to the protocol. this is avoided by restricting the stream on which a
+PRIORITY_UPDATE frame can be sent. In HTTP/2 the frame is on stream zero and
+in HTTP/3 it is sent on the
+control stream ({{!I-D.ietf-quic-http}}, Section 6.2.1).
 
 Unlike the header field, the reprioritization frame is a hop-by-hop signal.
 
@@ -433,6 +434,9 @@ frame header MUST be zero (0x0).
  +---------------------------------------------------------------+
 ~~~
 {: #fig-h2-reprioritization-frame title="HTTP/2 PRIORITY_UPDATE Frame Payload"}
+
+The PRIORITY_UPDATE frame in HTTP/2 MUST NOT be sent prior to opening the
+stream.
 
 TODO: add more description of how to handle things like receiving
 PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
@@ -468,6 +472,17 @@ Element ID is interpreted as a Push ID.
 
 Empty:
 : A seven-bit field that has no semantic value.
+
+The PRIORITY_UPDATE frame in HTTP/3 MUST NOT be sent before the stream
+has been opened or a PUSH_PROMISE for the corresponding PUSH_ID has been
+received.
+
+In HTTP/3, the PRIORITY_UPDATE frame can arrive before any data is received
+on the corresponding stream or server push due to reordering or proactively
+changing the priority of a server push.  If the stream ID is one which can
+be opened, the frame SHOULD be buffered until the stream is opened and
+applied immediately after the HEADERS are parsed.  This consumes extra state
+on the peer, but existing stream limits bound the size of that state.
 
 TODO: add more description of how to handle things like receiving
 PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
