@@ -242,7 +242,7 @@ defined parameters are omitted, or if the Priority header field is not used,
 their default values SHOULD be applied.
 
 The Priority header field is an end-to-end signal of the request
-client or the response priority from the server.
+priority from the client or the response priority from the server.
 
 Unknown parameters MUST be ignored.
 
