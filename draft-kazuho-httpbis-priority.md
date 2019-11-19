@@ -509,7 +509,18 @@ as the server did not specify the incremental(`i`) parameter.
 
 # Security Considerations
 
-## Fairness and Coalescing Intermediaries {#fairness}
+## Fairness {#fairness}
+
+As a general guideline, a server SHOULD NOT use the priority values for making
+schedule decisions across multiple connections, unless it knows that those
+connections originate from the same client. Due to this, priority information
+conveyed over a non-coalesced HTTP connection (e.g., HTTP/1.1) might go unused.
+
+Rest of this sub-section discusses scenarios in which unfairness could be a
+problem as well as how to mitigate them, or when unfairness might be the
+desirable behavior.
+
+### Coalescing Intermediaries
 
 When an intermediary coalesces HTTP requests coming from multiple clients into
 one HTTP/2 or HTTP/3 connection going to the backend server, requests that
