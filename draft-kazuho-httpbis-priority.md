@@ -573,7 +573,7 @@ using client initiated prioritisation where they can be scoped to individual
 clients. Authentication and other session information may provide this
 linkability.
 
-### Intetional Use of Unfairness
+### Intentional Use of Unfairness
 
 It is sometimes beneficial to deprioritize the transmission of one connection
 than others, knowing that doing so introduces certain amount of unfairness
