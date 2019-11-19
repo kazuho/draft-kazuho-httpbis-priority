@@ -49,7 +49,7 @@ retrieval requests.  Meanwhile, the nature of the relationship determines
 whether the client is blocked from continuing to process locally available
 resources.  For example, visual rendering of an HTML document could be blocked
 by the retrieval of a CSS file that the document refers to.  In contrast, inline
-images do not block rendering and get drawn progressively as the chunks of the
+images do not block rendering and get drawn incrementally as the chunks of the
 images arrive.
 
 To provide meaningful representation of a document at the earliest moment, it is
@@ -248,10 +248,10 @@ the client that the priority was overwritten. An intermediary can use the
 Priority information from client requests and server responses to correct or
 amend the precedence to suit it (see {{merging}}).
 
-This document defines the `urgency` and `progressive` parameters. Values of
-these parameters MUST always be present. When any of the defined parameters
-are omitted, or if the Priority header field is not used, their default
-values SHOULD be applied.
+This document defines the `u` and `i` parameters which stand for urgent and
+incremental. Values of these parameters MUST always be present. When any of
+the defined parameters are omitted, or if the Priority header field is not
+used, their default values SHOULD be applied.
 
 The Priority header field is an end-to-end signal of the request
 priority from the client or the response priority from the server.
@@ -261,7 +261,7 @@ Unknown parameters MUST be ignored.
 
 ## urgency
 
-The `urgency` parameter takes an integer between 0 and 7, in descending order of
+The urgency(`u`) parameter takes an integer between 0 and 7, in descending order of
 priority, as shown below:
 
 | Urgency         | Definition                        |
@@ -285,7 +285,7 @@ The following example shows a request for a CSS file with the urgency set to
 :scheme = https
 :authority = example.net
 :path = /style.css
-priority = urgency=0
+priority = u=0
 ~~~
 
 The definition of the urgencies and their expected use-case are described below.
@@ -357,31 +357,31 @@ As an example, the download of a large file in a web browser would be assigned
 the background urgency so it would not impact further page loads on the same
 connection.
 
-## progressive
+## incremental
 
-The `progressive` parameter takes an sh-boolean as the value that indicates if
-a response can be processed progressively, i.e. provide some meaningful output
+The incremental(`i`) parameter takes an sh-boolean as the value that indicates if
+a response can be processed incrementally, i.e. provide some meaningful output
 as chunks of the response arrive.
 
-The default value of the `progressive` parameter is `0`.
+The default value of the incremental parameter is `0`.
 
-A server SHOULD distribute the bandwidth of a connection between progressive
+A server SHOULD distribute the bandwidth of a connection between incremental
 responses that share the same urgency.
 
-A server SHOULD transmit non-progressive responses one by one, preferably in the
+A server SHOULD transmit non-incremental responses one by one, preferably in the
 order the requests were generated.  Doing so maximizes the chance of the client
 making progress in using the composition of the HTTP responses at the earliest
 moment.
 
 The following example shows a request for a JPEG file with the urgency parameter
-set to `4` and the progressive parameter set to `1`.
+set to `4` and the incremental parameter set to `1`.
 
 ~~~ example
 :method = GET
 :scheme = https
 :authority = example.net
 :path = /image.jpg
-priority = urgency=4, progressive=?1
+priority = u=4, i=?1
 ~~~
 
 # Reprioritization
@@ -389,10 +389,10 @@ priority = urgency=4, progressive=?1
 Once a client sends a request, circumstances might change and mean that it is
 beneficial to change the priority of the response. As an example, a web browser
 might issue a prefetch request for a JavaScript file with the urgency parameter
-of the Priority request header field set to `urgency=7` (background). Then, when
+of the Priority request header field set to `u=7` (background). Then, when
 the user navigates to a page which references the new JavaScript file, while the
 prefetch is in progress, the browser would send a reprioritization frame with the
-priority field value set to `urgency=0` (prerequisite).
+priority field value set to `u=0` (prerequisite).
 
 However, a client cannot reprioritize a response by using the Priority header
 field. This is because an HTTP header field can only be sent as part of an HTTP
@@ -490,7 +490,7 @@ For example, when the client sends an HTTP request with
 :scheme = https
 :authority = example.net
 :path = /menu.png
-priority = urgency=4, progressive=?1
+priority = u=4, i=?1
 ~~~
 
 and the origin responds with
@@ -498,13 +498,13 @@ and the origin responds with
 ~~~ example
 :status = 200
 content-type = image/png
-priority = urgency=2
+priority = u=2
 ~~~
 
 the intermediary's understanding of the urgency is promoted from `4` to `2`,
 because the server-provided value overrides the value provided by the client.
-The progressiveness continues to be `1`, the value specified by the client, as
-the server did not specify the `progressive` parameter.
+The incremental continues to be `1`, the value specified by the client, as
+the server did not specify the incremental(`i`) parameter.
 
 
 # Security Considerations
@@ -525,7 +525,7 @@ to one end client to be delayed totally after those going to another.
 
 In order to mitigate this fairness problem, when a server responds to a request
 that is known to have come through an intermediary, the server SHOULD prioritize
-the response as if it was assigned the priority of  `urgency=1, progressive=?1`
+the response as if it was assigned the priority of  `u=1, u=?1`
 (i.e. round-robin) regardless of the value of the Priority header field being
 transmitted, unless the server has the knowledge that no intermediaries are
 coalescing requests from multiple clients. That can be determined by the
@@ -579,7 +579,7 @@ One of the aims of this specification is to define a mechanism for merging
 client- and server-provided hints for prioritizing the responses.  For that to
 work, each urgency level needs to have a well-defined meaning.  As an example, a
 server can assign the highest precedence among the supplementary responses to an
-HTTP response carrying an icon, because the meaning of `urgency=2` is shared
+HTTP response carrying an icon, because the meaning of `u=2` is shared
 among the endpoints.
 
 This specification restricts itself to defining a minimum set of urgency levels
@@ -610,13 +610,13 @@ the intermediary express its own signal using the Priority header field, at the
 same time transplanting the original value to a different header field.
 
 As an example, when a client sends an HTTP request carrying a priority of
-`urgency=0` and the intermediary wants to instead associate
-`urgency=1; progressive=?1`, the intermediary would send a HTTP request that
+`u=0` and the intermediary wants to instead associate
+`u=1; i=?1`, the intermediary would send a HTTP request that
 contains the following two header fields to the backend server:
 
 ~~~
-priority = urgency=1; progressive=?1
-original-priority = urgency=0
+priority = u=1; i=?1
+original-priority = u=0
 ~~~
 
 # IANA Considerations
