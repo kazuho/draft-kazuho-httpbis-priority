@@ -240,6 +240,18 @@ compatible for peers that are unaware of the extended meaning.
 The scheme has a single encoding and set of functionality whether it's
 conveyed via a HTTP header or within a frame.
 
+## Impact on other connections
+
+When multiple connections are open, the priority MAY have impact on the
+client's local scheduling choices, but MUST NOT change how the server allocates
+resources among different incoming connections unless it has a guarantee some
+set of connections are from the same client. When a server knows multiple
+incoming connections are from the same client, the server MAY use the priority
+to inform scheduling decisions among the client's different connections.
+
+Due to this, priority information conveyed over a non-coalesced HTTP
+connection might go unused.
+
 # The Priority HTTP Header Field
 
 The Priority HTTP header field can appear in requests and responses. A client
