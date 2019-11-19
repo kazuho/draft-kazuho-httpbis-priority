@@ -509,7 +509,13 @@ the server did not specify the `progressive` parameter.
 
 # Security Considerations
 
-## Fairness and Coalescing Intermediaries {#fairness}
+## Fairness {#fairness}
+
+Client initiated priority SHOULD be scoped to the client connection: Allowing
+Client_A requests to directly impact the scheduling of Client_B requests
+creates a fairness problem.
+
+### Coalescing Intermediaries {#coalescing}
 
 When an intermediary coalesces HTTP requests coming from multiple clients into
 one HTTP/2 or HTTP/3 connection going to the backend server, requests that
@@ -548,6 +554,17 @@ scheme it implements. A sophisticated server MAY use a weighted round-robin
 reflecting the urgencies expressed in the requests, so that less urgent
 responses would receive less bandwidth in case the bottleneck exists between the
 server and the intermediary.
+
+### HTTP/1 origins {#http11}
+
+It is common in CDN infrastructure to support HTTP/2 or HTTP/3 at the client
+facing edge, but HTTP/1.1 to origin servers. Unlike with connection coalescing,
+the CDN will "de-mux" requests into discrete connections to the origin. As
+HTTP/1.1 and older do not support priorities there is no immediate fairness
+issue in protocol.  However origin servers MAY still use client headers for
+request scheduling.  Origins SHOULD only schedule using client initiated
+prioritisation where they can be scoped to individual clients. Authentication
+and other session information may provide this linkability.
 
 # Considerations
 
