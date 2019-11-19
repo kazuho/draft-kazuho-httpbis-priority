@@ -248,12 +248,10 @@ the client that the priority was overwritten. An intermediary can use the
 Priority information from client requests and server responses to correct or
 amend the precedence to suit it (see {{merging}}).
 
-The value of the Priority header field is a Structured Headers Dictionary
-({{!STRUCTURED-HEADERS}}). Each dictionary member represents a parameter of the
-Priority header field. This document defines the `urgency` and `progressive`
-parameters. Values of these parameters MUST always be present. When any of the
-defined parameters are omitted, or if the Priority header field is not used,
-their default values SHOULD be applied.
+This document defines the `urgency` and `progressive` parameters. Values of
+these parameters MUST always be present. When any of the defined parameters
+are omitted, or if the Priority header field is not used, their default
+values SHOULD be applied.
 
 Unknown parameters MUST be ignored.
 
