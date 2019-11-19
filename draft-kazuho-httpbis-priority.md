@@ -400,7 +400,7 @@ avoided by restricting the stream on which a PRIORITY_UPDATE frame can be sent.
 In HTTP/2 the frame is on stream zero and in HTTP/3 it is sent on the control
 stream ({{!I-D.ietf-quic-http}}, Section 6.2.1).
 
-Unlike the header, the reprioritization frame is a hop-by-hop signal.
+Unlike the header field, the reprioritization frame is a hop-by-hop signal.
 
 ## HTTP/2 PRIORITY_UPDATE Frame
 
