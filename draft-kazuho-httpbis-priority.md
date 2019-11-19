@@ -560,6 +560,19 @@ reflecting the urgencies expressed in the requests, so that less urgent
 responses would receive less bandwidth in case the bottleneck exists between the
 server and the intermediary.
 
+### HTTP/1.x Origins
+
+It is common for CDN infrastracture to support different HTTP versions on the
+front end and back end. For instance, the client-facing edge might support
+HTTP/2 and HTTP/3 while communication to origin servers is done using HTTP/1.1.
+Unlike with connection coalescing, the CDN will "de-mux" requests into discrete
+connections to the origin. As HTTP/1.1 and older do not support priorities
+there is no immediate fairness issue in protocol.  However origin servers MAY
+still use client headers for request scheduling.  Origins SHOULD only schedule
+using client initiated prioritisation where they can be scoped to individual
+clients. Authentication and other session information may provide this
+linkability.
+
 # Considerations
 
 ## Why use an End-to-End Header Field?
