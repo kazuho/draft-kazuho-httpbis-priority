@@ -573,6 +573,18 @@ using client initiated prioritisation where they can be scoped to individual
 clients. Authentication and other session information may provide this
 linkability.
 
+### Use of Different Congestion Controllers
+
+It is sometimes beneficial to deprioritize the transmission of one connection
+than others, knowing that doing so introduces certain amount of unfairness
+between the connections and therefore between the requests served on those
+connections.
+
+For example, a server might use a scavenging congestion controller on
+connections that only convey background priority responses such as software
+update images. Doing so improves responsiveness of other connections at the cost
+of delaying the delivery of updates.
+
 # Considerations
 
 ## Why use an End-to-End Header Field?
