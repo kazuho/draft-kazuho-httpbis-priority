@@ -233,9 +233,9 @@ key-value pairs encoded as a Structured Headers Dictionary
 ({{!STRUCTURED-HEADERS}}) to enable extensibility. Each dictionary member
 represents a parameter of the Priority header field.
 
-Care must be taken to ensure any use of existing parameters are either
-unchanged or modified in a way that is backwards compatible for peers that
-are unaware of the extended meaning.
+When attempting to extend priorities, care must be taken to ensure any use of
+existing parameters are either unchanged or modified in a way that is backwards
+compatible for peers that are unaware of the extended meaning.
 
 The scheme has a single encoding and set of functionality whether it's
 conveyed via a HTTP header or within a frame.
