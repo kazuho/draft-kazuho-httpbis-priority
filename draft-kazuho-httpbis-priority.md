@@ -241,6 +241,9 @@ parameters. Values of these parameters MUST always be present. When any of the
 defined parameters are omitted, or if the Priority header field is not used,
 their default values SHOULD be applied.
 
+The priority header is an end-to-end signal of the request priority from the
+client or the response priority from the server.
+
 Unknown parameters MUST be ignored.
 
 
@@ -397,6 +400,7 @@ avoided by restricting the stream on which a PRIORITY_UPDATE frame can be sent.
 In HTTP/2 the frame is on stream zero and in HTTP/3 it is sent on the control
 stream ({{!I-D.ietf-quic-http}}, Section 6.2.1).
 
+Unlike the header, the reprioritization frame is a hop-by-hop signal.
 
 ## HTTP/2 PRIORITY_UPDATE Frame
 
