@@ -573,7 +573,7 @@ using client initiated prioritisation where they can be scoped to individual
 clients. Authentication and other session information may provide this
 linkability.
 
-### Intentional Use of Unfairness
+### Intentional Introduction of Unfairness
 
 It is sometimes beneficial to deprioritize the transmission of one connection
 than others, knowing that doing so introduces certain amount of unfairness
@@ -584,6 +584,9 @@ For example, a server might use a scavenging congestion controller on
 connections that only convey background priority responses such as software
 update images. Doing so improves responsiveness of other connections at the cost
 of delaying the delivery of updates.
+
+Also, a client MAY use the priority values for making local scheduling choices
+for the requests it initiates.
 
 # Considerations
 
