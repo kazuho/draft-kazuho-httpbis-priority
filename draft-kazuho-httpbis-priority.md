@@ -226,20 +226,6 @@ extensible priority scheme when and only when all the requests that are to be
 sent on that backend connection originates from one client-side connection that
 has negotiated the use of the extensible priority scheme (see {{fairness}}).
 
-# Extensible Priorities
-
-This priority design is intended to be extensible, and uses a sequence of
-key-value pairs encoded as a Structured Headers Dictionary
-({{!STRUCTURED-HEADERS}}) to enable extensibility. Each dictionary member
-represents a parameter of the Priority header field.
-
-When attempting to extend priorities, care must be taken to ensure any use of
-existing parameters are either unchanged or modified in a way that is backwards
-compatible for peers that are unaware of the extended meaning.
-
-The scheme has a single encoding and set of functionality whether it's
-conveyed via a HTTP header or within a frame.
-
 # The Priority HTTP Header Field
 
 The Priority HTTP header field can appear in requests and responses. A client
@@ -248,13 +234,12 @@ the client that the priority was overwritten. An intermediary can use the
 Priority information from client requests and server responses to correct or
 amend the precedence to suit it (see {{merging}}).
 
-This document defines the `urgency` and `progressive` parameters. Values of
-these parameters MUST always be present. When any of the defined parameters
-are omitted, or if the Priority header field is not used, their default
-values SHOULD be applied.
-
-The Priority header field is an end-to-end signal of the request
-priority from the client or the response priority from the server.
+The value of the Priority header field is a Structured Headers Dictionary
+({{!STRUCTURED-HEADERS}}). Each dictionary member represents a parameter of the
+Priority header field. This document defines the `urgency` and `progressive`
+parameters. Values of these parameters MUST always be present. When any of the
+defined parameters are omitted, or if the Priority header field is not used,
+their default values SHOULD be applied.
 
 Unknown parameters MUST be ignored.
 
@@ -412,7 +397,6 @@ avoided by restricting the stream on which a PRIORITY_UPDATE frame can be sent.
 In HTTP/2 the frame is on stream zero and in HTTP/3 it is sent on the control
 stream ({{!I-D.ietf-quic-http}}, Section 6.2.1).
 
-Unlike the header field, the reprioritization frame is a hop-by-hop signal.
 
 ## HTTP/2 PRIORITY_UPDATE Frame
 
@@ -509,7 +493,13 @@ the server did not specify the `progressive` parameter.
 
 # Security Considerations
 
-## Fairness and Coalescing Intermediaries {#fairness}
+## Fairness {#fairness}
+
+Client initiated priority SHOULD be scoped to the client connection: Allowing 
+Client_A requests to directly impact the scheduling of Client_B requests
+creates a fairness problem.
+
+### Coalescing Intermediaries {#coalescing}
 
 When an intermediary coalesces HTTP requests coming from multiple clients into
 one HTTP/2 or HTTP/3 connection going to the backend server, requests that
@@ -548,6 +538,17 @@ scheme it implements. A sophisticated server MAY use a weighted round-robin
 reflecting the urgencies expressed in the requests, so that less urgent
 responses would receive less bandwidth in case the bottleneck exists between the
 server and the intermediary.
+
+### HTTP/1 origins {#http11}
+
+It is common in CDN infrastructure to support HTTP/2 or HTTP/3 at the client
+facing edge, but HTTP/1.1 to origin servers. Unlike with connection coalescing,
+the CDN will "de-mux" requests into discrete connections to the origin. As 
+HTTP/1.1 and older do not support priorities there is no immediate fairness
+issue in protocol.  However origin servers MAY still use client headers for
+request scheduling.  Origins SHOULD only schedule using client initiated 
+prioritisation where they can be scoped to individual clients. Authentication
+and other session information may provide this linkability.
 
 # Considerations
 
