@@ -408,7 +408,7 @@ HTTP/2 this is the Stream ID, in HTTP/3 this is either the Stream ID or Push ID.
 In HTTP/2 and HTTP/3, after a request message is sent on a stream, the stream
 transitions it into a state that prevents the client from sending additional
 frames on the stream. Modifying this behavior would require a semantic change
-to the protocol. this is avoided by restricting the stream on which a
+to the protocol, but this is avoided by restricting the stream on which a
 PRIORITY_UPDATE frame can be sent. In HTTP/2 the frame is on stream zero and
 in HTTP/3 it is sent on the
 control stream ({{!I-D.ietf-quic-http}}, Section 6.2.1).
