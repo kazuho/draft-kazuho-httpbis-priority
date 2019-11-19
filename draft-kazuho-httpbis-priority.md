@@ -555,10 +555,10 @@ reflecting the urgencies expressed in the requests, so that less urgent
 responses would receive less bandwidth in case the bottleneck exists between the
 server and the intermediary.
 
-### HTTP/1 origins {#http11}
+### HTTP/1.x origins {#http11}
 
 It is common in CDN infrastructure to support HTTP/2 or HTTP/3 at the client
-facing edge, but HTTP/1.1 to origin servers. Unlike with connection coalescing,
+facing edge, but HTTP/1.x to origin servers. Unlike with connection coalescing,
 the CDN will "de-mux" requests into discrete connections to the origin. As
 HTTP/1.1 and older do not support priorities there is no immediate fairness
 issue in protocol.  However origin servers MAY still use client headers for
