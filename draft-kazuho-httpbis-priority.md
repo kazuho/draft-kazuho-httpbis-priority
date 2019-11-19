@@ -525,7 +525,7 @@ to one end client to be delayed totally after those going to another.
 
 In order to mitigate this fairness problem, when a server responds to a request
 that is known to have come through an intermediary, the server SHOULD prioritize
-the response as if it was assigned the priority of  `u=1, u=?1`
+the response as if it was assigned the priority of  `u=1, i=?1`
 (i.e. round-robin) regardless of the value of the Priority header field being
 transmitted, unless the server has the knowledge that no intermediaries are
 coalescing requests from multiple clients. That can be determined by the
