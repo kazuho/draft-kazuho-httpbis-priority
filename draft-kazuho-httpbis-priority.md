@@ -226,6 +226,20 @@ extensible priority scheme when and only when all the requests that are to be
 sent on that backend connection originates from one client-side connection that
 has negotiated the use of the extensible priority scheme (see {{fairness}}).
 
+# Extensible Priorities
+
+This priority design is intended to be extensible, and uses a sequence of
+key-value pairs encoded as a Structured Headers Dictionary
+({{!STRUCTURED-HEADERS}}) to enable extensibility. Each dictionary member
+represents a parameter of the Priority header field.
+
+Care must be taken to ensure any use of extisting parameters are either
+unchanged or modified in a way that is backwards compatible for peers that
+are unaware of the extended meaning.
+
+The scheme has a single encoding and set of functionality whether it's
+conveyed via a HTTP header or within a frame.
+
 # The Priority HTTP Header Field
 
 The Priority HTTP header field can appear in requests and responses. A client
