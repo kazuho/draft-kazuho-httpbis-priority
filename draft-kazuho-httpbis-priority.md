@@ -1,6 +1,6 @@
 ---
 title: Extensible Prioritization Scheme for HTTP
-docname: draft-kazuho-httpbis-priority-latest
+docname: draft-kazuho-httpbis-priority-04
 category: std
 
 ipr: trust200902
