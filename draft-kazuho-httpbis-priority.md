@@ -148,13 +148,13 @@ be 0 or 1. Any value other than 0 or 1 MUST be treated as a connection error
 (see {{!RFC7540}}; Section 5.4.1) of type PROTOCOL_ERROR.
 
 Endpoints MUST send this SETTINGS parameter as part of the first SETTINGS frame.
-When the peer receives the first SETTINGS frame, it learns if the sender has
-deprecated the HTTP/2 priority scheme, by consulting the value of
-SETTINGS_DEPRECATE_HTTP2_PRIORITIES parameter (or through lack of that
-parameter).
+When the peer receives the first SETTINGS frame, it learns the sender has
+deprecated the HTTP/2 priority scheme if it receives the
+SETTINGS_DEPRECATE_HTTP2_PRIORITIES parameter with the value of 1.
 
-A sender MUST NOT change the SETTINGS_DEPRECATE_HTTP2_PRIORITIES parameter
-value after the first SETTINGS frame.
+A sender MUST NOT change the SETTINGS_DEPRECATE_HTTP2_PRIORITIES parameter value
+after the first SETTINGS frame. Detection of a change by a receiver MUST be
+treated as a connection error of type PROTOCOL_ERROR. 
 
 Until the client receives the SETTINGS frame from the server, the client SHOULD
 send both the priority signal defined in the HTTP/2 priority scheme (as it sees
