@@ -561,7 +561,7 @@ server and the intermediary.
 
 ### HTTP/1.x Origins
 
-It is common for CDN infrastracture to support different HTTP versions on the
+It is common for CDN infrastructure to support different HTTP versions on the
 front end and back end. For instance, the client-facing edge might support
 HTTP/2 and HTTP/3 while communication to origin servers is done using HTTP/1.1.
 Unlike with connection coalescing, the CDN will "de-mux" requests into discrete
