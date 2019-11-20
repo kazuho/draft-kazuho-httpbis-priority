@@ -144,7 +144,8 @@ opt out of using the HTTP/2 priority scheme, in favor of using an alternative
 such as the scheme defined in this specification. Endpoints benefit from
 understanding their peer's intention, so the new
 SETTINGS_DEPRECATE_HTTP2_PRIORITIES is defined. The value of the parameter MUST
-be 0 or 1.
+be 0 or 1. Any value other than 0 or 1 MUST be treated as a connection error
+(see {{!RFC7540}}; Section 5.4.1) of type PROTOCOL_ERROR.
 
 Endpoints MUST send this SETTINGS parameter as part of the first SETTINGS frame.
 When the peer receives the first SETTINGS frame, it learns if the sender has
