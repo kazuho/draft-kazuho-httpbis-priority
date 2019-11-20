@@ -437,7 +437,7 @@ frame header MUST be zero (0x0).
 
 The HTTP/2 PRIORITY_UPDATE frame MUST NOT be sent prior to opening the
 stream.  If a PRIORITY_UPDATE is received prior to the stream being opened,
-it MAY close the connection error.
+it MAY be treated as a connection error of type PROTOCOL_ERROR.
 
 TODO: add more description of how to handle things like receiving
 PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
