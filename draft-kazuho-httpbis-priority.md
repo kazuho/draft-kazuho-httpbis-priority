@@ -351,18 +351,14 @@ references the new JavaScript file, while the prefetch is in progress, the
 browser would send a reprioritization frame with the priority field value
 set to `u=0` (prerequisite).
 
-A client cannot reprioritize a response by using the Priority header field,
-because an HTTP header field can only be sent as part of an HTTP message.
-To support reprioritization, it is necessary to define a
-HTTP-version-dependent mechanism for transmitting the priority parameters.
-
 In HTTP/2 and HTTP/3, after a request message is sent on a stream, the stream
 transitions to a state that prevents the client from sending additional
-frames on the stream. Modifying this behavior would require a semantic change
-to the protocol, but this is avoided by restricting the stream on which a
-PRIORITY_UPDATE frame can be sent. In HTTP/2 the frame is on stream zero and
-in HTTP/3 it is sent on the
-control stream ({{!I-D.ietf-quic-http}}, Section 6.2.1).
+frames on the stream. Therefore, a client cannot reprioritize a response by
+using the Priority header field.  Modifying this behavior would require a
+semantic change to the protocol, but this is avoided by restricting the
+stream on which a PRIORITY_UPDATE frame can be sent. In HTTP/2 the frame
+is on stream zero and in HTTP/3 it is sent on the control stream
+({{!I-D.ietf-quic-http}}, Section 6.2.1).
 
 This document specifies a new PRIORITY_UPDATE frame type for HTTP/2
 ({{!RFC7540}}) and HTTP/3 ({{!I-D.ietf-quic-http}}) which enables
