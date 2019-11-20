@@ -137,94 +137,36 @@ multiple experiments from independent research have shown that simpler schemes
 can reach at least equivalent performance characteristics compared to the more
 complex HTTP/2 setups seen in practice, at least for the web use case.
 
-The problems and insights laid out above are motivation for the alternative and
-more straightforward prioritization scheme presented in this document. In order
-to support deployment of new schemes, a general-purpose negotiation mechanism is
-specified in {{negotiating-priorities}}.
+## Disabling HTTP/2 Priorities
 
-# Negotiating Priorities
+The problems and insights set out above are motivation for allowing endpoints to
+opt out of using the HTTP/2 priority scheme, in favor of using an alternative
+such as the scheme defined in this specification. Endpoints benefit from
+understanding their peer's intention, so the new
+SETTINGS_DEPRECATE_HTTP2_PRIORITIES is defined. The value of the parameter MUST
+be 0 or 1. Any value other than 0 or 1 MUST be treated as a connection error
+(see {{!RFC7540}}; Section 5.4.1) of type PROTOCOL_ERROR.
 
-The document specifies a negotiation mechanism that allows each peer to
-communicate which, if any, priority schemes are supported, as well as the
-server's ranked preference.
+Endpoints MUST send this SETTINGS parameter as part of the first SETTINGS frame.
+When the peer receives the first SETTINGS frame, it learns the sender has
+deprecated the HTTP/2 priority scheme if it receives the
+SETTINGS_DEPRECATE_HTTP2_PRIORITIES parameter with the value of 1.
 
-For both HTTP/2 and HTTP/3, either peer's SETTINGS may arrive first,
-so any negotiation must be unilateral and not rely upon receiving
-the peer's SETTINGS value.
+A sender MUST NOT change the SETTINGS_DEPRECATE_HTTP2_PRIORITIES parameter value
+after the first SETTINGS frame. Detection of a change by a receiver MUST be
+treated as a connection error of type PROTOCOL_ERROR.
 
-Servers are likely to only use one prioritization scheme at once per each
-connection, and may be unable to change the scheme once established, so the
-setting MUST be sent prior to the first request if it is ever sent. In HTTP/3,
-SETTINGS might arrive after the first request even if they are sent first.
-Therefore, future specifications that define alternative prioritization schemes
-for HTTP/3 SHOULD define how the server would act when it receives a
-stream-level priority signal prior to receiving the SETTINGS frame.
+Until the client receives the SETTINGS frame from the server, the client SHOULD
+send both the priority signal defined in the HTTP/2 priority scheme (as it sees
+fit) and also that of this prioritization scheme. Once the client learns that
+the HTTP/2 priority scheme is deprecated, it SHOULD stop sending the HTTP/2
+priority signals. If the client learns that the HTTP/2 priority scheme is not
+deprecated, it SHOULD stop sending PRIORITY_UPDATE frames, but MAY continue
+sending the Priority header field, as it is an end-to-end signal that might be
+useful to nodes behind the server that the client is directly connected to.
 
-## The SETTINGS_PRIORITIES SETTINGS Parameter
-
-This document defines a new SETTINGS_PRIORITIES parameter (0x9) for HTTP/2 and
-HTTP/3, which allows both peers to indicate which prioritization schemes they
-support. The value of this parameter is interpreted in two ways depending on if it is
-zero or non-zero.
-
-If the setting has a value of zero it indicates no support for priorities. If
-either side sends the parameter with a value of zero, clients SHOULD NOT send
-hop-by-hop priority signals (e.g., HTTP/2 PRIORITY frame) and servers SHOULD NOT
-make any assumptions based on the presence or lack thereof of such signals.
-
-If the value is non-zero, then it is interpreted as an ordered preference list
-of prioritization schemes represented by 8-bit values. The least significant 8
-bits indicate the sender's most preferred priority scheme, the second least
-significant 8 bits indicate the sender's second choice, and so on. This allows
-expressing support for 4 schemes in HTTP/2 and 7 in HTTP/3.
-
-A sender MUST comply with the following restrictions when constructing a
-preference list: duplicate 8-bit values (excluding the value 0) MUST NOT be used,
-and if any byte is 0 then all more significant bytes MUST also be 0. An endpoint
-that receives a setting in violation of these requirements MUST treat it as a
-connection error of type PROTOCOL_ERROR for HTTP/2 {{!RFC7540}}, or of type
-H3_SETTINGS_ERROR for HTTP/3 {{!I-D.ietf-quic-http}}.
-
-In HTTP/2, the setting SHOULD appear in the first SETTINGS frame and peers
-MUST NOT process the setting if it is received multiple times in order to
-avoid changing the agreed upon prioritization scheme.
-
-If there is a prioritization scheme supported by both the client and server,
-then the server's preference order prevails and both peers SHOULD
-only use the agreed upon priority scheme for the remainder of the session.
-The server chooses because it is in the best position to know what
-information from the client is of the most value.
-
-Once the negotiation is complete, endpoints MAY stop sending hop-by-hop
-prioritization signals that were not negotiated in order to conserve bandwidth.
-However, endpoints SHOULD continue sending end-to-end signals (e.g., the
-Priority header field), as that might have meaningful effect to other nodes that
-handle the HTTP message.
-
-## Defined Prioritization Scheme Values
-
-This document defines two prioritization scheme values for use with the
-SETTINGS_PRIORITIES setting.
-
-### H2_TREE {#settings-h2-scheme}
-
-This document defines the priority scheme identifier H2_TREE (8-bit value of 1)
-that indicates support for HTTP/2-style priorities ({{!RFC7540}}, Section 5.3).
-
-The H2_TREE priority scheme identifier MUST NOT be be sent in an HTTP/3 settings
-because there is no defined mapping of this scheme. Endpoints MUST treat receipt
-of H2_TREE as a connection error of type H3_SETTINGS_ERROR.
-
-### URGENCY {#settings-this-scheme}
-
-This document defines the priority scheme identifier URGENCY (8-bit value of 2)
-that indicates support for the extensible priority scheme defined in the present
-document.
-
-An intermediary connecting to a backend server SHOULD declare support for the
-extensible priority scheme when and only when all the requests that are to be
-sent on that backend connection originates from one client-side connection that
-has negotiated the use of the extensible priority scheme (see {{fairness}}).
+As the SETTINGS frame precedes any priority signal sent from a client, a server
+can determine if it should respect the HTTP/2 scheme before building state.
 
 # Priority Parameters
 
@@ -577,10 +519,8 @@ In order to mitigate this fairness problem, when a server responds to a request
 that is known to have come through an intermediary, the server SHOULD prioritize
 the response as if it was assigned the priority of  `u=1, i=?1`
 (i.e. round-robin) regardless of the value of the Priority header field being
-transmitted, unless the server has the knowledge that no intermediaries are
-coalescing requests from multiple clients. That can be determined by the
-settings when the intermediaries support this specification (see
-{{settings-this-scheme}}), or else through configuration.
+transmitted, unless the server knows the intermediary is not
+coalescing requests from multiple clients.
 
 A server can determine if a request came from an intermediary through
 configuration, or by consulting if that request contains one of the following
@@ -725,22 +665,7 @@ This specification registers the following entry in the HTTP/2 Settings registry
 established by {{!RFC7540}}:
 
 Name:
-: SETTINGS_PRIORITIES
-
-Code:
-: 0x9
-
-Initial value:
-: 0
-
-Specification:
-: This document
-
-This specification registers the following entry in the HTTP/2 Settings registry
-established by {{!I-D.ietf-quic-http}}:
-
-Name:
-: SETTINGS_PRIORITIES
+: SETTINGS_DEPRECATE_HTTP2_PRIORITIES
 
 Code:
 : 0x9
@@ -775,36 +700,6 @@ Code:
 Specification:
 : This document
 
-## HTTP Prioritization Scheme Registry
-
-This document establishes a registry for HTTP prioritization scheme codes to be
-used in conjunction with the SETTINGS_PRIORITIES parameter. The "HTTP
-Prioritization Scheme" registry manages an 8-bit space. The "HTTP Prioritization
-Scheme" registry operates under either of the "IETF Review" or "IESG Approval"
-policies {{!RFC5226}} for values between 0x00 and 0xef, with values between 0xf0
-and 0xff being reserved for Experimental Use.
-
-New entries in this registry require the following information:
-
-Prioritization Scheme:
-: A name or label for the prioritization scheme.
-
-Code:
-: The 8-bit code assigned to the prioritization scheme.
-
-Specification:
-: A reference to a specification that includes a description of the
-prioritization scheme.
-
-The entries in the following table are registered by this document.
-
-| ----------------------| ------ | -------------------------- |
-| Prioritization Scheme |  Code  | Specification              |
-| --------------------- | :----: | -------------------------- |
-| H2_TREE               |   1    | {{settings-h2-scheme}}     |
-| URGENCY               |   2    | {{settings-this-scheme}}   |
-| --------------------- | ------ | -------------------------- |
-
 --- back
 
 # Acknowledgements
@@ -813,8 +708,10 @@ Roy Fielding presented the idea of using a header field for representing
 priorities in <http://tools.ietf.org/agenda/83/slides/slides-83-httpbis-5.pdf>.
 In <https://github.com/pmeenan/http3-prioritization-proposal>, Patrick Meenan
 advocates for representing the priorities using a tuple of urgency and
-concurrency. The negotiation scheme described in this document is based on
-{{?I-D.lassey-priority-setting}}, authored by Brad Lassey and Lucas Pardue.
+concurrency. The ability to deprecate HTTP/2 priortization is based on
+{{?I-D.lassey-priority-setting}}, authored by Brad Lassey and Lucas Pardue, with
+modifications based on feedback that was not incorporated into an update to that
+document.
 
 The motivation for defining an alternative to HTTP/2 priorities is drawn from
 discussion within the broad HTTP community. Special thanks to Roberto Peon,
@@ -831,6 +728,7 @@ Mike Bishop, Roberto Peon, Robin Marx, Roy Fielding.
 ## Since draft-kazuho-httpbis-priority-03
 
 * Changed numbering from [-1,6] to [0,7] (#78)
+* Replaced priority scheme negotiation with HTTP/2 priority deprecation (#100)
 * Shorten parameter names (#108)
 * Expand on considerations (#105, #107, #109, #110, #111, #113)
 
