@@ -154,7 +154,7 @@ SETTINGS_DEPRECATE_HTTP2_PRIORITIES parameter with the value of 1.
 
 A sender MUST NOT change the SETTINGS_DEPRECATE_HTTP2_PRIORITIES parameter value
 after the first SETTINGS frame. Detection of a change by a receiver MUST be
-treated as a connection error of type PROTOCOL_ERROR. 
+treated as a connection error of type PROTOCOL_ERROR.
 
 Until the client receives the SETTINGS frame from the server, the client SHOULD
 send both the priority signal defined in the HTTP/2 priority scheme (as it sees
@@ -708,7 +708,7 @@ Roy Fielding presented the idea of using a header field for representing
 priorities in <http://tools.ietf.org/agenda/83/slides/slides-83-httpbis-5.pdf>.
 In <https://github.com/pmeenan/http3-prioritization-proposal>, Patrick Meenan
 advocates for representing the priorities using a tuple of urgency and
-concurrency. The ability to disable HTTP/2 priortization is based on
+concurrency. The ability to deprecate HTTP/2 priortization is based on
 {{?I-D.lassey-priority-setting}}, authored by Brad Lassey and Lucas Pardue, with
 modifications based on feedback that was not incorporated into an update to that
 document.
@@ -728,7 +728,7 @@ Mike Bishop, Roberto Peon, Robin Marx, Roy Fielding.
 ## Since draft-kazuho-httpbis-priority-03
 
 * Changed numbering from [-1,6] to [0,7] (#78)
-* Replaced priority scheme negotiation with HTTP/2 priority disabling (#100)
+* Replaced priority scheme negotiation with HTTP/2 priority deprecation (#100)
 * Shorten parameter names (#108)
 * Expand on considerations (#105, #107, #109, #110, #111, #113)
 
