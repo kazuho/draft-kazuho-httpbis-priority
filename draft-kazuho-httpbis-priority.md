@@ -435,7 +435,7 @@ frame header MUST be zero (0x0).
 ~~~
 {: #fig-h2-reprioritization-frame title="HTTP/2 PRIORITY_UPDATE Frame Payload"}
 
-The PRIORITY_UPDATE frame in HTTP/2 MUST NOT be sent prior to opening the
+The HTTP/2 PRIORITY_UPDATE frame MUST NOT be sent prior to opening the
 stream.
 
 TODO: add more description of how to handle things like receiving
