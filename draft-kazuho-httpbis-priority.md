@@ -343,7 +343,7 @@ that control the caching behavior (e.g., Cache-Control, Vary).
 
 # Reprioritization
 
-Once a client sends a request, it may be beneficial to change the priority of
+After a client sends a request, it may be beneficial to change the priority of
 the response. As an example, a web browser might issue a prefetch request for
 a JavaScript file with the urgency parameter of the Priority request header
 field set to `u=7` (background). Then, when the user navigates to a page which
