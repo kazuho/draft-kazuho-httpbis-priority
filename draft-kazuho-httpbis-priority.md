@@ -137,19 +137,21 @@ multiple experiments from independent research have shown that simpler schemes
 can reach at least equivalent performance characteristics compared to the more
 complex HTTP/2 setups seen in practice, at least for the web use case.
 
-## Disabling HTTP/2 Priorities {#settings-this-scheme}
+## Disabling HTTP/2 Priorities
 The problems and insights set out above are motivation for allowing endpoints to
 opt out of using the HTTP/2 priority scheme. Endpoints would benefit from
 understanding their peer's intention, so the new
 SETTINGS_DISABLE_HTTP2_PRIORITIES is defined. The value of the parameter MUST be
 0 or 1.
 
-If either side sends the parameter with a value of `1`, clients SHOULD NOT send
-the HTTP/2 priority signal in HEADERS or PRIORITY frames. If both sides send the
-parameter with a value of `0`, then both parties MAY use HTTP/2 priorities as
-they see fit. A sender MUST NOT send the parameter with the value of `1` after
-previously sending a value of `0`. If a client or server does not send the
-setting, the peer SHOULD assume that HTTP/2 priority signals are interpreted.
+An HTTP/2 client SHOULD use the HTTP/2 priority scheme (as it sees fit) until it
+receives the peer's SETTINGS_DISABLE_HTTP2_PRIORITIES settings with the value of
+`1`. As the SETTINGS frame precedes any priority signal sent from a client, a server can
+determine if it should respect the HTTP/2 scheme before building state.
+
+A client that disables the HTTP/2 priority scheme SHOULD subtitute it with some
+other means of signaling request priority. The scheme extensible priority scheme
+is RECOMMENDED.
 
 # Priority Parameters
 
@@ -503,9 +505,7 @@ that is known to have come through an intermediary, the server SHOULD prioritize
 the response as if it was assigned the priority of  `u=1, i=?1`
 (i.e. round-robin) regardless of the value of the Priority header field being
 transmitted, unless the server has the knowledge that no intermediaries are
-coalescing requests from multiple clients. That can be determined by the
-settings when the intermediaries support this specification (see
-{{settings-this-scheme}}), or else through configuration.
+coalescing requests from multiple clients.
 
 A server can determine if a request came from an intermediary through
 configuration, or by consulting if that request contains one of the following
