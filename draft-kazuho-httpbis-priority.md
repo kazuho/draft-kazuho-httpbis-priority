@@ -474,7 +474,7 @@ Empty:
 : A seven-bit field that has no semantic value.
 
 The HTTP/3 PRIORITY_UPDATE frame MUST NOT be sent with an invalid identifier including before the request stream
-has been opened or a PUSH_PROMISE for the corresponding PUSH_ID has been
+has been opened or a before a promised request has been
 received.
 
 In HTTP/3, the PRIORITY_UPDATE frame can arrive before any data is received
