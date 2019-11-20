@@ -473,7 +473,7 @@ Element ID is interpreted as a Push ID.
 Empty:
 : A seven-bit field that has no semantic value.
 
-The PRIORITY_UPDATE frame in HTTP/3 MUST NOT be sent before the stream
+The HTTP/3 PRIORITY_UPDATE frame MUST NOT be sent with an invalid identifier including before the request stream
 has been opened or a PUSH_PROMISE for the corresponding PUSH_ID has been
 received.
 
