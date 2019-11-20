@@ -568,7 +568,7 @@ Unlike with connection coalescing, the CDN will "de-mux" requests into discrete
 connections to the origin. As HTTP/1.1 and older do not support priorities
 there is no immediate fairness issue in protocol.  However, origin servers MAY
 still use client headers for request scheduling.  Origins SHOULD only schedule
-using client initiated prioritisation where they can be scoped to individual
+based on client priority information where that information can be scoped to individual
 clients. Authentication and other session information may provide this
 linkability.
 
