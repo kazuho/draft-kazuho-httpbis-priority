@@ -141,9 +141,9 @@ complex HTTP/2 setups seen in practice, at least for the web use case.
 
 The problems and insights set out above are motivation for allowing endpoints to
 opt out of using the HTTP/2 priority scheme, in favor of using an alternative
-such as the scheme defined in this specification. Endpoints benefit from
-understanding their peer's intention, so the new
-SETTINGS_DEPRECATE_HTTP2_PRIORITIES is defined. The value of the parameter MUST
+such as the scheme defined in this specification. The
+SETTINGS_DEPRECATE_HTTP2_PRIORITIES setting described below enables endpoints to
+understand their peer's intention. The value of the parameter MUST
 be 0 or 1. Any value other than 0 or 1 MUST be treated as a connection error
 (see {{!RFC7540}}; Section 5.4.1) of type PROTOCOL_ERROR.
 
@@ -157,16 +157,17 @@ after the first SETTINGS frame. Detection of a change by a receiver MUST be
 treated as a connection error of type PROTOCOL_ERROR.
 
 Until the client receives the SETTINGS frame from the server, the client SHOULD
-send both the priority signal defined in the HTTP/2 priority scheme (as it sees
-fit) and also that of this prioritization scheme. Once the client learns that
-the HTTP/2 priority scheme is deprecated, it SHOULD stop sending the HTTP/2
-priority signals. If the client learns that the HTTP/2 priority scheme is not
+send both the priority signal defined in the HTTP/2 priority scheme and also
+that of this prioritization scheme. Once the client learns that the HTTP/2
+priority scheme is deprecated, it SHOULD stop sending the HTTP/2 priority
+signals. If the client learns that the HTTP/2 priority scheme is not
 deprecated, it SHOULD stop sending PRIORITY_UPDATE frames, but MAY continue
 sending the Priority header field, as it is an end-to-end signal that might be
 useful to nodes behind the server that the client is directly connected to.
 
-As the SETTINGS frame precedes any priority signal sent from a client, a server
-can determine if it should respect the HTTP/2 scheme before building state.
+The SETTINGS frame precedes any priority signal sent from a client in HTTP/2,
+so a server can determine if it should respect the HTTP/2 scheme before
+building state.
 
 # Priority Parameters
 
@@ -175,9 +176,9 @@ future extensions. Each key-value pair represents a priority parameter.
 
 The Priority HTTP header field is an end-to-end way to transmit this set of
 parameters when a request or a response is issued. In order to reprioritize a
-request that has been issued, HTTP-version-specific frames are used by
-clients to transmit the same information on a single hop.  If intermediaries want
-to specify prioritizaton on a multiplexed HTTP connection, it SHOULD use a
+request, HTTP-version-specific frames are used by clients to transmit the
+same information on a single hop.  If intermediaries want to specify
+prioritizaton on a multiplexed HTTP connection, it SHOULD use a
 PRIORITY_UPDATE frame and SHOULD NOT change the Priority header field.
 
 In both cases, the set of priority parameters is encoded as a Structured Headers
@@ -342,32 +343,28 @@ that control the caching behavior (e.g., Cache-Control, Vary).
 
 # Reprioritization
 
-Once a client sends a request, circumstances might change and mean that it is
-beneficial to change the priority of the response. As an example, a web browser
-might issue a prefetch request for a JavaScript file with the urgency parameter
-of the Priority request header field set to `u=7` (background). Then, when
-the user navigates to a page which references the new JavaScript file, while the
-prefetch is in progress, the browser would send a reprioritization frame with the
-priority field value set to `u=0` (prerequisite).
-
-However, a client cannot reprioritize a response by using the Priority header
-field. This is because an HTTP header field can only be sent as part of an HTTP
-message. Therefore, to support reprioritization, it is necessary to define a
-HTTP-version-dependent mechanism for transmitting the priority parameters.
-
-This document specifies a new PRIORITY_UPDATE frame type for HTTP/2
-({{!RFC7540}}) and HTTP/3 ({{!I-D.ietf-quic-http}}) that is specialized for
-reprioritization. It carries updated priority parameters and references the
-target of the reprioritization based on a version-specific identifier; in
-HTTP/2 this is the Stream ID, in HTTP/3 this is either the Stream ID or Push ID.
+After a client sends a request, it may be beneficial to change the priority of
+the response. As an example, a web browser might issue a prefetch request for
+a JavaScript file with the urgency parameter of the Priority request header
+field set to `u=7` (background). Then, when the user navigates to a page which
+references the new JavaScript file, while the prefetch is in progress, the
+browser would send a reprioritization frame with the priority field value
+set to `u=0` (prerequisite).
 
 In HTTP/2 and HTTP/3, after a request message is sent on a stream, the stream
 transitions to a state that prevents the client from sending additional
-frames on the stream. Modifying this behavior would require a semantic change
-to the protocol, but this is avoided by restricting the stream on which a
-PRIORITY_UPDATE frame can be sent. In HTTP/2 the frame is on stream zero and
-in HTTP/3 it is sent on the
-control stream ({{!I-D.ietf-quic-http}}, Section 6.2.1).
+frames on the stream. Therefore, a client cannot reprioritize a response by
+using the Priority header field.  Modifying this behavior would require a
+semantic change to the protocol, but this is avoided by restricting the
+stream on which a PRIORITY_UPDATE frame can be sent. In HTTP/2 the frame
+is on stream zero and in HTTP/3 it is sent on the control stream
+({{!I-D.ietf-quic-http}}, Section 6.2.1).
+
+This document specifies a new PRIORITY_UPDATE frame type for HTTP/2
+({{!RFC7540}}) and HTTP/3 ({{!I-D.ietf-quic-http}}) which enables
+reprioritization. It carries updated priority parameters and references the
+target of the reprioritization based on a version-specific identifier; in
+HTTP/2 this is the Stream ID, in HTTP/3 this is either the Stream ID or Push ID.
 
 Unlike the header field, the reprioritization frame is a hop-by-hop signal.
 
