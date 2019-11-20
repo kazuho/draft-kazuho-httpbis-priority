@@ -384,13 +384,12 @@ The Priority HTTP header field can appear in requests and responses. A client
 uses it to specify the priority of the response. A server uses it to inform
 the client that the priority was overwritten. An intermediary can use the
 Priority information from client requests and server responses to correct or
-amend the precedence to suit it (see {{merging}}).
+amend the precedence to suit it (see {{merging}}).  If intermediaries want to
+specify prioritizaton on a multiplexed HTTP connection, it SHOULD use a
+PRIORITY_UPDATE frame and SHOULD NOT change the Priority header field.
 
 The Priority header field is an end-to-end signal of the request
-priority from the client or the response priority from the server.  If
-intermediaries want to specify prioritizaton on a multiplexed HTTP connection,
-it SHOULD use a PRIORITY_UPDATE frame and SHOULD NOT change the Priority header
-field.
+priority from the client or the response priority from the server.
 
 # Reprioritization
 
