@@ -141,7 +141,7 @@ complex HTTP/2 setups seen in practice, at least for the web use case.
 
 The problems and insights set out above are motivation for allowing endpoints to
 opt out of using the HTTP/2 priority scheme, in favor of using an alternative
-such as the scheme defined in this specification. Endpoints would benefit from
+such as the scheme defined in this specification. Endpoints benefit from
 understanding their peer's intention, so the new
 SETTINGS_DEPRECATE_HTTP2_PRIORITIES is defined. The value of the parameter MUST
 be 0 or 1.
