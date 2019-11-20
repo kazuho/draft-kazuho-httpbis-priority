@@ -509,7 +509,17 @@ as the server did not specify the incremental(`i`) parameter.
 
 # Security Considerations
 
-## Fairness and Coalescing Intermediaries {#fairness}
+## Fairness {#fairness}
+
+As a general guideline, a server SHOULD NOT use priority information for making
+schedule decisions across multiple connections, unless it knows that those
+connections originate from the same client. Due to this, priority information
+conveyed over a non-coalesced HTTP connection (e.g., HTTP/1.1) might go unused.
+
+The remainder of this section discusses scenarios where unfairness is
+problematic and presents possible mitigations, or where unfairness is desirable.
+
+### Coalescing Intermediaries
 
 When an intermediary coalesces HTTP requests coming from multiple clients into
 one HTTP/2 or HTTP/3 connection going to the backend server, requests that
@@ -548,6 +558,35 @@ scheme it implements. A sophisticated server MAY use a weighted round-robin
 reflecting the urgencies expressed in the requests, so that less urgent
 responses would receive less bandwidth in case the bottleneck exists between the
 server and the intermediary.
+
+### HTTP/1.x Back Ends
+
+It is common for CDN infrastructure to support different HTTP versions on the
+front end and back end. For instance, the client-facing edge might support
+HTTP/2 and HTTP/3 while communication to back end servers is done using
+HTTP/1.1. Unlike with connection coalescing, the CDN will "de-mux" requests into
+discrete connections to the back end. As HTTP/1.1 and older do not provide a way
+to concurrently transmit multiple responses, there is no immediate fairness
+issue in protocol. However, back end servers MAY still use client headers for
+request scheduling. Back end servers SHOULD only schedule based on client
+priority information where that information can be scoped to individual end
+clients. Authentication and other session information might provide this
+linkability.
+
+### Intentional Introduction of Unfairness
+
+It is sometimes beneficial to deprioritize the transmission of one connection
+over others, knowing that doing so introduces a certain amount of unfairness
+between the connections and therefore between the requests served on those
+connections.
+
+For example, a server might use a scavenging congestion controller on
+connections that only convey background priority responses such as software
+update images. Doing so improves responsiveness of other connections at the cost
+of delaying the delivery of updates.
+
+Also, a client MAY use the priority values for making local scheduling choices
+for the requests it initiates.
 
 # Considerations
 
