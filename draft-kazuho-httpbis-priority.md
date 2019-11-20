@@ -511,9 +511,9 @@ the server did not specify the `progressive` parameter.
 
 ## Fairness {#fairness}
 
-Client initiated priority SHOULD be scoped to the client connection: Allowing
-Client_A requests to directly impact the scheduling of Client_B requests
-creates a fairness problem.
+Client initiated priority SHOULD be scoped to the client connection: Where there
+are two clients A and B; allowing requests from Client A to directly impact the
+scheduling of responses to Client B's requests creates a fairness problem.
 
 ### Coalescing Intermediaries {#coalescing}
 
