@@ -389,7 +389,7 @@ amend the precedence to suit it (see {{merging}}).
 The Priority header field is an end-to-end signal of the request
 priority from the client or the response priority from the server.  If
 intermediaries want to specify prioritizaton on a multiplexed HTTP connection,
-it SHOULD use a reprioritizaton frame and SHOULD NOT change the priority header
+it SHOULD use a PRIORITY_UPDATE frame and SHOULD NOT change the Priority header
 field.
 
 # Reprioritization
