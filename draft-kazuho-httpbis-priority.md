@@ -226,15 +226,17 @@ extensible priority scheme when and only when all the requests that are to be
 sent on that backend connection originates from one client-side connection that
 has negotiated the use of the extensible priority scheme (see {{fairness}}).
 
-# The Priority Parameters
+# Priority Parameters
 
 The priority information is a sequence of key-value pairs, providing room for
 future extensions. Each key-value pair represents a priority parameter.
 
-The Priority HTTP header field is used to transmit this set of parameters when
-a request or a response is being issued. In order to request reprioritization
-after the requests have been issued, HTTP-version-specific frames are used by
-clients to transmit this same information.
+The Priority HTTP header field is an end-to-end way to transmit this set of
+parameters when a request or a response is issued. In order to reprioritize a
+request that has been issued, HTTP-version-specific frames are used by
+clients to transmit the same information on a single hop.  If intermediaries want
+to specify prioritizaton on a multiplexed HTTP connection, it SHOULD use a
+PRIORITY_UPDATE frame and SHOULD NOT change the Priority header field.
 
 In both cases, the set of priority parameters is encoded as a Structured Headers
 Dictionary ({{!STRUCTURED-HEADERS}}).
