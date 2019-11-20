@@ -138,16 +138,18 @@ can reach at least equivalent performance characteristics compared to the more
 complex HTTP/2 setups seen in practice, at least for the web use case.
 
 ## Disabling HTTP/2 Priorities
+
 The problems and insights set out above are motivation for allowing endpoints to
 opt out of using the HTTP/2 priority scheme. Endpoints would benefit from
 understanding their peer's intention, so the new
-SETTINGS_DISABLE_HTTP2_PRIORITIES is defined. The value of the parameter MUST be
-0 or 1.
+SETTINGS_DEPRECATE_HTTP2_PRIORITIES is defined. The value of the parameter MUST
+be 0 or 1.
 
 An HTTP/2 client SHOULD use the HTTP/2 priority scheme (as it sees fit) until it
-receives the peer's SETTINGS_DISABLE_HTTP2_PRIORITIES settings with the value of
-`1`. As the SETTINGS frame precedes any priority signal sent from a client, a server can
-determine if it should respect the HTTP/2 scheme before building state.
+receives the peer's SETTINGS_DEPRECATE_HTTP2_PRIORITIES settings with the value
+of `1`. As the SETTINGS frame precedes any priority signal sent from a client, a
+server can determine if it should respect the HTTP/2 scheme before building
+state.
 
 A client that disables the HTTP/2 priority scheme SHOULD subtitute it with some
 other means of signaling request priority. The scheme extensible priority scheme
@@ -650,7 +652,7 @@ This specification registers the following entry in the HTTP/2 Settings registry
 established by {{!RFC7540}}:
 
 Name:
-: SETTINGS_DISABLE_HTTP2_PRIORITIES
+: SETTINGS_DEPRECATE_HTTP2_PRIORITIES
 
 Code:
 : 0x9
