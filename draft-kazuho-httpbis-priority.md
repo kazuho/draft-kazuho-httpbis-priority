@@ -142,7 +142,7 @@ complex HTTP/2 setups seen in practice, at least for the web use case.
 The problems and insights set out above are motivation for allowing endpoints to
 opt out of using the HTTP/2 priority scheme, in favor of using an alternative
 such as the scheme defined in this specification. The
-SETTINGS_DEPRECATE_HTTP2_PRIORITIES described below enables endpoints to
+SETTINGS_DEPRECATE_HTTP2_PRIORITIES setting described below enables endpoints to
 understand their peer's intention. The value of the parameter MUST
 be 0 or 1. Any value other than 0 or 1 MUST be treated as a connection error
 (see {{!RFC7540}}; Section 5.4.1) of type PROTOCOL_ERROR.
