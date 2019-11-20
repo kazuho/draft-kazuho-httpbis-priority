@@ -451,14 +451,13 @@ frame header MUST be zero (0x0).
 
 The PRIORITY_UPDATE frame payload has the following fields:
 
-R: 
-: A reserved 1-bit field. The semantics of this bit are undefined,
-and the bit MUST remain unset (0x0) when sending and MUST be
-ignored when receiving.
+R:
+: A reserved 1-bit field. The semantics of this bit are undefined, and the bit
+  MUST remain unset (0x0) when sending and MUST be ignored when receiving.
 
 Stream ID:
-: A 31-bit stream identifier for the stream that is the target of the priority 
-update.
+: A 31-bit stream identifier for the stream that is the target of the priority
+  update.
 
 Priority Field Value:
 : The priority update value in ASCII text, encoded using Structured Headers.
@@ -503,8 +502,7 @@ Empty:
 : A seven-bit field that has no semantic value.
 
 Prioritized Element ID:
-: The stream ID or push ID that is the target of the priority 
-update.
+: The stream ID or push ID that is the target of the priority update.
 
 Priority Field Value:
 : The priority update value in ASCII text, encoded using Structured Headers.
