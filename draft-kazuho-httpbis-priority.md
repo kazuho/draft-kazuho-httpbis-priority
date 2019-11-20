@@ -485,6 +485,17 @@ be opened, the frame SHOULD be buffered until the stream is opened and
 applied immediately after the HEADERS are parsed.  This consumes extra state
 on the peer, but existing stream limits bound the size of that state.
 
+The HTTP/3 PRIORITY_UPDATE frame is sent on the control stream. Because there
+are no ordering guarantees between streams, a client that reprioritizes a
+request before receiving the response data might cause the server to receive
+a PRIORITY_UPDATE for an unknown request. If the request stream ID is within
+bidirectional stream limits, the PRIORITY_UPDATE frame SHOULD be buffered
+until the stream is opened and applied immediately after the request message
+has been processed. Holding PRIORITY_UPDATES consumes extra state on the peer,
+although the size of the state is bounded by bidirectional stream limits. There
+is no bound on the number of PRIORITY_UPDATES that can be sent, so an
+endpoint SHOULD store only the most recently received frame.
+
 TODO: add more description of how to handle things like receiving
 PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
 
