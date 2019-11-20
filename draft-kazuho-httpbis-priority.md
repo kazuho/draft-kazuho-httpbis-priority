@@ -516,9 +516,8 @@ schedule decisions across multiple connections, unless it knows that those
 connections originate from the same client. Due to this, priority information
 conveyed over a non-coalesced HTTP connection (e.g., HTTP/1.1) might go unused.
 
-Rest of this sub-section discusses scenarios in which unfairness could be a
-problem as well as how to mitigate them, or when unfairness might be the
-desirable behavior.
+The remainder of this section discusses scenarios where unfairness is
+problematic and presents possible mitigations, or where unfairness is desirable.
 
 ### Coalescing Intermediaries
 
