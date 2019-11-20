@@ -519,7 +519,7 @@ In order to mitigate this fairness problem, when a server responds to a request
 that is known to have come through an intermediary, the server SHOULD prioritize
 the response as if it was assigned the priority of  `u=1, i=?1`
 (i.e. round-robin) regardless of the value of the Priority header field being
-transmitted, unless the server has the knowledge that no intermediaries are
+transmitted, unless the server knows the intermediary is not
 coalescing requests from multiple clients.
 
 A server can determine if a request came from an intermediary through
