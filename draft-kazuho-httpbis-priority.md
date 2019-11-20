@@ -226,38 +226,26 @@ extensible priority scheme when and only when all the requests that are to be
 sent on that backend connection originates from one client-side connection that
 has negotiated the use of the extensible priority scheme (see {{fairness}}).
 
-# Extensible Priorities
+# The Priority Parameters
 
-This priority design is intended to be extensible, and uses a sequence of
-key-value pairs encoded as a Structured Headers Dictionary
-({{!STRUCTURED-HEADERS}}) to enable extensibility. Each dictionary member
-represents a parameter of the Priority header field.
+The priority information is a sequence of key-value pairs, providing room for
+future extensions. Each key-value pair represents a priority parameter.
 
-When attempting to extend priorities, care must be taken to ensure any use of
-existing parameters are either unchanged or modified in a way that is backwards
-compatible for peers that are unaware of the extended meaning.
+The Priority HTTP header field is used to transmit this set of parameters when
+a request or a response is being issued. In order to request reprioritization
+after the requests have been issued, HTTP-version-specific frames are used by
+clients to transmit this same information.
 
-The scheme has a single encoding and set of functionality whether it's
-conveyed via a HTTP header or within a frame.
+In both cases, the set of priority parameters is encoded as a Structured Headers
+Dictionary ({{!STRUCTURED-HEADERS}}).
 
-# The Priority HTTP Header Field
+This document defines the urgency(`u`) and incremental(`i`) parameters. When
+used, these parameters MUST be accompanied by values. When any of the defined
+parameters are omitted, or if the Priority header field is not used, their
+default values SHOULD be applied.
 
-The Priority HTTP header field can appear in requests and responses. A client
-uses it to specify the priority of the response. A server uses it to inform
-the client that the priority was overwritten. An intermediary can use the
-Priority information from client requests and server responses to correct or
-amend the precedence to suit it (see {{merging}}).
-
-This document defines the urgency(`u`) and incremental(`i`) parameters. Values
-of these parameters MUST always be present. When any of the defined parameters
-are omitted, or if the Priority header field is not used, their default values
-SHOULD be applied.
-
-The Priority header field is an end-to-end signal of the request
-priority from the client or the response priority from the server.
-
-Unknown parameters MUST be ignored.
-
+Unknown parameters, parameters with out-of-range values or values of unexpected
+types MUST be ignored.
 
 ## urgency
 
@@ -383,6 +371,23 @@ set to `4` and the incremental parameter set to `1`.
 :path = /image.jpg
 priority = u=4, i=?1
 ~~~
+
+## Defining New Parameters
+
+When attempting to extend priorities, care must be taken to ensure any use of
+existing parameters are either unchanged or modified in a way that is backwards
+compatible for peers that are unaware of the extended meaning.
+
+# The Priority HTTP Header Field
+
+The Priority HTTP header field can appear in requests and responses. A client
+uses it to specify the priority of the response. A server uses it to inform
+the client that the priority was overwritten. An intermediary can use the
+Priority information from client requests and server responses to correct or
+amend the precedence to suit it (see {{merging}}).
+
+The Priority header field is an end-to-end signal of the request
+priority from the client or the response priority from the server.
 
 # Reprioritization
 
