@@ -619,10 +619,10 @@ for the requests it initiates.
 
 As is the ordinary case for HTTP caching ({{?RFC7234}}), a response with a
 Priority header field might be cached and re-used for subsequent requests.
-Origin servers that generate the Priority response header field based on
-properties of a HTTP request are expected to control the cacheability or the
-applicability of the cached response, by using header fields that control the
-caching behavior (e.g., Cache-Control, Vary).
+When an origin server generates the Priority response header field based on
+properties of an HTTP request it receives, the server is expected to control the
+cacheability or the applicability of the cached response, by using header fields
+that control the caching behavior (e.g., Cache-Control, Vary).
 
 # Considerations
 
