@@ -461,7 +461,7 @@ Stream ID:
 update.
 
 Priority Field Value:
-: The priority update value in ASCII text.
+: The priority update value in ASCII text, encoded using Structured Headers.
 
 The HTTP/2 PRIORITY_UPDATE frame MUST NOT be sent prior to opening the
 stream.  If a PRIORITY_UPDATE is received prior to the stream being opened,
@@ -507,7 +507,7 @@ Prioritized Element ID:
 update.
 
 Priority Field Value:
-: The priority update value in ASCII text.
+: The priority update value in ASCII text, encoded using Structured Headers.
 
 The HTTP/3 PRIORITY_UPDATE frame MUST NOT be sent with an invalid identifier,
 including before the request stream has been opened or before a promised
