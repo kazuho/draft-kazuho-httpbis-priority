@@ -405,12 +405,13 @@ reprioritization. It carries updated priority parameters and references the
 target of the reprioritization based on a version-specific identifier; in
 HTTP/2 this is the Stream ID, in HTTP/3 this is either the Stream ID or Push ID.
 
-In HTTP/2 and HTTP/3 a request message sent on a stream transitions it into a
-state that prevents the client from sending additional frames on the stream.
-Modifying this behavior requires a semantic change to the protocol, this is
-avoided by restricting the stream on which a PRIORITY_UPDATE frame can be sent.
-In HTTP/2 the frame is on stream zero and in HTTP/3 it is sent on the control
-stream ({{!I-D.ietf-quic-http}}, Section 6.2.1).
+In HTTP/2 and HTTP/3, after a request message is sent on a stream, the stream
+transitions to a state that prevents the client from sending additional
+frames on the stream. Modifying this behavior would require a semantic change
+to the protocol, but this is avoided by restricting the stream on which a
+PRIORITY_UPDATE frame can be sent. In HTTP/2 the frame is on stream zero and
+in HTTP/3 it is sent on the
+control stream ({{!I-D.ietf-quic-http}}, Section 6.2.1).
 
 Unlike the header field, the reprioritization frame is a hop-by-hop signal.
 
@@ -433,6 +434,10 @@ frame header MUST be zero (0x0).
  +---------------------------------------------------------------+
 ~~~
 {: #fig-h2-reprioritization-frame title="HTTP/2 PRIORITY_UPDATE Frame Payload"}
+
+The HTTP/2 PRIORITY_UPDATE frame MUST NOT be sent prior to opening the
+stream.  If a PRIORITY_UPDATE is received prior to the stream being opened,
+it MAY be treated as a connection error of type PROTOCOL_ERROR.
 
 TODO: add more description of how to handle things like receiving
 PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
@@ -468,6 +473,23 @@ Element ID is interpreted as a Push ID.
 
 Empty:
 : A seven-bit field that has no semantic value.
+
+The HTTP/3 PRIORITY_UPDATE frame MUST NOT be sent with an invalid identifier,
+including before the request stream has been opened or before a promised
+request has been received.  If a server receives a PRIORITY_UPDATE specifying
+a push ID that has not been promised, it SHOULD be treated as a connection
+error of type H3_ID_ERROR.
+
+Because the HTTP/3 PRIORITY_UPDATE frame is sent on the control stream and
+there are no ordering guarantees between streams, a client that reprioritizes
+a request before receiving the response data might cause the server to receive
+a PRIORITY_UPDATE for an unknown request. If the request stream ID is within
+bidirectional stream limits, the PRIORITY_UPDATE frame SHOULD be buffered
+until the stream is opened and applied immediately after the request message
+has been processed. Holding PRIORITY_UPDATES consumes extra state on the peer,
+although the size of the state is bounded by bidirectional stream limits. There
+is no bound on the number of PRIORITY_UPDATES that can be sent, so an
+endpoint SHOULD store only the most recently received frame.
 
 TODO: add more description of how to handle things like receiving
 PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
