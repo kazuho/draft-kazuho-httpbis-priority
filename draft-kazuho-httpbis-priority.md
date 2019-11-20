@@ -511,7 +511,7 @@ as the server did not specify the incremental(`i`) parameter.
 
 ## Fairness {#fairness}
 
-As a general guideline, a server SHOULD NOT use the priority values for making
+As a general guideline, a server SHOULD NOT use priority information for making
 schedule decisions across multiple connections, unless it knows that those
 connections originate from the same client. Due to this, priority information
 conveyed over a non-coalesced HTTP connection (e.g., HTTP/1.1) might go unused.
