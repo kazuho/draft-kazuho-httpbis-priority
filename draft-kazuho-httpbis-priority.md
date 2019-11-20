@@ -559,7 +559,7 @@ reflecting the urgencies expressed in the requests, so that less urgent
 responses would receive less bandwidth in case the bottleneck exists between the
 server and the intermediary.
 
-### HTTP/1.x Back ends
+### HTTP/1.x Back Ends
 
 It is common for CDN infrastructure to support different HTTP versions on the
 front end and back end. For instance, the client-facing edge might support
