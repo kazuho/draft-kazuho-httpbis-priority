@@ -476,7 +476,9 @@ Empty:
 
 The HTTP/3 PRIORITY_UPDATE frame MUST NOT be sent with an invalid identifier,
 including before the request stream has been opened or before a promised
-request has been received.
+request has been received.  If a server receives a PRIORITY_UPDATE specifying
+a push ID that has not been promised, it SHOULD be treated as a connection
+error of type H3_ID_ERROR.
 
 Because the HTTP/3 PRIORITY_UPDATE frame is sent on the control stream and
 there are no ordering guarantees between streams, a client that reprioritizes
