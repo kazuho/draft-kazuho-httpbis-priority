@@ -575,7 +575,7 @@ linkability.
 ### Intentional Introduction of Unfairness
 
 It is sometimes beneficial to deprioritize the transmission of one connection
-than others, knowing that doing so introduces certain amount of unfairness
+over others, knowing that doing so introduces a certain amount of unfairness
 between the connections and therefore between the requests served on those
 connections.
 
