@@ -436,7 +436,8 @@ frame header MUST be zero (0x0).
 {: #fig-h2-reprioritization-frame title="HTTP/2 PRIORITY_UPDATE Frame Payload"}
 
 The HTTP/2 PRIORITY_UPDATE frame MUST NOT be sent prior to opening the
-stream.
+stream.  If a PRIORITY_UPDATE is received prior to the stream being opened,
+it MAY close the connection error.
 
 TODO: add more description of how to handle things like receiving
 PRIORITY_UPDATE on wrong stream, a PRIORITY_UPDATE with an invalid ID, etc.
@@ -473,9 +474,9 @@ Element ID is interpreted as a Push ID.
 Empty:
 : A seven-bit field that has no semantic value.
 
-The HTTP/3 PRIORITY_UPDATE frame MUST NOT be sent with an invalid identifier including before the request stream
-has been opened or a before a promised request has been
-received.
+The HTTP/3 PRIORITY_UPDATE frame MUST NOT be sent with an invalid identifier,
+including before the request stream has been opened or before a promised
+request has been received.
 
 In HTTP/3, the PRIORITY_UPDATE frame can arrive before any data is received
 on the corresponding stream or server push due to reordering or proactively
