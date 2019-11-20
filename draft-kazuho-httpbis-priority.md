@@ -234,7 +234,9 @@ future extensions. Each key-value pair represents a priority parameter.
 The Priority HTTP header field is an end-to-end way to transmit this set of
 parameters when a request or a response is issued. In order to reprioritize a
 request that has been issued, HTTP-version-specific frames are used by
-clients to transmit the same information on a single hop.
+clients to transmit the same information on a single hop.  If intermediaries want
+to specify prioritizaton on a multiplexed HTTP connection, it SHOULD use a
+PRIORITY_UPDATE frame and SHOULD NOT change the Priority header field.
 
 In both cases, the set of priority parameters is encoded as a Structured Headers
 Dictionary ({{!STRUCTURED-HEADERS}}).
@@ -384,9 +386,7 @@ The Priority HTTP header field can appear in requests and responses. A client
 uses it to specify the priority of the response. A server uses it to inform
 the client that the priority was overwritten. An intermediary can use the
 Priority information from client requests and server responses to correct or
-amend the precedence to suit it (see {{merging}}).  If intermediaries want to
-specify prioritizaton on a multiplexed HTTP connection, it SHOULD use a
-PRIORITY_UPDATE frame and SHOULD NOT change the Priority header field.
+amend the precedence to suit it (see {{merging}}).
 
 The Priority header field is an end-to-end signal of the request
 priority from the client or the response priority from the server.
