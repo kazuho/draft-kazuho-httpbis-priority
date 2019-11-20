@@ -449,6 +449,20 @@ frame header MUST be zero (0x0).
 ~~~
 {: #fig-h2-reprioritization-frame title="HTTP/2 PRIORITY_UPDATE Frame Payload"}
 
+The PRIORITY_UPDATE frame payload has the following fields:
+
+R: 
+: A reserved 1-bit field. The semantics of this bit are undefined,
+and the bit MUST remain unset (0x0) when sending and MUST be
+ignored when receiving.
+
+Stream ID:
+: A 31-bit stream identifier for the stream that is the target of the priority 
+update.
+
+Priority Field Value:
+: The priority update value in ASCII text.
+
 The HTTP/2 PRIORITY_UPDATE frame MUST NOT be sent prior to opening the
 stream.  If a PRIORITY_UPDATE is received prior to the stream being opened,
 it MAY be treated as a connection error of type PROTOCOL_ERROR.
@@ -487,6 +501,13 @@ Element ID is interpreted as a Push ID.
 
 Empty:
 : A seven-bit field that has no semantic value.
+
+Prioritized Element ID:
+: The stream ID or push ID that is the target of the priority 
+update.
+
+Priority Field Value:
+: The priority update value in ASCII text.
 
 The HTTP/3 PRIORITY_UPDATE frame MUST NOT be sent with an invalid identifier,
 including before the request stream has been opened or before a promised
