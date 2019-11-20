@@ -478,16 +478,9 @@ The HTTP/3 PRIORITY_UPDATE frame MUST NOT be sent with an invalid identifier,
 including before the request stream has been opened or before a promised
 request has been received.
 
-In HTTP/3, the PRIORITY_UPDATE frame can arrive before any data is received
-on the corresponding stream or server push due to reordering or proactively
-changing the priority of a server push.  If the stream ID is one which can
-be opened, the frame SHOULD be buffered until the stream is opened and
-applied immediately after the HEADERS are parsed.  This consumes extra state
-on the peer, but existing stream limits bound the size of that state.
-
-The HTTP/3 PRIORITY_UPDATE frame is sent on the control stream. Because there
-are no ordering guarantees between streams, a client that reprioritizes a
-request before receiving the response data might cause the server to receive
+Because the HTTP/3 PRIORITY_UPDATE frame is sent on the control stream and
+there are no ordering guarantees between streams, a client that reprioritizes
+a request before receiving the response data might cause the server to receive
 a PRIORITY_UPDATE for an unknown request. If the request stream ID is within
 bidirectional stream limits, the PRIORITY_UPDATE frame SHOULD be buffered
 until the stream is opened and applied immediately after the request message
