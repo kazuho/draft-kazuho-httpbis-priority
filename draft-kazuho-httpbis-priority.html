@@ -290,7 +290,7 @@ ul.toc li {
 <link href="#rfc.section.3.2" rel="Chapter" title="3.2 Defined Prioritization Scheme Values">
 <link href="#rfc.section.3.2.1" rel="Chapter" title="3.2.1 H2_TREE">
 <link href="#rfc.section.3.2.2" rel="Chapter" title="3.2.2 URGENCY">
-<link href="#rfc.section.4" rel="Chapter" title="4 The Priority Parameters">
+<link href="#rfc.section.4" rel="Chapter" title="4 Priority Parameters">
 <link href="#rfc.section.4.1" rel="Chapter" title="4.1 urgency">
 <link href="#rfc.section.4.1.1" rel="Chapter" title="4.1.1 prerequisite">
 <link href="#rfc.section.4.1.2" rel="Chapter" title="4.1.2 default">
@@ -403,7 +403,7 @@ ul.toc li {
 </li>
 <li>3.2.2.   <a href="#rfc.section.3.2.2">URGENCY</a>
 </li>
-</ul></ul><li>4.   <a href="#rfc.section.4">The Priority Parameters</a>
+</ul></ul><li>4.   <a href="#rfc.section.4">Priority Parameters</a>
 </li>
 <ul><li>4.1.   <a href="#rfc.section.4.1">urgency</a>
 </li>
@@ -532,10 +532,10 @@ ul.toc li {
 <p id="rfc.section.3.2.2.p.1">This document defines the priority scheme identifier URGENCY (8-bit value of 2) that indicates support for the extensible priority scheme defined in the present document.</p>
 <p id="rfc.section.3.2.2.p.2">An intermediary connecting to a backend server SHOULD declare support for the extensible priority scheme when and only when all the requests that are to be sent on that backend connection originates from one client-side connection that has negotiated the use of the extensible priority scheme (see <a href="#fairness" class="xref">Section 8.1</a>).</p>
 <h1 id="rfc.section.4">
-<a href="#rfc.section.4">4.</a> <a href="#the-priority-parameters" id="the-priority-parameters">The Priority Parameters</a>
+<a href="#rfc.section.4">4.</a> <a href="#priority-parameters" id="priority-parameters">Priority Parameters</a>
 </h1>
 <p id="rfc.section.4.p.1">The priority information is a sequence of key-value pairs, providing room for future extensions. Each key-value pair represents a priority parameter.</p>
-<p id="rfc.section.4.p.2">The Priority HTTP header field is used to transmit this set of parameters when a request or a response is being issued. In order to request reprioritization after the requests have been issued, HTTP-version-specific frames are used by clients to transmit this same information.</p>
+<p id="rfc.section.4.p.2">The Priority HTTP header field is an end-to-end way to transmit this set of parameters when a request or a response is issued. In order to reprioritize a request that has been issued, HTTP-version-specific frames are used by clients to transmit the same information on a single hop.  If intermediaries want to specify prioritizaton on a multiplexed HTTP connection, it SHOULD use a PRIORITY_UPDATE frame and SHOULD NOT change the Priority header field.</p>
 <p id="rfc.section.4.p.3">In both cases, the set of priority parameters is encoded as a Structured Headers Dictionary (<a href="#STRUCTURED-HEADERS" class="xref">[STRUCTURED-HEADERS]</a>).</p>
 <p id="rfc.section.4.p.4">This document defines the urgency(<samp>u</samp>) and incremental(<samp>i</samp>) parameters. When used, these parameters MUST be accompanied by values. When any of the defined parameters are omitted, or if the Priority header field is not used, their default values SHOULD be applied.</p>
 <p id="rfc.section.4.p.5">Unknown parameters, parameters with out-of-range values or values of unexpected types MUST be ignored.</p>
@@ -715,6 +715,7 @@ priority = u=2
 </h1>
 <p id="rfc.section.8.1.p.1">As a general guideline, a server SHOULD NOT use priority information for making schedule decisions across multiple connections, unless it knows that those connections originate from the same client. Due to this, priority information conveyed over a non-coalesced HTTP connection (e.g., HTTP/1.1) might go unused.</p>
 <p id="rfc.section.8.1.p.2">The remainder of this section discusses scenarios where unfairness is problematic and presents possible mitigations, or where unfairness is desirable.</p>
+<p id="rfc.section.8.1.p.3">TODO: Discuss if we should add a signal that mitigates this issue. For example, we might add a SETTINGS parameter that indicates the next hop that the connection is NOT coalesced (see https://github.com/kazuho/draft-kazuho-httpbis-priority/issues/99).</p>
 <h1 id="rfc.section.8.1.1">
 <a href="#rfc.section.8.1.1">8.1.1.</a> <a href="#coalescing-intermediaries" id="coalescing-intermediaries">Coalescing Intermediaries</a>
 </h1>
