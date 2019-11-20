@@ -386,8 +386,15 @@ the client that the priority was overwritten. An intermediary can use the
 Priority information from client requests and server responses to correct or
 amend the precedence to suit it (see {{merging}}).
 
-The Priority header field is an end-to-end signal of the request
-priority from the client or the response priority from the server.
+The Priority header field is an end-to-end signal of the request priority from
+the client or the response priority from the server.
+
+As is the ordinary case for HTTP caching ({{?RFC7234}}), a response with a
+Priority header field might be cached and re-used for subsequent requests.
+When an origin server generates the Priority response header field based on
+properties of an HTTP request it receives, the server is expected to control the
+cacheability or the applicability of the cached response, by using header fields
+that control the caching behavior (e.g., Cache-Control, Vary).
 
 # Reprioritization
 
@@ -614,15 +621,6 @@ of delaying the delivery of updates.
 
 Also, a client MAY use the priority values for making local scheduling choices
 for the requests it initiates.
-
-## Caching of the Priority Response Header
-
-As is the ordinary case for HTTP caching ({{?RFC7234}}), a response with a
-Priority header field might be cached and re-used for subsequent requests.
-When an origin server generates the Priority response header field based on
-properties of an HTTP request it receives, the server is expected to control the
-cacheability or the applicability of the cached response, by using header fields
-that control the caching behavior (e.g., Cache-Control, Vary).
 
 # Considerations
 
