@@ -146,11 +146,14 @@ understanding their peer's intention, so the new
 SETTINGS_DEPRECATE_HTTP2_PRIORITIES is defined. The value of the parameter MUST
 be 0 or 1.
 
-Enpoints MUST send this SETTINGS parameter as part of the first SETTINGS frame.
+Endpoints MUST send this SETTINGS parameter as part of the first SETTINGS frame.
 When the peer receives the first SETTINGS frame, it learns if the sender has
 deprecated the HTTP/2 priority scheme, by consulting the value of
 SETTINGS_DEPRECATE_HTTP2_PRIORITIES parameter (or through lack of that
 parameter).
+
+A sender MUST NOT change the SETTINGS_DEPRECATE_HTTP2_PRIORITIES parameter
+value after the first SETTINGS frame.
 
 Until the client receives the SETTINGS frame from the server, the client SHOULD
 send both the priority signal defined in the HTTP/2 priority scheme (as it sees
