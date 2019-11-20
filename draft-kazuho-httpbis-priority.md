@@ -145,15 +145,23 @@ understanding their peer's intention, so the new
 SETTINGS_DEPRECATE_HTTP2_PRIORITIES is defined. The value of the parameter MUST
 be 0 or 1.
 
-An HTTP/2 client SHOULD use the HTTP/2 priority scheme (as it sees fit) until it
-receives the peer's SETTINGS_DEPRECATE_HTTP2_PRIORITIES settings with the value
-of `1`. As the SETTINGS frame precedes any priority signal sent from a client, a
-server can determine if it should respect the HTTP/2 scheme before building
-state.
+Enpoints MUST send this SETTINGS parameter as part of the first SETTINGS frame.
+When the peer receives the first SETTINGS frame, it learns if the sender has
+deprecated the HTTP/2 priority scheme, by consulting the value of
+SETTINGS_DEPRECATE_HTTP2_PRIORITIES parameter (or through lack of that
+parameter).
 
-A client that disables the HTTP/2 priority scheme SHOULD subtitute it with some
-other means of signaling request priority. The scheme extensible priority scheme
-is RECOMMENDED.
+Until the client receives the SETTINGS frame from the server, the client SHOULD
+send both the priority signal defined in the HTTP/2 priority scheme (as it sees
+fit) and also that of this prioritization scheme. Once the client learns that
+the HTTP/2 priority scheme is deprecated, it SHOULD stop sending the HTTP/2
+priority signals. If the client learns that the HTTP/2 priority scheme is not
+deprecated, it SHOULD stop sending PRIORITY_UPDATE frames, but MAY continue
+sending the Priority header field, as it is an end-to-end signal that might be
+useful to nodes behind the server that the client is directly connected to.
+
+As the SETTINGS frame precedes any priority signal sent from a client, a server
+can determine if it should respect the HTTP/2 scheme before building state.
 
 # Priority Parameters
 
