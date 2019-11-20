@@ -831,6 +831,8 @@ Mike Bishop, Roberto Peon, Robin Marx, Roy Fielding.
 ## Since draft-kazuho-httpbis-priority-03
 
 * Changed numbering from [-1,6] to [0,7] (#78)
+* Shorten parameter names (#108)
+* Expand on considerations (#105, #107, #109, #110, #111, #113)
 
 ## Since draft-kazuho-httpbis-priority-02
 
