@@ -722,7 +722,7 @@ Mike Bishop, Roberto Peon, Robin Marx, Roy Fielding.
 
 ## Since draft-kazuho-httpbis-priority-04
 
-* None yet.
+* Removed outdated Consideration (#118)
 
 ## Since draft-kazuho-httpbis-priority-03
 
