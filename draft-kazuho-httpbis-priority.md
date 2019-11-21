@@ -633,27 +633,6 @@ server that receives requests for a font {{?RFC8081}} and images with the same
 urgency might give higher precedence to the font, so that a visual client can
 render textual information at an early moment.
 
-## Can an Intermediary Send its own Signal?
-
-There might be a benefit in recommending a coalescing intermediary to embed its
-own prioritization hints into the HTTP request that it forwards to the backend
-server, as otherwise the Priority header field would not be as helpful to the
-backend (see {{fairness}}).
-
-One way of achieving that, without dropping the original signal, would be to let
-the intermediary express its own signal using the Priority header field, at the
-same time transplanting the original value to a different header field.
-
-As an example, when a client sends an HTTP request carrying a priority of
-`u=0` and the intermediary wants to instead associate
-`u=1, i=?1`, the intermediary would send a HTTP request that
-contains the following two header fields to the backend server:
-
-~~~
-priority = u=1, i=?1
-original-priority = u=0
-~~~
-
 # IANA Considerations
 
 This specification registers the following entry in the Permanent Message Header
@@ -743,7 +722,7 @@ Mike Bishop, Roberto Peon, Robin Marx, Roy Fielding.
 
 ## Since draft-kazuho-httpbis-priority-04
 
-* None yet.
+* Removed outdated Consideration (#118)
 
 ## Since draft-kazuho-httpbis-priority-03
 
