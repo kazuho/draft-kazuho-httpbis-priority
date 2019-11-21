@@ -334,9 +334,12 @@ amend the precedence to suit it (see {{merging}}).
 The Priority header field is an end-to-end signal of the request priority from
 the client or the response priority from the server.
 
-A server MUST NOT generate different response based on the value of the Priority
-request header field. The sole intention of prioritization is to optimize how
-responses are being provided, not to change what is provided as response.
+The sole intention of prioritization is to optimize how responses are being
+provided, not to change what is provided as response. Therefore, a server MUST
+NOT generate different response based on the value of the Priority request
+header field. Sending a cacheable response that depends on the Priority request
+header field might lead to mis-prioritization, when a cache reuses that
+response.
 
 # Reprioritization
 
