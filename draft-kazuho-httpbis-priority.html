@@ -307,7 +307,6 @@ ul.toc li {
 <link href="#rfc.section.8" rel="Chapter" title="8 Considerations">
 <link href="#rfc.section.8.1" rel="Chapter" title="8.1 Why use an End-to-End Header Field?">
 <link href="#rfc.section.8.2" rel="Chapter" title="8.2 Why do Urgencies Have Meanings?">
-<link href="#rfc.section.8.3" rel="Chapter" title="8.3 Can an Intermediary Send its own Signal?">
 <link href="#rfc.section.9" rel="Chapter" title="9 IANA Considerations">
 <link href="#rfc.references" rel="Chapter" title="10 References">
 <link href="#rfc.references.1" rel="Chapter" title="10.1 Normative References">
@@ -432,8 +431,6 @@ ul.toc li {
 <ul><li>8.1.   <a href="#rfc.section.8.1">Why use an End-to-End Header Field?</a>
 </li>
 <li>8.2.   <a href="#rfc.section.8.2">Why do Urgencies Have Meanings?</a>
-</li>
-<li>8.3.   <a href="#rfc.section.8.3">Can an Intermediary Send its own Signal?</a>
 </li>
 </ul><li>9.   <a href="#rfc.section.9">IANA Considerations</a>
 </li>
@@ -737,16 +734,6 @@ priority = u=2
 <p id="rfc.section.8.2.p.2">This specification restricts itself to defining a minimum set of urgency levels in order to provide sufficient granularity for prioritizing responses for ordinary web browsing, at minimal complexity.</p>
 <p id="rfc.section.8.2.p.3">However, that does not mean that the prioritization scheme would forever be stuck to the eight levels.  The design provides extensibility.  If deemed necessary, it would be possible to subdivide any of the eight urgency levels that are currently defined.  Or, a graphical user-agent could send a <samp>visible</samp> parameter to indicate if the resource being requested is within the viewport.</p>
 <p id="rfc.section.8.2.p.4">A server can combine the hints provided in the Priority header field with other information in order to improve the prioritization of responses.  For example, a server that receives requests for a font <a href="#RFC8081" class="xref">[RFC8081]</a> and images with the same urgency might give higher precedence to the font, so that a visual client can render textual information at an early moment.</p>
-<h1 id="rfc.section.8.3">
-<a href="#rfc.section.8.3">8.3.</a> <a href="#can-an-intermediary-send-its-own-signal" id="can-an-intermediary-send-its-own-signal">Can an Intermediary Send its own Signal?</a>
-</h1>
-<p id="rfc.section.8.3.p.1">There might be a benefit in recommending a coalescing intermediary to embed its own prioritization hints into the HTTP request that it forwards to the backend server, as otherwise the Priority header field would not be as helpful to the backend (see <a href="#fairness" class="xref">Section 7.1</a>).</p>
-<p id="rfc.section.8.3.p.2">One way of achieving that, without dropping the original signal, would be to let the intermediary express its own signal using the Priority header field, at the same time transplanting the original value to a different header field.</p>
-<p id="rfc.section.8.3.p.3">As an example, when a client sends an HTTP request carrying a priority of <samp>u=0</samp> and the intermediary wants to instead associate <samp>u=1, i=?1</samp>, the intermediary would send a HTTP request that contains the following two header fields to the backend server:</p>
-<pre>
-priority = u=1, i=?1
-original-priority = u=0
-</pre>
 <h1 id="rfc.section.9">
 <a href="#rfc.section.9">9.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a>
 </h1>
@@ -886,7 +873,7 @@ original-priority = u=0
 </h1>
 <p></p>
 
-<ul><li>None yet.</li></ul>
+<ul><li>Removed outdated Consideration (#118)</li></ul>
 <h1 id="rfc.appendix.B.2">
 <a href="#rfc.appendix.B.2">B.2.</a> <a href="#since-draft-kazuho-httpbis-priority-03" id="since-draft-kazuho-httpbis-priority-03">Since draft-kazuho-httpbis-priority-03</a>
 </h1>

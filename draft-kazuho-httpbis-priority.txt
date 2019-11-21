@@ -92,19 +92,19 @@ Table of Contents
    8.  Considerations  . . . . . . . . . . . . . . . . . . . . . . .  15
      8.1.  Why use an End-to-End Header Field? . . . . . . . . . . .  15
      8.2.  Why do Urgencies Have Meanings? . . . . . . . . . . . . .  15
-     8.3.  Can an Intermediary Send its own Signal?  . . . . . . . .  16
    9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  16
    10. References  . . . . . . . . . . . . . . . . . . . . . . . . .  17
      10.1.  Normative References . . . . . . . . . . . . . . . . . .  17
      10.2.  Informative References . . . . . . . . . . . . . . . . .  18
-   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  19
+   Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  18
    Appendix B.  Change Log . . . . . . . . . . . . . . . . . . . . .  19
-     B.1.  Since draft-kazuho-httpbis-priority-04  . . . . . . . . .  20
-     B.2.  Since draft-kazuho-httpbis-priority-03  . . . . . . . . .  20
-     B.3.  Since draft-kazuho-httpbis-priority-02  . . . . . . . . .  20
-     B.4.  Since draft-kazuho-httpbis-priority-01  . . . . . . . . .  20
+     B.1.  Since draft-kazuho-httpbis-priority-04  . . . . . . . . .  19
+     B.2.  Since draft-kazuho-httpbis-priority-03  . . . . . . . . .  19
+     B.3.  Since draft-kazuho-httpbis-priority-02  . . . . . . . . .  19
+     B.4.  Since draft-kazuho-httpbis-priority-01  . . . . . . . . .  19
      B.5.  Since draft-kazuho-httpbis-priority-00  . . . . . . . . .  20
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  20
+
 
 
 
@@ -865,38 +865,10 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
    precedence to the font, so that a visual client can render textual
    information at an early moment.
 
-8.3.  Can an Intermediary Send its own Signal?
-
-   There might be a benefit in recommending a coalescing intermediary to
-   embed its own prioritization hints into the HTTP request that it
-   forwards to the backend server, as otherwise the Priority header
-   field would not be as helpful to the backend (see Section 7.1).
-
-   One way of achieving that, without dropping the original signal,
-   would be to let the intermediary express its own signal using the
-   Priority header field, at the same time transplanting the original
-   value to a different header field.
-
-   As an example, when a client sends an HTTP request carrying a
-   priority of "u=0" and the intermediary wants to instead associate
-   "u=1, i=?1", the intermediary would send a HTTP request that contains
-   the following two header fields to the backend server:
-
-   priority = u=1, i=?1
-   original-priority = u=0
-
 9.  IANA Considerations
 
    This specification registers the following entry in the Permanent
    Message Header Field Names registry established by [RFC3864]:
-
-
-
-
-Oku & Pardue              Expires May 24, 2020                 [Page 16]
-
-Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
-
 
    Header field name:  Priority
 
@@ -918,6 +890,13 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
    Code:  0x9
 
    Initial value:  0
+
+
+
+Oku & Pardue              Expires May 24, 2020                 [Page 16]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
+
 
    Specification:  This document
 
@@ -942,17 +921,6 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 10.  References
 
 10.1.  Normative References
-
-
-
-
-
-
-
-Oku & Pardue              Expires May 24, 2020                 [Page 17]
-
-Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
-
 
    [I-D.ietf-quic-http]
               Bishop, M., "Hypertext Transfer Protocol Version 3
@@ -979,6 +947,13 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
               DOI 10.17487/RFC7540, May 2015,
               <https://www.rfc-editor.org/info/rfc7540>.
 
+
+
+Oku & Pardue              Expires May 24, 2020                 [Page 17]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
+
+
    [STRUCTURED-HEADERS]
               Nottingham, M. and P. Kamp, "Structured Headers for HTTP",
               draft-ietf-httpbis-header-structure-14 (work in progress),
@@ -1000,15 +975,6 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
               Ed., "Hypertext Transfer Protocol (HTTP/1.1): Caching",
               RFC 7234, DOI 10.17487/RFC7234, June 2014,
               <https://www.rfc-editor.org/info/rfc7234>.
-
-
-
-
-
-Oku & Pardue              Expires May 24, 2020                 [Page 18]
-
-Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
-
 
    [RFC7239]  Petersson, A. and M. Nilsson, "Forwarded HTTP Extension",
               RFC 7239, DOI 10.17487/RFC7239, June 2014,
@@ -1036,6 +1002,14 @@ Appendix A.  Acknowledgements
    slides-83-httpbis-5.pdf [1].  In https://github.com/pmeenan/http3-
    prioritization-proposal [2], Patrick Meenan advocates for
    representing the priorities using a tuple of urgency and concurrency.
+
+
+
+Oku & Pardue              Expires May 24, 2020                 [Page 18]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
+
+
    The ability to deprecate HTTP/2 priortization is based on
    [I-D.lassey-priority-setting], authored by Brad Lassey and Lucas
    Pardue, with modifications based on feedback that was not
@@ -1054,21 +1028,9 @@ Appendix A.  Acknowledgements
 
 Appendix B.  Change Log
 
-
-
-
-
-
-
-
-Oku & Pardue              Expires May 24, 2020                 [Page 19]
-
-Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
-
-
 B.1.  Since draft-kazuho-httpbis-priority-04
 
-   o  None yet.
+   o  Removed outdated Consideration (#118)
 
 B.2.  Since draft-kazuho-httpbis-priority-03
 
@@ -1095,6 +1057,15 @@ B.4.  Since draft-kazuho-httpbis-priority-01
 
    o  Explain how reprioritization might be supported.
 
+
+
+
+
+Oku & Pardue              Expires May 24, 2020                 [Page 19]
+
+Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
+
+
 B.5.  Since draft-kazuho-httpbis-priority-00
 
    o  Expand urgency levels from 3 to 8.
@@ -1111,6 +1082,35 @@ Authors' Addresses
    Cloudflare
 
    Email: lucaspardue.24.7@gmail.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
