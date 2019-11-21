@@ -646,11 +646,11 @@ same time transplanting the original value to a different header field.
 
 As an example, when a client sends an HTTP request carrying a priority of
 `u=0` and the intermediary wants to instead associate
-`u=1; i=?1`, the intermediary would send a HTTP request that
+`u=1, i=?1`, the intermediary would send a HTTP request that
 contains the following two header fields to the backend server:
 
 ~~~
-priority = u=1; i=?1
+priority = u=1, i=?1
 original-priority = u=0
 ~~~
 
