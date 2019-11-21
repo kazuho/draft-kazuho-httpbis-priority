@@ -5,12 +5,12 @@
 HTTP                                                              K. Oku
 Internet-Draft                                                    Fastly
 Intended status: Standards Track                               L. Pardue
-Expires: May 23, 2020                                         Cloudflare
-                                                       November 20, 2019
+Expires: May 24, 2020                                         Cloudflare
+                                                       November 21, 2019
 
 
                Extensible Prioritization Scheme for HTTP
-                    draft-kazuho-httpbis-priority-04
+                  draft-kazuho-httpbis-priority-latest
 
 Abstract
 
@@ -40,7 +40,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on May 23, 2020.
+   This Internet-Draft will expire on May 24, 2020.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Oku & Pardue              Expires May 23, 2020                  [Page 1]
+Oku & Pardue              Expires May 24, 2020                  [Page 1]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -99,17 +99,17 @@ Table of Contents
      10.2.  Informative References . . . . . . . . . . . . . . . . .  18
    Appendix A.  Acknowledgements . . . . . . . . . . . . . . . . . .  19
    Appendix B.  Change Log . . . . . . . . . . . . . . . . . . . . .  19
-     B.1.  Since draft-kazuho-httpbis-priority-03  . . . . . . . . .  20
-     B.2.  Since draft-kazuho-httpbis-priority-02  . . . . . . . . .  20
-     B.3.  Since draft-kazuho-httpbis-priority-01  . . . . . . . . .  20
-     B.4.  Since draft-kazuho-httpbis-priority-00  . . . . . . . . .  20
+     B.1.  Since draft-kazuho-httpbis-priority-04  . . . . . . . . .  20
+     B.2.  Since draft-kazuho-httpbis-priority-03  . . . . . . . . .  20
+     B.3.  Since draft-kazuho-httpbis-priority-02  . . . . . . . . .  20
+     B.4.  Since draft-kazuho-httpbis-priority-01  . . . . . . . . .  20
+     B.5.  Since draft-kazuho-httpbis-priority-00  . . . . . . . . .  20
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  20
 
 
 
 
-
-Oku & Pardue              Expires May 23, 2020                  [Page 2]
+Oku & Pardue              Expires May 24, 2020                  [Page 2]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -165,7 +165,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                  [Page 3]
+Oku & Pardue              Expires May 24, 2020                  [Page 3]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -221,7 +221,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                  [Page 4]
+Oku & Pardue              Expires May 24, 2020                  [Page 4]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -277,7 +277,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                  [Page 5]
+Oku & Pardue              Expires May 24, 2020                  [Page 5]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -333,7 +333,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                  [Page 6]
+Oku & Pardue              Expires May 24, 2020                  [Page 6]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -389,7 +389,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                  [Page 7]
+Oku & Pardue              Expires May 24, 2020                  [Page 7]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -445,7 +445,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                  [Page 8]
+Oku & Pardue              Expires May 24, 2020                  [Page 8]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -501,7 +501,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                  [Page 9]
+Oku & Pardue              Expires May 24, 2020                  [Page 9]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -557,7 +557,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                 [Page 10]
+Oku & Pardue              Expires May 24, 2020                 [Page 10]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -613,7 +613,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                 [Page 11]
+Oku & Pardue              Expires May 24, 2020                 [Page 11]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -669,7 +669,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                 [Page 12]
+Oku & Pardue              Expires May 24, 2020                 [Page 12]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -725,7 +725,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                 [Page 13]
+Oku & Pardue              Expires May 24, 2020                 [Page 13]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -781,7 +781,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                 [Page 14]
+Oku & Pardue              Expires May 24, 2020                 [Page 14]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -837,7 +837,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                 [Page 15]
+Oku & Pardue              Expires May 24, 2020                 [Page 15]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -879,10 +879,10 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
    As an example, when a client sends an HTTP request carrying a
    priority of "u=0" and the intermediary wants to instead associate
-   "u=1; i=?1", the intermediary would send a HTTP request that contains
+   "u=1, i=?1", the intermediary would send a HTTP request that contains
    the following two header fields to the backend server:
 
-   priority = u=1; i=?1
+   priority = u=1, i=?1
    original-priority = u=0
 
 9.  IANA Considerations
@@ -893,7 +893,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                 [Page 16]
+Oku & Pardue              Expires May 24, 2020                 [Page 16]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -949,7 +949,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                 [Page 17]
+Oku & Pardue              Expires May 24, 2020                 [Page 17]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -1005,7 +1005,7 @@ Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
 
-Oku & Pardue              Expires May 23, 2020                 [Page 18]
+Oku & Pardue              Expires May 24, 2020                 [Page 18]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
@@ -1061,12 +1061,16 @@ Appendix B.  Change Log
 
 
 
-Oku & Pardue              Expires May 23, 2020                 [Page 19]
+Oku & Pardue              Expires May 24, 2020                 [Page 19]
 
 Internet-Draft  Extensible Prioritization Scheme for HTTP  November 2019
 
 
-B.1.  Since draft-kazuho-httpbis-priority-03
+B.1.  Since draft-kazuho-httpbis-priority-04
+
+   o  None yet.
+
+B.2.  Since draft-kazuho-httpbis-priority-03
 
    o  Changed numbering from [-1,6] to [0,7] (#78)
 
@@ -1077,7 +1081,7 @@ B.1.  Since draft-kazuho-httpbis-priority-03
 
    o  Expand on considerations (#105, #107, #109, #110, #111, #113)
 
-B.2.  Since draft-kazuho-httpbis-priority-02
+B.3.  Since draft-kazuho-httpbis-priority-02
 
    o  Consolidation of the problem statement (#61, #73)
 
@@ -1087,11 +1091,11 @@ B.2.  Since draft-kazuho-httpbis-priority-02
 
    o  Explain fairness issue and mitigations (#56)
 
-B.3.  Since draft-kazuho-httpbis-priority-01
+B.4.  Since draft-kazuho-httpbis-priority-01
 
    o  Explain how reprioritization might be supported.
 
-B.4.  Since draft-kazuho-httpbis-priority-00
+B.5.  Since draft-kazuho-httpbis-priority-00
 
    o  Expand urgency levels from 3 to 8.
 
@@ -1113,8 +1117,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-Oku & Pardue              Expires May 23, 2020                 [Page 20]
+Oku & Pardue              Expires May 24, 2020                 [Page 20]
