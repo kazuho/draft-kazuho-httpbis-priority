@@ -1,6 +1,6 @@
 ---
 title: Extensible Prioritization Scheme for HTTP
-docname: draft-kazuho-httpbis-priority-04
+docname: draft-kazuho-httpbis-priority-latest
 category: std
 
 ipr: trust200902
@@ -740,6 +740,10 @@ Andrew Galloni, Craig Taylor, Ian Swett, Kazuho Oku, Lucas Pardue, Matthew Cox,
 Mike Bishop, Roberto Peon, Robin Marx, Roy Fielding.
 
 # Change Log
+
+## Since draft-kazuho-httpbis-priority-04
+
+* None yet.
 
 ## Since draft-kazuho-httpbis-priority-03
 
