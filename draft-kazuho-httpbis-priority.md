@@ -336,7 +336,7 @@ the client or the response priority from the server.
 
 The sole intention of prioritization is to optimize how responses are being
 provided, not to change what is provided as the response. Therefore, a server MUST
-NOT generate different HTTP response based on the value of the Priority request
+NOT generate a different HTTP response based on the value of the Priority request
 header field. Sending a cacheable response that depends on the Priority request
 header field might lead to mis-prioritization, when a cache reuses that
 response.
