@@ -334,12 +334,12 @@ amend the precedence to suit it (see {{merging}}).
 The Priority header field is an end-to-end signal of the request priority from
 the client or the response priority from the server.
 
-As is the ordinary case for HTTP caching ({{?RFC7234}}), a response with a
-Priority header field might be cached and re-used for subsequent requests.
-When an origin server generates the Priority response header field based on
-properties of an HTTP request it receives, the server is expected to control the
-cacheability or the applicability of the cached response, by using header fields
-that control the caching behavior (e.g., Cache-Control, Vary).
+The sole intention of prioritization is to optimize how responses are being
+provided, not to change what is provided as the response. Therefore, a server MUST
+NOT generate a different HTTP response based on the value of the Priority request
+header field. Sending a cacheable response that depends on the Priority request
+header field might lead to mis-prioritization, when a cache reuses that
+response.
 
 # Reprioritization
 
